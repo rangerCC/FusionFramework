@@ -36,8 +36,13 @@ static int os_pushresult (lua_State *L, int i, const char *filename) {
 
 
 static int os_execute (lua_State *L) {
+#ifdef LUA_USE_IOS
+  luaL_error(L, "os.execute not supported on iOS");
+  return 0;
+#else
   lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
   return 1;
+#endif
 }
 
 

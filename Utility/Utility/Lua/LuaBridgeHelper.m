@@ -37,7 +37,7 @@ void pushArrayToLuaState(NSArray* data, lua_State* L) {
     for(NSUInteger index=0; index<[data count]; index++) {
         id value = [data objectAtIndex:index];
         if([value isKindOfClass:[NSNumber class]]) {
-            if(CFGetTypeID(value) == CFBooleanGetTypeID()) {
+            if(CFGetTypeID((__bridge CFTypeRef)value) == CFBooleanGetTypeID()) {
                 lua_pushnumber(L, index+1);
                 lua_pushboolean(L, [value boolValue]);
                 lua_settable(L, -3);
@@ -73,7 +73,7 @@ void pushDictionaryToLuaState(NSDictionary* data, lua_State* L) {
     for(NSString* key in [data allKeys]) {
         id value = [data valueForKey:key];
         if([value isKindOfClass:[NSNumber class]]) {
-            if(CFGetTypeID(value) == CFBooleanGetTypeID()) {
+            if(CFGetTypeID((__bridge CFTypeRef)value) == CFBooleanGetTypeID()) {
                 lua_pushstring(L, [key cStringUsingEncoding:NSUTF8StringEncoding]);
                 lua_pushboolean(L, [value boolValue]);
                 lua_settable(L, -3);

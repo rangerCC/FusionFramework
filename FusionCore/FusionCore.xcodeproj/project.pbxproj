@@ -41,6 +41,7 @@
 		20789AE21A62193E002DF278 /* Utility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20789AE11A62193E002DF278 /* Utility.framework */; };
 		20789D271A62208F002DF278 /* Enviroment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20789D261A62208F002DF278 /* Enviroment.framework */; };
 		20969D7B1A63A8E700E9C377 /* FusionBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20969D7A1A63A8E700E9C377 /* FusionBase.framework */; };
+		E6CA00424AE96870EA4D9348 /* Pods_FusionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973356D9C6129C05D387BFF8 /* Pods_FusionCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,9 @@
 		20789AE11A62193E002DF278 /* Utility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Utility.framework; path = "../Utility/build/Debug-iphoneos/Utility.framework"; sourceTree = "<group>"; };
 		20789D261A62208F002DF278 /* Enviroment.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Enviroment.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/Enviroment.framework"; sourceTree = "<group>"; };
 		20969D7A1A63A8E700E9C377 /* FusionBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionBase.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/FusionBase.framework"; sourceTree = "<group>"; };
+		973356D9C6129C05D387BFF8 /* Pods_FusionCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FusionCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0414DFCD4FA3B4F7C00B6C4 /* Pods-FusionCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FusionCore.debug.xcconfig"; path = "Target Support Files/Pods-FusionCore/Pods-FusionCore.debug.xcconfig"; sourceTree = "<group>"; };
+		C23464D19CDB94F2455D29B4 /* Pods-FusionCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FusionCore.release.xcconfig"; path = "Target Support Files/Pods-FusionCore/Pods-FusionCore.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,18 +94,30 @@
 				20969D7B1A63A8E700E9C377 /* FusionBase.framework in Frameworks */,
 				20789D271A62208F002DF278 /* Enviroment.framework in Frameworks */,
 				20789AE21A62193E002DF278 /* Utility.framework in Frameworks */,
+				E6CA00424AE96870EA4D9348 /* Pods_FusionCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11BCEA38FA0F02F231B78846 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A0414DFCD4FA3B4F7C00B6C4 /* Pods-FusionCore.debug.xcconfig */,
+				C23464D19CDB94F2455D29B4 /* Pods-FusionCore.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
 		20789A4A1A62167B002DF278 = {
 			isa = PBXGroup;
 			children = (
 				20789EC31A62241F002DF278 /* Frameworks */,
 				20789A561A62167B002DF278 /* FusionCore */,
 				20789A551A62167B002DF278 /* Products */,
+				11BCEA38FA0F02F231B78846 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -182,6 +198,7 @@
 				20969D7A1A63A8E700E9C377 /* FusionBase.framework */,
 				20789AE11A62193E002DF278 /* Utility.framework */,
 				20789D261A62208F002DF278 /* Enviroment.framework */,
+				973356D9C6129C05D387BFF8 /* Pods_FusionCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -219,6 +236,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20789A6A1A62167C002DF278 /* Build configuration list for PBXNativeTarget "FusionCore" */;
 			buildPhases = (
+				1082648302AAF5B3821B81BF /* [CP] Check Pods Manifest.lock */,
 				20789A4F1A62167B002DF278 /* Sources */,
 				20789A501A62167B002DF278 /* Frameworks */,
 				20789A511A62167B002DF278 /* Headers */,
@@ -273,6 +291,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1082648302AAF5B3821B81BF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FusionCore-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20789A4F1A62167B002DF278 /* Sources */ = {
@@ -419,7 +462,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionCore";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.FusionCore;
 			};
 			name = Debug;
 		};
@@ -444,7 +488,8 @@ ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionCore";				SKIP_INSTALL = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionCore";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.FusionCore;
 			};
 			name = Release;
 		};

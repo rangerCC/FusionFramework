@@ -24,6 +24,7 @@
 		20969D771A63A73700E9C377 /* NSDictionary+RemoveNSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969D711A63A73700E9C377 /* NSDictionary+RemoveNSNull.m */; };
 		20969D781A63A73700E9C377 /* NSSet+RemoveNSNULL.h in Headers */ = {isa = PBXBuildFile; fileRef = 20969D721A63A73700E9C377 /* NSSet+RemoveNSNULL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		20969D791A63A73700E9C377 /* NSSet+RemoveNSNULL.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969D731A63A73700E9C377 /* NSSet+RemoveNSNULL.m */; };
+		8499F822278414EC2304193D /* Pods_FusionBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65109D1296651233220E72EB /* Pods_FusionBase.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,9 @@
 		20969D711A63A73700E9C377 /* NSDictionary+RemoveNSNull.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+RemoveNSNull.m"; sourceTree = "<group>"; };
 		20969D721A63A73700E9C377 /* NSSet+RemoveNSNULL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSSet+RemoveNSNULL.h"; sourceTree = "<group>"; };
 		20969D731A63A73700E9C377 /* NSSet+RemoveNSNULL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSet+RemoveNSNULL.m"; sourceTree = "<group>"; };
+		221A3C1849473A90D3C532A9 /* Pods-FusionBase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FusionBase.release.xcconfig"; path = "Target Support Files/Pods-FusionBase/Pods-FusionBase.release.xcconfig"; sourceTree = "<group>"; };
+		65109D1296651233220E72EB /* Pods_FusionBase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FusionBase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C60B5B41D6BACEB130DA18B2 /* Pods-FusionBase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FusionBase.debug.xcconfig"; path = "Target Support Files/Pods-FusionBase/Pods-FusionBase.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8499F822278414EC2304193D /* Pods_FusionBase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +69,8 @@
 			children = (
 				20969D3E1A63A2E400E9C377 /* FusionBase */,
 				20969D3D1A63A2E400E9C377 /* Products */,
+				4D383BABEA624EC78EAB613A /* Pods */,
+				F2FD179EBE6FF037D9B8DFBA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -124,6 +131,24 @@
 			path = NSURL;
 			sourceTree = "<group>";
 		};
+		4D383BABEA624EC78EAB613A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C60B5B41D6BACEB130DA18B2 /* Pods-FusionBase.debug.xcconfig */,
+				221A3C1849473A90D3C532A9 /* Pods-FusionBase.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
+		F2FD179EBE6FF037D9B8DFBA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				65109D1296651233220E72EB /* Pods_FusionBase.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -150,6 +175,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20969D521A63A2E400E9C377 /* Build configuration list for PBXNativeTarget "FusionBase" */;
 			buildPhases = (
+				5E85872E5FA195928C88789F /* [CP] Check Pods Manifest.lock */,
 				20969D371A63A2E400E9C377 /* Sources */,
 				20969D381A63A2E400E9C377 /* Frameworks */,
 				20969D391A63A2E400E9C377 /* Headers */,
@@ -204,6 +230,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5E85872E5FA195928C88789F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FusionBase-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20969D371A63A2E400E9C377 /* Sources */ = {
@@ -314,6 +365,7 @@
 		};
 		20969D531A63A2E400E9C377 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C60B5B41D6BACEB130DA18B2 /* Pods-FusionBase.debug.xcconfig */;
 			buildSettings = {
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -323,12 +375,14 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionBase";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.FusionBase;
 			};
 			name = Debug;
 		};
 		20969D541A63A2E400E9C377 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 221A3C1849473A90D3C532A9 /* Pods-FusionBase.release.xcconfig */;
 			buildSettings = {
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -338,7 +392,8 @@ ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionBase";				SKIP_INSTALL = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionBase";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.FusionBase;
 			};
 			name = Release;
 		};

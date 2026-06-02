@@ -6,7 +6,7 @@
 //  Copyright (c) 2012年 RyouZhang. All rights reserved.
 //
 
-#import "../FusionActor.h"
+#import "FusionActor.h"
 
 
 @interface FusionLuaActor : FusionActor {

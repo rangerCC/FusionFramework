@@ -11,6 +11,7 @@
 #import "NeoHttpDownloadTask.h"
 #import "NeoNetEngine.h"
 #import "NetworkCommon.h"
+#import "FusionNativeMessage+Error.h"
 #import <Utility/Utility.h>
 #import "SafeARC.h"
 
@@ -30,9 +31,9 @@
 - (void)processFusionNativeMessage:(FusionNativeMessage *)message {
     BOOL forceDownload = NO;
     
-    NSString *localPath = [message.params valueForKey:NET_LOCAL_PATH];
-    if ([message.params valueForKey:NET_FORCE_DOWNLOAD]) {
-        forceDownload = [[message.params valueForKey:NET_FORCE_DOWNLOAD] boolValue];
+    NSString *localPath = [message.args valueForKey:NET_LOCAL_PATH];
+    if ([message.args valueForKey:NET_FORCE_DOWNLOAD]) {
+        forceDownload = [[message.args valueForKey:NET_FORCE_DOWNLOAD] boolValue];
     }
     
     if ([[FileKit getInstance] isFileExist:localPath] && forceDownload == NO) {
@@ -41,7 +42,7 @@
         return;
     }
     
-    NSString *url = [message.params valueForKey:NET_REMOTE_URL];
+    NSString *url = [message.args valueForKey:NET_REMOTE_URL];
     if (url == nil || [NSURL URLWithString:url] == nil) {
         [message setErrorDomainCode:ERROR_DOMAIN_NETWORK
                           errorCode:ERROR_INVALID_URL
@@ -50,10 +51,10 @@
         return;
     }
     
-    NSDictionary *httpHeaders = [message.params valueForKey:NET_HTTP_HEADER];
-    NSString *httpMethod = [message.params valueForKey:NET_HTTP_METHOD];
+    NSDictionary *httpHeaders = [message.args valueForKey:NET_HTTP_HEADER];
+    NSString *httpMethod = [message.args valueForKey:NET_HTTP_METHOD];
     
-    NSString *tempPath = [message.params valueForKey:NET_TEMP_PATH];
+    NSString *tempPath = [message.args valueForKey:NET_TEMP_PATH];
     if (tempPath == nil || tempPath.length == 0) {
         tempPath = [FileHelper getTempPath:url];
     }
@@ -203,7 +204,7 @@
 }
 
 - (void)cancelFusionNativeMessage:(FusionNativeMessage *)message {
-    NSString *url = [message.params valueForKey:NET_REMOTE_URL];
+    NSString *url = [message.args valueForKey:NET_REMOTE_URL];
     
     DownloadFileCluster *cluster = SafeRetain([_clusterDic valueForKey:url]);
     if (cluster == nil)

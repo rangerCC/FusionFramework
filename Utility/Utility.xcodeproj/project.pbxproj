@@ -212,9 +212,11 @@
 		20789CF31A621962002DF278 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 20789BF51A621962002DF278 /* zutil.c */; };
 		20789CF41A621962002DF278 /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 20789BF61A621962002DF278 /* zutil.h */; };
 		20789D201A621AF9002DF278 /* Enviroment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20789D1F1A621AF9002DF278 /* Enviroment.framework */; };
+		719FF2E42E6DE84626906B25 /* Pods_Utility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 648223F9E1525842803C616B /* Pods_Utility.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		13329EC7CF1DBD24C4FB7DDB /* Pods-Utility.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Utility.debug.xcconfig"; path = "Target Support Files/Pods-Utility/Pods-Utility.debug.xcconfig"; sourceTree = "<group>"; };
 		20789AC51A6218C5002DF278 /* Utility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Utility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20789AC91A6218C5002DF278 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20789ACA1A6218C5002DF278 /* Utility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
@@ -422,6 +424,8 @@
 		20789BF51A621962002DF278 /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
 		20789BF61A621962002DF278 /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
 		20789D1F1A621AF9002DF278 /* Enviroment.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Enviroment.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/Enviroment.framework"; sourceTree = "<group>"; };
+		648223F9E1525842803C616B /* Pods_Utility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Utility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA4D8320A5A63253C0225F16 /* Pods-Utility.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Utility.release.xcconfig"; path = "Target Support Files/Pods-Utility/Pods-Utility.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -432,6 +436,7 @@
 				20789D201A621AF9002DF278 /* Enviroment.framework in Frameworks */,
 				20789CC31A621962002DF278 /* libssl.a in Frameworks */,
 				20789CC21A621962002DF278 /* libcrypto.a in Frameworks */,
+				719FF2E42E6DE84626906B25 /* Pods_Utility.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +449,7 @@
 				20789D211A621D1F002DF278 /* Frameworks */,
 				20789AC61A6218C5002DF278 /* Products */,
 				20789AC71A6218C5002DF278 /* Utility */,
+				8D6632E658CF35E43C6ED205 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -807,8 +813,19 @@
 			isa = PBXGroup;
 			children = (
 				20789D1F1A621AF9002DF278 /* Enviroment.framework */,
+				648223F9E1525842803C616B /* Pods_Utility.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8D6632E658CF35E43C6ED205 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				13329EC7CF1DBD24C4FB7DDB /* Pods-Utility.debug.xcconfig */,
+				CA4D8320A5A63253C0225F16 /* Pods-Utility.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -962,6 +979,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20789ADB1A6218C5002DF278 /* Build configuration list for PBXNativeTarget "Utility" */;
 			buildPhases = (
+				5CFDABF818741342B8330C49 /* [CP] Check Pods Manifest.lock */,
 				20789AC01A6218C5002DF278 /* Sources */,
 				20789AC11A6218C5002DF278 /* Frameworks */,
 				20789AC21A6218C5002DF278 /* Headers */,
@@ -1017,6 +1035,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5CFDABF818741342B8330C49 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Utility-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20789AC01A6218C5002DF278 /* Sources */ = {
@@ -1205,8 +1248,9 @@
 					"$(PROJECT_DIR)/Utility/OpenSSL",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Utility";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "Utility/Lua/lua-5.1.5/src/** Utility/OpenSSL/include/** ../Workspace/Commonheader/**";
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.Utility;
 			};
 			name = Debug;
 		};
@@ -1229,8 +1273,9 @@ ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Utility";				SKIP_INSTALL = YES;
 					"$(PROJECT_DIR)/Utility/OpenSSL",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Utility";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "Utility/Lua/lua-5.1.5/src/** Utility/OpenSSL/include/** ../Workspace/Commonheader/**";
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.Utility;
 			};
 			name = Release;
 		};

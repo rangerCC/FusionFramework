@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Ryou Zhang. All rights reserved.
 //
 
-#import "../Filter/FusionFilter.h"
+#import "FusionFilter.h"
 
 @interface FusionLuaFilter : FusionFilter {
 }

@@ -8,6 +8,9 @@
 
 #import <Enviroment/AppEnvironment.h>
 #import <Enviroment/AppUserDefault.h>
+#import <FusionBase/CommonErrorCode.h>
+#import <FusionBase/CommonNotification.h>
+#import <FusionBase/SafeARC.h>
 
 //! Project version number for Enviroment.
 FOUNDATION_EXPORT double EnviromentVersionNumber;

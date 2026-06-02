@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "../FusionNativeMessage.h"
+#import "FusionNativeMessage.h"
 #import <Utility/Utility.h>
 
 #define Actor_Lua_State         @"Actor_Lua_State"
 
-typedef FusionNativeMessage* PFusionNativeMessage;
+typedef __unsafe_unretained FusionNativeMessage* PFusionNativeMessage;
 
 //FusionNativeMessage
 int getMessageParams(lua_State* L);

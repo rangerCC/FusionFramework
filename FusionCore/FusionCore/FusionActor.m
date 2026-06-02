@@ -10,7 +10,7 @@
 #import "FusionNativeMessage.h"
 #import "FusionCore.h"
 #import "Filter/FusionFilter.h"
-#import "../../Workspace/CommonHeader/SafeARC.h"
+#import "SafeARC.h"
 
 @implementation FusionActor
 @synthesize name = _name;

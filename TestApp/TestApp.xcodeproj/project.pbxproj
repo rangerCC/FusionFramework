@@ -13,11 +13,10 @@
 		20969D9D1A64019F00E9C377 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969D9C1A64019F00E9C377 /* AppDelegate.m */; };
 		20969DA51A64019F00E9C377 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20969DA41A64019F00E9C377 /* Images.xcassets */; };
 		20969DA81A64019F00E9C377 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20969DA61A64019F00E9C377 /* LaunchScreen.xib */; };
-		20969DBF1A6401F300E9C377 /* FusionBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20969DBD1A6401F300E9C377 /* FusionBase.framework */; };
-		20969DC01A6401F300E9C377 /* FusionUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20969DBE1A6401F300E9C377 /* FusionUI.framework */; };
 		20969DC41A64038300E9C377 /* TestAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DC31A64038300E9C377 /* TestAdapter.m */; };
 		20969DC71A64048A00E9C377 /* TestAPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DC61A64048A00E9C377 /* TestAPageController.m */; };
 		20969DCA1A64138100E9C377 /* TestBPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DC91A64138100E9C377 /* TestBPageController.m */; };
+		EA21D9C2679A193CCDCEDC8F /* Pods_TestApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BBC6A28015EE352032A3147 /* Pods_TestApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,14 +31,15 @@
 		20969D9C1A64019F00E9C377 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		20969DA41A64019F00E9C377 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		20969DA71A64019F00E9C377 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		20969DBD1A6401F300E9C377 /* FusionBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionBase.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphonesimulator/FusionBase.framework"; sourceTree = "<group>"; };
-		20969DBE1A6401F300E9C377 /* FusionUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionUI.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphonesimulator/FusionUI.framework"; sourceTree = "<group>"; };
 		20969DC21A64038300E9C377 /* TestAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAdapter.h; sourceTree = "<group>"; };
 		20969DC31A64038300E9C377 /* TestAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAdapter.m; sourceTree = "<group>"; };
 		20969DC51A64048A00E9C377 /* TestAPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAPageController.h; sourceTree = "<group>"; };
 		20969DC61A64048A00E9C377 /* TestAPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAPageController.m; sourceTree = "<group>"; };
 		20969DC81A64138100E9C377 /* TestBPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBPageController.h; sourceTree = "<group>"; };
 		20969DC91A64138100E9C377 /* TestBPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestBPageController.m; sourceTree = "<group>"; };
+		9BBC6A28015EE352032A3147 /* Pods_TestApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACD7B84F8C1D9DA3DD51885D /* Pods-TestApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.debug.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.debug.xcconfig"; sourceTree = "<group>"; };
+		E6BFBA9FFE5B70F90866133E /* Pods-TestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.release.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,8 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20969DBF1A6401F300E9C377 /* FusionBase.framework in Frameworks */,
-				20969DC01A6401F300E9C377 /* FusionUI.framework in Frameworks */,
+				EA21D9C2679A193CCDCEDC8F /* Pods_TestApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +60,7 @@
 				20969DC11A64032900E9C377 /* Frameworks */,
 				20969D961A64019F00E9C377 /* TestApp */,
 				20969D951A64019F00E9C377 /* Products */,
+				59C2BBAE54DC8A9F2F4233F9 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,10 +106,19 @@
 		20969DC11A64032900E9C377 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				20969DBD1A6401F300E9C377 /* FusionBase.framework */,
-				20969DBE1A6401F300E9C377 /* FusionUI.framework */,
+				9BBC6A28015EE352032A3147 /* Pods_TestApp.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		59C2BBAE54DC8A9F2F4233F9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ACD7B84F8C1D9DA3DD51885D /* Pods-TestApp.debug.xcconfig */,
+				E6BFBA9FFE5B70F90866133E /* Pods-TestApp.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,9 +128,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20969DB71A64019F00E9C377 /* Build configuration list for PBXNativeTarget "TestApp" */;
 			buildPhases = (
+				43E5BA3D9C075CC37F9F8244 /* [CP] Check Pods Manifest.lock */,
 				20969D901A64019F00E9C377 /* Sources */,
 				20969D911A64019F00E9C377 /* Frameworks */,
 				20969D921A64019F00E9C377 /* Resources */,
+				C29BBD3C587F2E36A004DF76 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -177,6 +188,59 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		43E5BA3D9C075CC37F9F8244 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TestApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C29BBD3C587F2E36A004DF76 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CoreService/CoreService.framework",
+				"${BUILT_PRODUCTS_DIR}/Enviroment/Enviroment.framework",
+				"${BUILT_PRODUCTS_DIR}/FusionBase/FusionBase.framework",
+				"${BUILT_PRODUCTS_DIR}/FusionCore/FusionCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FusionUI/FusionUI.framework",
+				"${BUILT_PRODUCTS_DIR}/Utility/Utility.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreService.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Enviroment.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionBase.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionUI.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Utility.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20969D901A64019F00E9C377 /* Sources */ = {
@@ -247,7 +311,7 @@
 				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../Workspace/CommonHeader/**";
+				USER_HEADER_SEARCH_PATHS = "../FusionBase/FusionBase/CommonHeader/**";
 			};
 			name = Debug;
 		};
@@ -284,43 +348,41 @@
 				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../Workspace/CommonHeader/**";
+				USER_HEADER_SEARCH_PATHS = "../FusionBase/FusionBase/CommonHeader/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		20969DB81A64019F00E9C377 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = ACD7B84F8C1D9DA3DD51885D /* Pods-TestApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 6547856335;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(BUILD_DIR)/Debug-iphoneos",
-					"$(BUILD_DIR)/Debug-iphonesimulator",
 				);
 				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.TestApp";
+				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.TestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
 		20969DB91A64019F00E9C377 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E6BFBA9FFE5B70F90866133E /* Pods-TestApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 6547856335;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(BUILD_DIR)/Debug-iphoneos",
-					"$(BUILD_DIR)/Debug-iphonesimulator",
 				);
 				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.TestApp";
+				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.TestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

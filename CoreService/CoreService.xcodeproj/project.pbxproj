@@ -58,9 +58,11 @@
 		20789EBF1A622219002DF278 /* Enviroment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20789EBC1A622219002DF278 /* Enviroment.framework */; };
 		20789EC01A622219002DF278 /* FusionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20789EBD1A622219002DF278 /* FusionCore.framework */; };
 		20789EC11A622219002DF278 /* Utility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20789EBE1A622219002DF278 /* Utility.framework */; };
+		65744C1AF4557B91C177B5A6 /* Pods_CoreService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2BA0E235C91359656777E23 /* Pods_CoreService.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		193FAE9034E957F7D9C62D7B /* Pods-CoreService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreService.debug.xcconfig"; path = "Target Support Files/Pods-CoreService/Pods-CoreService.debug.xcconfig"; sourceTree = "<group>"; };
 		20789D321A622176002DF278 /* CoreService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20789D361A622176002DF278 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20789D371A622176002DF278 /* CoreService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreService.h; sourceTree = "<group>"; };
@@ -115,6 +117,8 @@
 		20789EBC1A622219002DF278 /* Enviroment.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Enviroment.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/Enviroment.framework"; sourceTree = "<group>"; };
 		20789EBD1A622219002DF278 /* FusionCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionCore.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/FusionCore.framework"; sourceTree = "<group>"; };
 		20789EBE1A622219002DF278 /* Utility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Utility.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/Utility.framework"; sourceTree = "<group>"; };
+		3881D351F0DB7A6E81CB4B65 /* Pods-CoreService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreService.release.xcconfig"; path = "Target Support Files/Pods-CoreService/Pods-CoreService.release.xcconfig"; sourceTree = "<group>"; };
+		E2BA0E235C91359656777E23 /* Pods_CoreService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CoreService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +134,7 @@
 				20789E6A1A6221E2002DF278 /* libcares.a in Frameworks */,
 				20789E6E1A6221E3002DF278 /* libspdylay.a in Frameworks */,
 				20789E601A6221E2002DF278 /* libcares.a in Frameworks */,
+				65744C1AF4557B91C177B5A6 /* Pods_CoreService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,6 +147,8 @@
 				20789EC21A622231002DF278 /* Frameowrks */,
 				20789D341A622176002DF278 /* CoreService */,
 				20789D331A622176002DF278 /* Products */,
+				371B4AB4394C28AFB2DCFE60 /* Pods */,
+				BC3587BC00AFCC293BD0522B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -276,6 +283,24 @@
 			name = Frameowrks;
 			sourceTree = "<group>";
 		};
+		371B4AB4394C28AFB2DCFE60 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				193FAE9034E957F7D9C62D7B /* Pods-CoreService.debug.xcconfig */,
+				3881D351F0DB7A6E81CB4B65 /* Pods-CoreService.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
+		BC3587BC00AFCC293BD0522B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E2BA0E235C91359656777E23 /* Pods_CoreService.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -322,6 +347,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20789D481A622176002DF278 /* Build configuration list for PBXNativeTarget "CoreService" */;
 			buildPhases = (
+				5BFB8A9882FAA6F394994084 /* [CP] Check Pods Manifest.lock */,
 				20789D2D1A622176002DF278 /* Sources */,
 				20789D2E1A622176002DF278 /* Frameworks */,
 				20789D2F1A622176002DF278 /* Headers */,
@@ -376,6 +402,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5BFB8A9882FAA6F394994084 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CoreService-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20789D2D1A622176002DF278 /* Sources */ = {
@@ -512,7 +563,8 @@
 					"$(PROJECT_DIR)/CoreService/Network/libcurl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.CoreService";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.CoreService;
 			};
 			name = Debug;
 		};
@@ -536,7 +588,8 @@ ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.CoreService";				SKIP_INSTALL = YES
 					"$(PROJECT_DIR)/CoreService/Network/libcurl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.CoreService";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.CoreService;
 			};
 			name = Release;
 		};

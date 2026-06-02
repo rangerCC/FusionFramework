@@ -17,13 +17,6 @@
 #import <Utility/NSString+base64Decode.h>
 #import <Utility/Base64Transcoder.h>
 #import <Utility/NSData+DESCrypto.h>
-#import <Utility/ZipFile.h>
-#import <Utility/FileInZipInfo.h>
-#import <Utility/ZipException.h>
-#import <Utility/ZipReadStream.h>
-#import <Utility/ZipWriteStream.h>
-#import <Utility/zip.h>
-#import <Utility/unzip.h>
 
 #pragma LuaPart
 #import <Utility/LuaScriptManager.h>

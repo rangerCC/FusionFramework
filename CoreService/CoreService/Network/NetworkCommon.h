@@ -34,4 +34,9 @@
 #define ERROR_INVALID_URL                   1
 #define ERROR_INVALID_DOWNLOAD_LOCAL_PATH   2
 
+// Keys used to store error information into a message's dataTable.
+#define MESSAGE_ERROR_DOMAIN    @"error_domain"
+#define MESSAGE_ERROR_CODE      @"error_code"
+#define MESSAGE_ERROR_MSG       @"error_msg"
+
 #endif

@@ -368,7 +368,7 @@ static NeoNetEngine *_NeoNetEngine_Instance = nil;
         userp:(void *)userp
        scketp:(void*)socketp {
     NeoNetTask *task = [self findNeoNetTask:easy];
-    NeoSocketContext *context = (NeoSocketContext*)socketp;
+    NeoSocketContext *context = (__bridge NeoSocketContext*)socketp;
 
     if ((action == CURL_POLL_IN || action == CURL_POLL_OUT)
         && task ) {
@@ -379,7 +379,7 @@ static NeoNetEngine *_NeoNetEngine_Instance = nil;
                 context = [self generateSocketContext:task];
                 assert(context != nil);
             }
-            curl_multi_assign(_curl_mhandle, socket, context);
+            curl_multi_assign(_curl_mhandle, socket, (__bridge void*)context);
         }
     }
     return 0;
@@ -525,7 +525,7 @@ static NeoNetEngine *_NeoNetEngine_Instance = nil;
     
     [context IncrReferanceCount];
     
-    CFSocketContext ctxt = {0, context, NULL, NULL, NULL};
+    CFSocketContext ctxt = {0, (__bridge void*)context, NULL, NULL, NULL};
     context->socketRef = CFSocketCreateWithNative(kCFAllocatorDefault,
                                                   context->socket,
                                                   kCFSocketWriteCallBack|kCFSocketReadCallBack,

@@ -115,7 +115,7 @@ static LuaRT *_standardLuaRT_Instance = nil;
         lua_getglobal(_L, [methodName cStringUsingEncoding:NSUTF8StringEncoding]);
         for (id arg in args) {
             if ([arg isKindOfClass:[NSNumber class]]) {
-                if(CFGetTypeID(arg) == CFBooleanGetTypeID()) {
+                if(CFGetTypeID((__bridge CFTypeRef)arg) == CFBooleanGetTypeID()) {
                     lua_pushboolean(_L, [arg boolValue]);
                 } else {
                     lua_pushnumber(_L, [arg doubleValue]);

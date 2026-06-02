@@ -49,6 +49,7 @@
 		20969D8A1A63DC7D00E9C377 /* FusionPageNavigator+NaviAnime.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969D881A63DC7D00E9C377 /* FusionPageNavigator+NaviAnime.m */; };
 		20969DCD1A64243B00E9C377 /* FusionPageNavigator+Manual.h in Headers */ = {isa = PBXBuildFile; fileRef = 20969DCB1A64243B00E9C377 /* FusionPageNavigator+Manual.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		20969DCE1A64243B00E9C377 /* FusionPageNavigator+Manual.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DCC1A64243B00E9C377 /* FusionPageNavigator+Manual.m */; };
+		7B1F0C49BF14C7AB96500F2F /* Pods_FusionUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 569C4C847625053EDFA9A4BC /* Pods_FusionUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +97,9 @@
 		20969D881A63DC7D00E9C377 /* FusionPageNavigator+NaviAnime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FusionPageNavigator+NaviAnime.m"; sourceTree = "<group>"; };
 		20969DCB1A64243B00E9C377 /* FusionPageNavigator+Manual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FusionPageNavigator+Manual.h"; sourceTree = "<group>"; };
 		20969DCC1A64243B00E9C377 /* FusionPageNavigator+Manual.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FusionPageNavigator+Manual.m"; sourceTree = "<group>"; };
+		439465AAFE63A142C2A78E66 /* Pods-FusionUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FusionUI.release.xcconfig"; path = "Target Support Files/Pods-FusionUI/Pods-FusionUI.release.xcconfig"; sourceTree = "<group>"; };
+		569C4C847625053EDFA9A4BC /* Pods_FusionUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FusionUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E799A4549A7D82118AC0C833 /* Pods-FusionUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FusionUI.debug.xcconfig"; path = "Target Support Files/Pods-FusionUI/Pods-FusionUI.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +108,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20969D7D1A63AA6F00E9C377 /* FusionBase.framework in Frameworks */,
+				7B1F0C49BF14C7AB96500F2F /* Pods_FusionUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +121,7 @@
 				20969D7E1A63AA7A00E9C377 /* Frameworks */,
 				20969CDC1A63861B00E9C377 /* FusionUI */,
 				20969CDB1A63861B00E9C377 /* Products */,
+				6DC1253B7B3D493F163BFEA0 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,8 +210,19 @@
 			isa = PBXGroup;
 			children = (
 				20969D7C1A63AA6F00E9C377 /* FusionBase.framework */,
+				569C4C847625053EDFA9A4BC /* Pods_FusionUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6DC1253B7B3D493F163BFEA0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E799A4549A7D82118AC0C833 /* Pods-FusionUI.debug.xcconfig */,
+				439465AAFE63A142C2A78E66 /* Pods-FusionUI.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -246,6 +263,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20969CF01A63861B00E9C377 /* Build configuration list for PBXNativeTarget "FusionUI" */;
 			buildPhases = (
+				2B0D02BE3E5A48B6A359AAD9 /* [CP] Check Pods Manifest.lock */,
 				20969CD51A63861B00E9C377 /* Sources */,
 				20969CD61A63861B00E9C377 /* Frameworks */,
 				20969CD71A63861B00E9C377 /* Headers */,
@@ -300,6 +318,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2B0D02BE3E5A48B6A359AAD9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FusionUI-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20969CD51A63861B00E9C377 /* Sources */ = {
@@ -444,7 +487,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionUI";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.FusionUI;
 			};
 			name = Debug;
 		};
@@ -464,7 +508,8 @@ ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionUI";				SKIP_INSTALL = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.FusionUI";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.FusionUI;
 			};
 			name = Release;
 		};

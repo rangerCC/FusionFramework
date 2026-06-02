@@ -81,8 +81,8 @@ size_t http_task_write_header(void *buffer, size_t size, size_t nmemb, void *use
 
     curl_easy_setopt(_handle, CURLOPT_HEADERFUNCTION, http_task_write_header);
     curl_easy_setopt(_handle, CURLOPT_WRITEFUNCTION, http_task_write_data);
-    curl_easy_setopt(_handle, CURLOPT_HEADERDATA, (void*)self);
-    curl_easy_setopt(_handle, CURLOPT_WRITEDATA, (void*)self);
+    curl_easy_setopt(_handle, CURLOPT_HEADERDATA, (__bridge void*)self);
+    curl_easy_setopt(_handle, CURLOPT_WRITEDATA, (__bridge void*)self);
     
     [super prepareHandle];
     
@@ -93,7 +93,7 @@ size_t http_task_write_header(void *buffer, size_t size, size_t nmemb, void *use
     
     CFDictionaryRef setting = CFNetworkCopySystemProxySettings();
     
-    CFArrayRef proxys = CFNetworkCopyProxiesForURL((CFURLRef)url,
+    CFArrayRef proxys = CFNetworkCopyProxiesForURL((__bridge CFURLRef)url,
                                                    setting);
     if (CFArrayGetCount(proxys) == 0) {
         CFRelease(setting);

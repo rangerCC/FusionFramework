@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		042D665622B55A81304C780C /* Pods_Enviroment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A58BADEA06EED63E8FD5BCB /* Pods_Enviroment.framework */; };
 		20789D051A621A61002DF278 /* Enviroment.h in Headers */ = {isa = PBXBuildFile; fileRef = 20789D041A621A61002DF278 /* Enviroment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		20789D1D1A621AD6002DF278 /* AppEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 20789D1B1A621AD6002DF278 /* AppEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		20789D1E1A621AD6002DF278 /* AppEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = 20789D1C1A621AD6002DF278 /* AppEnvironment.m */; };
@@ -22,6 +23,9 @@
 		20789D1C1A621AD6002DF278 /* AppEnvironment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppEnvironment.m; sourceTree = "<group>"; };
 		20789D221A622031002DF278 /* AppUserDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppUserDefault.h; sourceTree = "<group>"; };
 		20789D231A622031002DF278 /* AppUserDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppUserDefault.m; sourceTree = "<group>"; };
+		61A591AC179C1A052BB79AC3 /* Pods-Enviroment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Enviroment.release.xcconfig"; path = "Target Support Files/Pods-Enviroment/Pods-Enviroment.release.xcconfig"; sourceTree = "<group>"; };
+		7A58BADEA06EED63E8FD5BCB /* Pods_Enviroment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Enviroment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B29FE7110786AAB69B882FF1 /* Pods-Enviroment.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Enviroment.debug.xcconfig"; path = "Target Support Files/Pods-Enviroment/Pods-Enviroment.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				042D665622B55A81304C780C /* Pods_Enviroment.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +45,8 @@
 			children = (
 				20789D011A621A61002DF278 /* Enviroment */,
 				20789D001A621A61002DF278 /* Products */,
+				BA670268ACC10478B40F56AD /* Pods */,
+				B9E211FF3423BEA0894F895F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,6 +79,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		B9E211FF3423BEA0894F895F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7A58BADEA06EED63E8FD5BCB /* Pods_Enviroment.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BA670268ACC10478B40F56AD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B29FE7110786AAB69B882FF1 /* Pods-Enviroment.debug.xcconfig */,
+				61A591AC179C1A052BB79AC3 /* Pods-Enviroment.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -92,6 +117,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20789D151A621A61002DF278 /* Build configuration list for PBXNativeTarget "Enviroment" */;
 			buildPhases = (
+				197B30D910FBE3DAD63F3979 /* [CP] Check Pods Manifest.lock */,
 				20789CFA1A621A61002DF278 /* Sources */,
 				20789CFB1A621A61002DF278 /* Frameworks */,
 				20789CFC1A621A61002DF278 /* Headers */,
@@ -125,6 +151,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 20789CF51A621A61002DF278;
@@ -146,6 +173,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		197B30D910FBE3DAD63F3979 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Enviroment-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20789CFA1A621A61002DF278 /* Sources */ = {
@@ -261,7 +313,8 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Enviroment";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.Enviroment;
 			};
 			name = Debug;
 		};
@@ -276,7 +329,8 @@ ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Enviroment";				SKIP_INSTALL = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Enviroment";				SKIP_INSTALL = YES;
+				SKIP_INSTALL = YES;
+				ttttPRODUCT_BUNDLE_IDENTIFIER = com.alitrip.Enviroment;
 			};
 			name = Release;
 		};

@@ -7,18 +7,21 @@
 //
 
 #import "FusionLuaBridge.h"
-#import "../FusionCore.h"
+#import "FusionCore.h"
 
 //FusionNativeMessage Bridge
 int createSubMessage(lua_State* L) {
     FusionNativeMessage* parent = nil;
     if(lua_isuserdata(L,1))
         parent = *(PFusionNativeMessage*)lua_touserdata(L,1);
-    
-    [parent createSubMessageWithScheme:[NSString stringWithUTF8String:lua_tostring(L, 2)]
-                               Service:[NSString stringWithUTF8String:lua_tostring(L, 3)]
-                                 Actor:[NSString stringWithUTF8String:lua_tostring(L, 4)]
-                                Params:pullTableFromLuaState(L)];
+
+    // Lua passes (parent, scheme, service, actor, paramsTable); scheme is
+    // obsolete in the current message API and is ignored.
+    FusionNativeMessage* child = [[FusionNativeMessage alloc]
+                                  initWithSerivice:[NSString stringWithUTF8String:lua_tostring(L, 3)]
+                                             actor:[NSString stringWithUTF8String:lua_tostring(L, 4)]
+                                              args:pullTableFromLuaState(L)];
+    [parent insertSubMessage:child];
     return 1;
 }
 
@@ -38,7 +41,7 @@ int dispatchFusionNativeMessage(lua_State* L) {
 
 int getMessageParams(lua_State* L) {
     FusionNativeMessage* message = *((PFusionNativeMessage*)lua_topointer(L, 1));
-    NSDictionary* args = generateArgsLuaTable([message params]);
+    NSDictionary* args = generateArgsLuaTable([message args]);
     pushTableToLuaState(args, L);
     return 1;
 }

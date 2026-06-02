@@ -8,7 +8,7 @@
 
 #import "FusionTimerService.h"
 #import "FusionTimerTask.h"
-#import "../../Workspace/CommonHeader/SafeARC.h"
+#import "SafeARC.h"
 
 @implementation FusionTimerService
 static FusionTimerService *_FusionTimerService_Instance = nil;

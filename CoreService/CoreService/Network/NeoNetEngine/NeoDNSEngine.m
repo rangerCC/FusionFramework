@@ -64,13 +64,13 @@ void on_ares_host_callback(void *arg,
                            int timeouts,
                            struct hostent *hostent) {
     if (status != ARES_SUCCESS) {
-        [[NeoDNSEngine getInstance] onAresHostCallback:arg address:nil];
+        [[NeoDNSEngine getInstance] onAresHostCallback:(__bridge NSString*)arg address:nil];
         return;
     }
     char buf[128];
     inet_ntop(hostent->h_addrtype, hostent->h_addr, buf, sizeof(buf));
     NSString *address = [NSString stringWithCString:buf encoding:NSASCIIStringEncoding];
-    [[NeoDNSEngine getInstance] onAresHostCallback:arg address:address];
+    [[NeoDNSEngine getInstance] onAresHostCallback:(__bridge NSString*)arg address:address];
 }
 
 @implementation NeoDNSEngine
@@ -212,7 +212,7 @@ static NeoDNSEngine *_NeoDNSEngine_Instance = nil;
         [array addObject:task];
         SafeRelease(array);
         
-        ares_gethostbyname(_channel, [host cStringUsingEncoding:NSUTF8StringEncoding], AF_INET, on_ares_host_callback, host);
+        ares_gethostbyname(_channel, [host cStringUsingEncoding:NSUTF8StringEncoding], AF_INET, on_ares_host_callback, (__bridge void*)host);
     }
 }
 

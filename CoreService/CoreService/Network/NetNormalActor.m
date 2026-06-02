@@ -11,6 +11,7 @@
 #import "NeoHttpPostTask.h"
 #import "NeoNetEngine.h"
 #import "NetworkCommon.h"
+#import "FusionNativeMessage+Error.h"
 #import "SafeARC.h"
 
 @implementation NetNormalActor
@@ -26,7 +27,7 @@
 }
 
 - (void)processFusionNativeMessage:(FusionNativeMessage *)message {
-    NSString *url = [message.params objectForKey:NET_REMOTE_URL];
+    NSString *url = [message.args objectForKey:NET_REMOTE_URL];
     if (url == nil || [NSURL URLWithString:url] == nil) {
         [message setErrorDomainCode:ERROR_DOMAIN_NETWORK
                           errorCode:ERROR_INVALID_URL
@@ -49,24 +50,24 @@
             [_waitingQueue removeObjectAtIndex:0];
             
             NeoHttpTask *task = nil;
-            if ([message.params valueForKey:NET_HTTP_METHOD] &&
-                [[message.params valueForKey:NET_HTTP_METHOD] isEqualToString:HTTP_POST_METHOD]) {
+            if ([message.args valueForKey:NET_HTTP_METHOD] &&
+                [[message.args valueForKey:NET_HTTP_METHOD] isEqualToString:HTTP_POST_METHOD]) {
                 
                 task = [NeoHttpPostTask new];
-                if ([message.params valueForKey:NET_DNS_RESOLVE]) {
-                    [task setResolveArray:@[[message.params valueForKey:NET_DNS_RESOLVE]]];
+                if ([message.args valueForKey:NET_DNS_RESOLVE]) {
+                    [task setResolveArray:@[[message.args valueForKey:NET_DNS_RESOLVE]]];
                 }
-                [task setUrl:[NSURL URLWithString:[message.params valueForKey:NET_REMOTE_URL]]];
-                [task setHeaderDic:[message.params valueForKey:NET_HTTP_HEADER]];
-                [(NeoHttpPostTask*)task setPostFields:[message.params valueForKey:NET_HTTP_PARAMS]];
+                [task setUrl:[NSURL URLWithString:[message.args valueForKey:NET_REMOTE_URL]]];
+                [task setHeaderDic:[message.args valueForKey:NET_HTTP_HEADER]];
+                [(NeoHttpPostTask*)task setPostFields:[message.args valueForKey:NET_HTTP_PARAMS]];
                 
             } else {
                 task = [NeoHttpTask new];
-                if ([message.params valueForKey:NET_DNS_RESOLVE]) {
-                    [task setResolveArray:@[[message.params valueForKey:NET_DNS_RESOLVE]]];
+                if ([message.args valueForKey:NET_DNS_RESOLVE]) {
+                    [task setResolveArray:@[[message.args valueForKey:NET_DNS_RESOLVE]]];
                 }
-                [task setUrl:[NSURL URLWithString:[message.params valueForKey:NET_REMOTE_URL]]];
-                [task setHeaderDic:[message.params valueForKey:NET_HTTP_HEADER]];
+                [task setUrl:[NSURL URLWithString:[message.args valueForKey:NET_REMOTE_URL]]];
+                [task setHeaderDic:[message.args valueForKey:NET_HTTP_HEADER]];
             }
             
             [task setSource:message];
@@ -110,8 +111,8 @@
     [task setSource:nil];
     [_connectionDic removeObjectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
     
-    if ([message.params valueForKey:HTTP_DISABLE_FOLLOW] &&
-        [[message.params valueForKey:HTTP_DISABLE_FOLLOW] boolValue]) {
+    if ([message.args valueForKey:HTTP_DISABLE_FOLLOW] &&
+        [[message.args valueForKey:HTTP_DISABLE_FOLLOW] boolValue]) {
         [message setState:FusionNativeMessageFinish];
         SafeRelease(message);
         [self schedulerNetConnection];
