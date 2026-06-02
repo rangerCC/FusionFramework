@@ -1,0 +1,159 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Build System
+
+This is a modular iOS framework using Xcode workspaces:
+
+- **Main Workspace**: `Workspace/FusionWorkspace.xcworkspace` - Open this in Xcode to build all modules
+- **Module Projects**: Each module (FusionCore, FusionUI, FusionBase, CoreService, Utility, Enviroment) has its own `.xcodeproj`
+- **Test App**: `TestApp/TestApp.xcodeproj` - Demo application showing framework usage
+
+Build order dependencies: FusionBase → (FusionCore, Utility, Enviroment) → (FusionUI, CoreService) → TestApp
+
+## Architecture Overview
+
+FusionFramework is an Actor-model message-driven iOS framework with Lua-based code generation.
+
+### Core Concepts
+
+**Actor Model Hierarchy**:
+- `FusionCore` (singleton message dispatcher) → `FusionService` (service container) → `FusionActor` (message handler)
+- Services are lazy-loaded; Actors are instantiated per-message on first use
+- Message routing: `native://{service}/{actor}?command={cmd}` format
+
+**Message Lifecycle**:
+```
+FusionNativeMessage (state machine)
+  ├── Origin (0) → sent to FusionCore
+  ├── Finish (1) → completed successfully
+  └── Failed (2) → error occurred
+```
+
+**Threading Model**:
+- `FusionCore` maintains dedicated threads: CoreThread, NetworkThread, WorkerThreads (CPU*2), MainThread
+- `FusionService.threadType` determines execution thread:
+  - `FusionService_Default` → WorkerThread pool
+  - `FusionService_NET` → NetworkThread
+  - `FusionService_UI` → MainThread
+
+**ARC Compatibility**:
+All source files include `SafeARC.h` from `Workspace/CommonHeader/` which provides macros that work in both ARC and non-ARC environments:
+```objc
+SafeRetain(obj)    // Retains in non-ARC, no-op in ARC
+SafeRelease(obj)   // Releases and nils in non-ARC, sets nil in ARC
+SafeAutoRelease(obj)  // Autorelease in non-ARC, no-op in ARC
+SafeSuperDealloc(super)  // [super dealloc] in non-ARC, no-op in ARC
+SafeAutoReleasePoolStart / SafeAutoReleasePoolEnd
+```
+
+### Lua Code Generation
+
+The `Workspace/MacroMaker.lua` script generates Objective-C macros from Lua configuration files:
+
+- **Input**: `*/Script/Service/*.lua`, `*/Script/Page/*.lua`
+- **Output**: `TRIPServiceMacro.h`, `TRIPPageMacro.h`, `Script.bundle/`, `config.zip`
+
+**Service Definition** (`Script/FusionService.lua`):
+```lua
+local service = FusionService.new("serviceName", "ClassName")
+service:addActor(FusionActor.new("actorName", "ActorClass"))
+register_core_service(service)  -- or register_logic_service()
+```
+
+**Page Definition** (`Script/Page.lua`):
+```lua
+local page = Page.new("PageName", "ViewControllerClass", "TrackingName")
+page:addCommand("customCommand")
+register_page(page)
+```
+
+### UI Navigation Architecture
+
+**PageNavigator** (`FusionUI/FusionUI/Navigation/`):
+- Central navigation controller managing view controller stack
+- Uses `IFusionPageProtocol` for page lifecycle
+- `IFusionPageAdapterProtocol` generates pages from config dictionaries
+- Supports TabBar integration via `tabbar_name` in page config
+
+**Page Configuration**:
+```objc
+@{
+    @"pageName": @"TestPageA",
+    @"class": @"TestAPageController",
+    @"title": @"Hello world",
+    @"tabbar_name": @"TestTabBar",
+    @"singleton": @YES  // Reuse existing instance if exists
+}
+```
+
+### Network Architecture
+
+**NeoNetEngine** (`CoreService/Network/NeoNetEngine/`):
+- Built on libcurl with c-ares DNS resolution
+- Multi-socket event-driven architecture
+- Task types: `NeoHttpTask`, `NeoHttpPostTask`, `NeoHttpDownloadTask`
+- Supports DNS caching and connection sharing via `CURLSH`
+
+## Working with Code
+
+### Adding a New Service
+
+1. Create Service class extending `FusionService`
+2. Create Actor class(es) extending `FusionActor`
+3. Add Lua config in `{Module}/Script/Service/YourService.lua`
+4. Run `lua Workspace/MacroMaker.lua` to regenerate macros
+5. Import `TRIPServiceMacro.h` to use service/actor constants
+
+### Adding a New Page
+
+1. Create ViewController extending `FusionPageController`
+2. Add Lua config in `{Module}/Script/Page/YourPage.lua`
+3. Run `lua Workspace/MacroMaker.lua` to regenerate macros
+4. Import `TRIPPageMacro.h` to use page constants
+5. Implement `IFusionPageAdapterProtocol` to return page config in adapter
+
+### Message Communication Pattern
+
+```objc
+// Sending a message
+FusionNativeMessage *msg = [[FusionNativeMessage alloc]
+    initWithSerivice:@"serviceName"
+               actor:@"actorName"
+                args:@{@"key": @"value"}];
+[[FusionCore getInstance] asyncSendMessage:msg];
+
+// In Actor: process message
+- (void)processFusionNativeMessage:(FusionNativeMessage *)message {
+    // Access arguments
+    NSDictionary *args = [message args];
+    // Set result data
+    [message setValue:result ToDataTableWith:@"resultKey"];
+    // Mark as finished
+    [message setState:FusionNativeMessageFinish];
+}
+
+// Callback from sub-message
+- (void)processCallbackMessage:(FusionNativeMessage *)message
+                 ParentMessage:(FusionNativeMessage *)parent {
+    // Process sub-message result
+    id result = [message getValueFromDataTableWith:@"resultKey"];
+    // Parent auto-completes when all children finish
+}
+```
+
+### Common Headers
+
+`Workspace/CommonHeader/` contains shared definitions:
+- `SafeARC.h` - ARC compatibility macros
+- `CommonErrorCode.h` - Error codes and domains
+- `CommonNotification.h` - NSNotification names
+
+## Testing
+
+The `TestApp/` directory contains a demo application with sample pages (TestPageA/B/C) demonstrating:
+- Page navigation
+- TabBar integration
+- Service/actor message flow
+- Adapter pattern implementation
