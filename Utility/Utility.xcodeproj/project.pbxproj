@@ -1131,7 +1131,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MACH_O_TYPE = staticlib;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1173,7 +1173,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MACH_O_TYPE = staticlib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-all_load";
@@ -1205,7 +1205,7 @@
 					"$(PROJECT_DIR)/Utility/OpenSSL",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Utility";				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "Utility/Lua/lua-5.1.5/src/** Utility/OpenSSL/include/** ../Workspace/Commonheader/**";
 			};
 			name = Debug;
@@ -1229,7 +1229,7 @@
 					"$(PROJECT_DIR)/Utility/OpenSSL",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+ttttPRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.Utility";				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "Utility/Lua/lua-5.1.5/src/** Utility/OpenSSL/include/** ../Workspace/Commonheader/**";
 			};
 			name = Release;

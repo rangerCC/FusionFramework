@@ -32,8 +32,8 @@
 		20969D9C1A64019F00E9C377 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		20969DA41A64019F00E9C377 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		20969DA71A64019F00E9C377 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		20969DBD1A6401F300E9C377 /* FusionBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionBase.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/FusionBase.framework"; sourceTree = "<group>"; };
-		20969DBE1A6401F300E9C377 /* FusionUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionUI.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos/FusionUI.framework"; sourceTree = "<group>"; };
+		20969DBD1A6401F300E9C377 /* FusionBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionBase.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphonesimulator/FusionBase.framework"; sourceTree = "<group>"; };
+		20969DBE1A6401F300E9C377 /* FusionUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FusionUI.framework; path = "../Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphonesimulator/FusionUI.framework"; sourceTree = "<group>"; };
 		20969DC21A64038300E9C377 /* TestAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAdapter.h; sourceTree = "<group>"; };
 		20969DC31A64038300E9C377 /* TestAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAdapter.m; sourceTree = "<group>"; };
 		20969DC51A64048A00E9C377 /* TestAPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAPageController.h; sourceTree = "<group>"; };
@@ -143,6 +143,7 @@
 				TargetAttributes = {
 					20969D931A64019F00E9C377 = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = 6547856335;
 					};
 				};
 			};
@@ -151,6 +152,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -239,7 +241,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-all_load";
@@ -277,7 +279,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
@@ -291,13 +293,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 6547856335;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Volumes/HardDisk/TestZone/201501/Fusion2015/Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos",
+					"$(BUILD_DIR)/Debug-iphoneos",
+					"$(BUILD_DIR)/Debug-iphonesimulator",
 				);
 				INFOPLIST_FILE = TestApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.TestApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -306,13 +311,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 6547856335;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Volumes/HardDisk/TestZone/201501/Fusion2015/Workspace/DerivedData/FusionWorkspace/Build/Products/Debug-iphoneos",
+					"$(BUILD_DIR)/Debug-iphoneos",
+					"$(BUILD_DIR)/Debug-iphonesimulator",
 				);
 				INFOPLIST_FILE = TestApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alitrip.TestApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
