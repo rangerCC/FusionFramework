@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>title</key>
+		<string>去医院打针</string>
+		<key>scene</key>
+		<string>第一次去医院打预防针，需要排队、卷起袖子、配合护士。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>理发店剪发</string>
+		<key>scene</key>
+		<string>去理发店剪头发，理发师会用剪刀和推子，会有一点点声音。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>坐公交车</string>
+		<key>scene</key>
+		<string>第一次自己坐公交车，要刷卡、找座位、到站下车。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>第一天上学</string>
+		<key>scene</key>
+		<string>第一天去幼儿园，和老师同学打招呼，参加集体活动。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>看牙医</string>
+		<key>scene</key>
+		<string>去牙科诊所检查牙齿，张开嘴让牙医看，配合清洁。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>超市购物</string>
+		<key>scene</key>
+		<string>和家人去超市买东西，推购物车、排队结账。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>过马路</string>
+		<key>scene</key>
+		<string>过马路要看红绿灯，等绿灯亮了再走斑马线。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>分享玩具</string>
+		<key>scene</key>
+		<string>和小伙伴一起玩，学习轮流玩和分享玩具。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>睡前准备</string>
+		<key>scene</key>
+		<string>晚上睡觉前要刷牙、换睡衣、关灯躺到床上。</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>生日聚会</string>
+		<key>scene</key>
+		<string>参加朋友的生日聚会，唱生日歌、吃蛋糕、送礼物。</string>
+	</dict>
+</array>
+</plist>

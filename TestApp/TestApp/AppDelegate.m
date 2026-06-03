@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 #import "TestAdapter.h"
 #import <FusionUI/FusionUI.h>
+#import <FusionUI/FusionPageNavigator+Auto.h>
+#import <SocialStoryCore/SocialStoryCore.h>
+#import <SocialStoryCore/SocialStoryCore-Swift.h>
 
 @interface AppDelegate () {
 @private
@@ -18,19 +21,22 @@
 
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    // Warm up the store and subscription status.
+    [SSStoryStore shared];
+    [[SubscriptionManager shared] refreshSubscriptionStatusWithCompletion:nil];
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     _navigator = [FusionPageNavigator new];
-    [_navigator.view setBackgroundColor:[UIColor whiteColor]];
+    [_navigator.view setBackgroundColor:[SSTheme backgroundColor]];
     [_navigator setRewriter:nil];
     [_navigator setAdapter:[TestAdapter getInstance]];
     [self.window setRootViewController:_navigator];
     [self.window makeKeyAndVisible];
     {
-        FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:@"TestPageA"
+        FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:SSPageLibrary
                                                                         pageNick:nil
                                                                          command:@"init"
-                                                                            args:@{@"user":@"good"}
+                                                                            args:nil
                                                                         callback:nil];
         [_navigator gotoPage:message];
     }

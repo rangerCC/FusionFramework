@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Ryou Zhang' => 'zhangryou@gmail.com' }
   s.source           = { :git => 'https://github.com/alitrip/FusionFramework.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '15.0'
   s.requires_arc = true
 
   s.source_files = 'Utility/Utility/**/*.{h,m,c}'
@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   # libraries (ZLib, MiniZip, OpenSSL) stay internal so consumers don't need
   # their private headers/search paths to import the Utility module.
   s.public_header_files = 'Utility/Utility/Utility.h',
+                          'Utility/Utility/UITool/*.h',
                           'Utility/Utility/Crypto/*.h',
                           'Utility/Utility/UIColor/*.h',
                           'Utility/Utility/File/*.h',

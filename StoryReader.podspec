@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
-  s.name             = 'Enviroment'
+  s.name             = 'StoryReader'
   s.version          = '1.0.0'
-  s.summary          = 'Environment module for FusionFramework'
-  s.description      = 'Provides environment configuration and user defaults management'
+  s.summary          = 'Story reader with text-to-speech'
+  s.description      = 'Reads a story with AVSpeechSynthesizer, adjustable rate and font size.'
   s.homepage         = 'https://github.com/alitrip/FusionFramework'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Ryou Zhang' => 'zhangryou@gmail.com' }
@@ -11,11 +11,12 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '15.0'
   s.requires_arc = true
 
-  s.source_files = 'Enviroment/Enviroment/**/*.{h,m}'
-  s.public_header_files = 'Enviroment/Enviroment/**/*.h'
+  s.source_files = 'SocialStory/StoryReader/**/*.{h,m}'
+  s.public_header_files = 'SocialStory/StoryReader/**/*.h'
 
-  s.frameworks = 'Foundation', 'UIKit'
-  s.dependency 'FusionBase'
+  s.frameworks = 'Foundation', 'UIKit', 'AVFoundation'
+  s.dependency 'SocialStoryCore'
+  s.dependency 'FusionUI'
 
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/FusionBase/FusionBase/CommonHeader'

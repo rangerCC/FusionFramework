@@ -22,6 +22,32 @@ PODS:
     - Utility
   - FusionUI (1.0.0):
     - FusionBase
+  - LookinServer (1.2.8):
+    - LookinServer/Core (= 1.2.8)
+  - LookinServer/Core (1.2.8)
+  - SocialStoryCore (1.0.0):
+    - CoreService
+    - FusionBase
+    - FusionCore
+    - FusionUI
+  - StoryGeneration (1.0.0):
+    - FusionUI
+    - SocialStoryCore
+  - StoryLibrary (1.0.0):
+    - FusionUI
+    - SocialStoryCore
+  - StoryReader (1.0.0):
+    - FusionUI
+    - SocialStoryCore
+  - StorySettings (1.0.0):
+    - FusionUI
+    - SocialStoryCore
+  - StorySubscription (1.0.0):
+    - FusionUI
+    - SocialStoryCore
+  - StoryTemplates (1.0.0):
+    - FusionUI
+    - SocialStoryCore
   - Utility (1.0.0):
     - Enviroment
     - FusionBase
@@ -32,7 +58,19 @@ DEPENDENCIES:
   - FusionBase (from `.`)
   - FusionCore (from `.`)
   - FusionUI (from `.`)
+  - LookinServer
+  - SocialStoryCore (from `.`)
+  - StoryGeneration (from `.`)
+  - StoryLibrary (from `.`)
+  - StoryReader (from `.`)
+  - StorySettings (from `.`)
+  - StorySubscription (from `.`)
+  - StoryTemplates (from `.`)
   - Utility (from `.`)
+
+SPEC REPOS:
+  trunk:
+    - LookinServer
 
 EXTERNAL SOURCES:
   CoreService:
@@ -45,17 +83,39 @@ EXTERNAL SOURCES:
     :path: "."
   FusionUI:
     :path: "."
+  SocialStoryCore:
+    :path: "."
+  StoryGeneration:
+    :path: "."
+  StoryLibrary:
+    :path: "."
+  StoryReader:
+    :path: "."
+  StorySettings:
+    :path: "."
+  StorySubscription:
+    :path: "."
+  StoryTemplates:
+    :path: "."
   Utility:
     :path: "."
 
 SPEC CHECKSUMS:
-  CoreService: 851ec8f6805af18839467b8e3b261778b9d2f6db
-  Enviroment: 444f7205daba90f59f2bd5b223b99a8f908b79b1
-  FusionBase: 711aedc5079fe4a2d3471d47c7f5833578d82523
-  FusionCore: 866ecce87cfbf74db3756222062e6e2fe43d3708
-  FusionUI: 394aa482e48829ccd3d645032258b7dc197106db
-  Utility: 84b9c3cfda5275846a3ff4a20b490a5f031ba6e6
+  CoreService: 95d5c79ffb006fb5c286b9ee06d89677619d5c40
+  Enviroment: 19515c3183d2b85c5e3764097638c7783f0bf608
+  FusionBase: 3e39e3812b3c60499bc129158f3160a633a3fd69
+  FusionCore: 3093f3420f9ee331d244a03f9f3878ab672db3db
+  FusionUI: e7caafbb549aeec95682397e2b3a04b2d1b074b9
+  LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
+  SocialStoryCore: 7d17cdc517111b571f383d915ad4415e0ce905c3
+  StoryGeneration: b53add16a699883c623e13fde6fa231cdd10acf2
+  StoryLibrary: 8c01f5edd9756e4785a88d7c177d9f6be8e20cb8
+  StoryReader: 554c5769b642ba11e7015be06846d057ec39733a
+  StorySettings: 51f558235ad61f94b91c2c17576e35aa23b9f7c3
+  StorySubscription: 06655a5a33ffc78795588b5e3914352946f49b5a
+  StoryTemplates: 0b6e9b9b55610e158776da69aa3fcaf32fc84186
+  Utility: 9007ef782e4ff29e38ac6657bad72d00725c75e7
 
-PODFILE CHECKSUM: ba999fad0c3fc00e5a39bb06ae5e514b51f7c786
+PODFILE CHECKSUM: 87c1b2567b74b86bc502c4bbc2abfd384aa4e29c
 
 COCOAPODS: 1.16.2
