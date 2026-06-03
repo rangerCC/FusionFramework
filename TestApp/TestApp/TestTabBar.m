@@ -25,16 +25,20 @@
         [self setBackgroundColor:[SSTheme cardColor]];
         _currentIndex = 0;
         _pageNames = @[SSPageLibrary, SSPageGenerate, SSPageSettings];
-        NSArray *titles = @[@"我的故事", @"生成", @"设置"];
+        NSArray *titles = @[
+            @{@"title": @"我的故事", @"icon_normal":@"icon_story_normal", @"icon_selected":@"icon_story_selected"},
+            @{@"title": @"创建", @"icon_normal":@"icon_createstory_normal", @"icon_selected":@"icon_createstory_selected"},
+            @{@"title": @"我的", @"icon_normal":@"icon_home_normal", @"icon_selected":@"icon_home_selected"},
+        ];
 
         _buttonArray = [NSMutableArray new];
         for (NSUInteger i = 0; i < titles.count; i++) {
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-            [button setTitle:titles[i] forState:UIControlStateNormal];
-            [button setTitleColor:[SSTheme secondaryTextColor] forState:UIControlStateNormal];
-            [button setTitleColor:[SSTheme accentColor] forState:UIControlStateSelected];
-            button.titleLabel.font = [UIFont systemFontOfSize:13];
-            button.accessibilityLabel = titles[i];
+            NSDictionary *titleInfo = titles[i];
+            UIButton *button = [self createTopImageBottomTitleSelectButton:CGRectMake(0, 0, 50, 50)
+                                                            normalImage:[UIImage imageNamed:titleInfo[@"icon_normal"]]
+                                                           selectedImage:[UIImage imageNamed:titleInfo[@"icon_selected"]]
+                                                                  title:titleInfo[@"title"]
+                                                                  space:4];
             [button addTarget:self action:@selector(onTapTab:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:button];
             [_buttonArray addObject:button];
@@ -86,4 +90,52 @@
     SafeSuperDealloc(super);
 }
 
+- (UIButton *)createTopImageBottomTitleSelectButton:(CGRect)frame
+                                        normalImage:(UIImage *)normalImage
+                                       selectedImage:(UIImage *)selectedImage
+                                              title:(NSString *)title
+                                              space:(CGFloat)space {
+
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = frame;
+
+    // 图片
+    [button setImage:normalImage forState:UIControlStateNormal];
+    [button setImage:selectedImage forState:UIControlStateSelected];
+
+    // 文字
+    [button setTitle:title forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont systemFontOfSize:14];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateSelected]; // 选中颜色
+
+    // 上图下文布局
+    [self layoutButtonTopImageBottomTitle:button space:space];
+
+    return button;
+}
+
+// 上图下文核心布局（通用）
+- (void)layoutButtonTopImageBottomTitle:(UIButton *)button space:(CGFloat)space {
+    CGFloat imageWidth = button.imageView.intrinsicContentSize.width;
+    CGFloat imageHeight = button.imageView.intrinsicContentSize.height;
+    CGFloat labelWidth = button.titleLabel.intrinsicContentSize.width;
+    CGFloat labelHeight = button.titleLabel.intrinsicContentSize.height;
+
+    CGFloat totalHeight = imageHeight + labelHeight + space;
+
+    button.imageEdgeInsets = UIEdgeInsetsMake(
+        -(totalHeight - imageHeight)/2,
+        (labelWidth + imageWidth)/2,
+        (totalHeight - imageHeight)/2 + space,
+        (labelWidth - imageWidth)/2
+    );
+
+    button.titleEdgeInsets = UIEdgeInsetsMake(
+        (totalHeight - labelHeight)/2 + space,
+        -labelWidth,
+        -(totalHeight - labelHeight)/2,
+        0
+    );
+}
 @end

@@ -13,6 +13,7 @@
 #import "FusionPageMessage.h"
 #import "Anime/FusionNaviAnimeHelper.h"
 #import "SafeARC.h"
+#import "FusionPageNavigator+Tab.h"
 
 @implementation FusionPageNavigator(Manual)
 - (FusionNaviAnime *)manualOpenPage:(FusionPageMessage *)message {
@@ -146,6 +147,8 @@
     }
     
     [_targetController processPageCommand:message.command args:message.args];
+    
+    [self processTabBarForPageController:_targetController];
     
     [anime setIsAuto:NO];
     [anime setForegroundView:_currentContentView];

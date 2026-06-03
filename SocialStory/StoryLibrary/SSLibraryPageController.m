@@ -64,6 +64,7 @@
     [self.tableView reloadData];
     [self updateEmptyState];
 }
+
 - (void)onRefresh:(UIRefreshControl *)refresh {
     [self.frc performFetch:NULL];
     [self.tableView reloadData];

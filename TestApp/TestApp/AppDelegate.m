@@ -32,6 +32,7 @@
     [_navigator setAdapter:[TestAdapter getInstance]];
     [self.window setRootViewController:_navigator];
     [self.window makeKeyAndVisible];
+    
     {
         FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:SSPageLibrary
                                                                         pageNick:nil
@@ -40,6 +41,7 @@
                                                                         callback:nil];
         [_navigator gotoPage:message];
     }
+    
     return YES;
 }
 

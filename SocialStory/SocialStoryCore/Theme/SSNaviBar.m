@@ -42,7 +42,7 @@ static const CGFloat kSSNaviBarContentHeight = 44.0;
 
 - (void)layoutSubviews {
     // Re-layout with a safe-area-aware top offset instead of the hardcoded 20pt.
-    CGFloat topOffset = isHaveBangScreen ? [self safeTopInset] : 0.0;
+    CGFloat topOffset = [SSUITool isNotchScreen] ? [self safeTopInset] : 0.0;
     CGFloat h = self.frame.size.height - topOffset;
 
     if (self.leftView) {
