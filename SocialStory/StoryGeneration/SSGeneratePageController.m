@@ -12,10 +12,16 @@
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UITextView *sceneTextView;
 @property (nonatomic, strong) UILabel *scenePlaceholder;
+@property (nonatomic, strong) UITextView *difficultyTextView;
+@property (nonatomic, strong) UILabel *difficultyPlaceholder;
 @property (nonatomic, strong) UITextField *nameField;
+@property (nonatomic, strong) UISegmentedControl *genderControl;
 @property (nonatomic, strong) UIStepper *ageStepper;
 @property (nonatomic, strong) UILabel *ageLabel;
+@property (nonatomic, strong) UISegmentedControl *diagnosisControl;
 @property (nonatomic, strong) UISegmentedControl *levelControl;
+@property (nonatomic, strong) UITextField *interestField;
+@property (nonatomic, strong) UISegmentedControl *toneControl;
 @property (nonatomic, strong) UIButton *generateButton;
 @property (nonatomic, strong) UIView *loadingOverlay;
 @property (nonatomic, copy) NSString *pendingScene;
@@ -34,37 +40,24 @@
 }
 
 - (void)buildForm {
-    CGFloat top = [_naviBar getNaviBarHeight];
+    CGFloat top = [self naviBarBottom];
     CGFloat bottom = [self contentBottomInset];
     self.scrollView = [[UIScrollView alloc] initWithFrame:
         CGRectMake(0, top, self.view.bounds.size.width, self.view.bounds.size.height - top - bottom)];
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.scrollView.alwaysBounceVertical = YES;
+    self.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     [self.view addSubview:self.scrollView];
 
     CGFloat margin = 16;
     CGFloat width = self.view.bounds.size.width - margin * 2;
     CGFloat y = 16;
 
-    y = [self addSectionLabel:@"场景描述" atY:y margin:margin];
-    self.sceneTextView = [[UITextView alloc] initWithFrame:CGRectMake(margin, y, width, 100)];
-    self.sceneTextView.font = [UIFont systemFontOfSize:16];
-    self.sceneTextView.layer.cornerRadius = 8;
-    self.sceneTextView.layer.borderWidth = 1;
-    self.sceneTextView.layer.borderColor = [SSTheme secondaryTextColor].CGColor;
-    self.sceneTextView.backgroundColor = [SSTheme cardColor];
-    self.sceneTextView.textColor = [SSTheme primaryTextColor];
-    self.sceneTextView.delegate = self;
-    self.sceneTextView.accessibilityLabel = @"场景描述输入框";
-    self.sceneTextView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    [self.scrollView addSubview:self.sceneTextView];
-
-    self.scenePlaceholder = [[UILabel alloc] initWithFrame:CGRectMake(margin + 5, y + 8, width - 10, 22)];
-    self.scenePlaceholder.text = @"例如：第一次去医院打针";
-    self.scenePlaceholder.font = [UIFont systemFontOfSize:16];
-    self.scenePlaceholder.textColor = [SSTheme secondaryTextColor];
-    [self.scrollView addSubview:self.scenePlaceholder];
-    y += 100 + 8;
+    // Social scenario
+    y = [self addSectionLabel:@"社交情境描述（50-500字）" atY:y margin:margin];
+    self.sceneTextView = [self addTextViewAtY:y margin:margin width:width height:90];
+    self.scenePlaceholder = [self addPlaceholder:@"例如：课间想和同学聊天，但不知道怎么开口" forTextView:self.sceneTextView];
+    y += 90 + 8;
 
     UIButton *tplButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [tplButton setTitle:@"从模板选择 →" forState:UIControlStateNormal];
@@ -76,16 +69,23 @@
     [self.scrollView addSubview:tplButton];
     y += 28 + 16;
 
-    y = [self addSectionLabel:@"儿童名字" atY:y margin:margin];
-    self.nameField = [[UITextField alloc] initWithFrame:CGRectMake(margin, y, width, 44)];
-    self.nameField.borderStyle = UITextBorderStyleRoundedRect;
-    self.nameField.placeholder = @"小朋友";
-    self.nameField.font = [UIFont systemFontOfSize:16];
-    self.nameField.accessibilityLabel = @"儿童名字";
-    self.nameField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    [self.scrollView addSubview:self.nameField];
+    // Difficulty detail
+    y = [self addSectionLabel:@"具体困难表现" atY:y margin:margin];
+    self.difficultyTextView = [self addTextViewAtY:y margin:margin width:width height:70];
+    self.difficultyPlaceholder = [self addPlaceholder:@"例如：会紧张、不敢主动说话" forTextView:self.difficultyTextView];
+    y += 70 + 16;
+
+    // Child name
+    y = [self addSectionLabel:@"孩子名字" atY:y margin:margin];
+    self.nameField = [self addTextFieldAtY:y margin:margin width:width placeholder:@"小朋友"];
     y += 44 + 16;
 
+    // Gender
+    y = [self addSectionLabel:@"性别" atY:y margin:margin];
+    self.genderControl = [self addSegmentAtY:y margin:margin width:width items:@[@"男孩", @"女孩"]];
+    y += 36 + 16;
+
+    // Age
     y = [self addSectionLabel:@"年龄" atY:y margin:margin];
     self.ageStepper = [[UIStepper alloc] initWithFrame:CGRectMake(margin, y, 0, 0)];
     self.ageStepper.minimumValue = 2;
@@ -100,13 +100,27 @@
     [self onAgeChanged];
     y += 40 + 16;
 
+    // Diagnosis type
+    y = [self addSectionLabel:@"诊断类型" atY:y margin:margin];
+    self.diagnosisControl = [self addSegmentAtY:y margin:margin width:width
+                                          items:@[@"自闭症", @"多动症", @"社交焦虑", @"其他"]];
+    self.diagnosisControl.apportionsSegmentWidthsByContent = YES;
+    y += 36 + 16;
+
+    // Language level
     y = [self addSectionLabel:@"语言水平" atY:y margin:margin];
-    self.levelControl = [[UISegmentedControl alloc] initWithItems:@[@"简单", @"标准"]];
-    self.levelControl.frame = CGRectMake(margin, y, width, 36);
-    self.levelControl.selectedSegmentIndex = 0;
-    self.levelControl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    [self.scrollView addSubview:self.levelControl];
-    y += 36 + 32;
+    self.levelControl = [self addSegmentAtY:y margin:margin width:width items:@[@"简单句", @"复合句", @"复杂句"]];
+    y += 36 + 16;
+
+    // Tone style
+    y = [self addSectionLabel:@"语气风格" atY:y margin:margin];
+    self.toneControl = [self addSegmentAtY:y margin:margin width:width items:@[@"温和", @"欢快", @"平静"]];
+    y += 36 + 16;
+
+    // Interest (optional)
+    y = [self addSectionLabel:@"兴趣点（选填）" atY:y margin:margin];
+    self.interestField = [self addTextFieldAtY:y margin:margin width:width placeholder:@"如：恐龙、火车、太空"];
+    y += 44 + 28;
 
     self.generateButton = [UIButton buttonWithType:UIButtonTypeSystem];
     self.generateButton.frame = CGRectMake(margin, y, width, 50);
@@ -129,6 +143,50 @@
     }
 }
 
+#pragma mark - Form helpers
+
+- (UITextView *)addTextViewAtY:(CGFloat)y margin:(CGFloat)margin width:(CGFloat)width height:(CGFloat)height {
+    UITextView *tv = [[UITextView alloc] initWithFrame:CGRectMake(margin, y, width, height)];
+    tv.font = [UIFont systemFontOfSize:16];
+    tv.layer.cornerRadius = 8;
+    tv.layer.borderWidth = 1;
+    tv.layer.borderColor = [SSTheme secondaryTextColor].CGColor;
+    tv.backgroundColor = [SSTheme cardColor];
+    tv.textColor = [SSTheme primaryTextColor];
+    tv.delegate = self;
+    tv.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.scrollView addSubview:tv];
+    return tv;
+}
+
+- (UILabel *)addPlaceholder:(NSString *)text forTextView:(UITextView *)tv {
+    UILabel *ph = [[UILabel alloc] initWithFrame:CGRectMake(tv.frame.origin.x + 5, tv.frame.origin.y + 8, tv.frame.size.width - 10, 22)];
+    ph.text = text;
+    ph.font = [UIFont systemFontOfSize:16];
+    ph.textColor = [SSTheme secondaryTextColor];
+    [self.scrollView addSubview:ph];
+    return ph;
+}
+
+- (UITextField *)addTextFieldAtY:(CGFloat)y margin:(CGFloat)margin width:(CGFloat)width placeholder:(NSString *)placeholder {
+    UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(margin, y, width, 44)];
+    tf.borderStyle = UITextBorderStyleRoundedRect;
+    tf.placeholder = placeholder;
+    tf.font = [UIFont systemFontOfSize:16];
+    tf.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.scrollView addSubview:tf];
+    return tf;
+}
+
+- (UISegmentedControl *)addSegmentAtY:(CGFloat)y margin:(CGFloat)margin width:(CGFloat)width items:(NSArray *)items {
+    UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:items];
+    seg.frame = CGRectMake(margin, y, width, 36);
+    seg.selectedSegmentIndex = 0;
+    seg.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.scrollView addSubview:seg];
+    return seg;
+}
+
 - (CGFloat)addSectionLabel:(NSString *)text atY:(CGFloat)y margin:(CGFloat)margin {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(margin, y, self.view.bounds.size.width - margin * 2, 22)];
     label.text = text;
@@ -143,7 +201,11 @@
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    self.scenePlaceholder.hidden = textView.text.length > 0;
+    if (textView == self.sceneTextView) {
+        self.scenePlaceholder.hidden = textView.text.length > 0;
+    } else if (textView == self.difficultyTextView) {
+        self.difficultyPlaceholder.hidden = textView.text.length > 0;
+    }
 }
 
 #pragma mark - Actions
@@ -176,6 +238,10 @@
 }
 
 - (void)onGenerate {
+    if (self.sceneTextView.text.length < 4) {
+        [self showAlert:@"请完善信息" message:@"请先描述社交情境"];
+        return;
+    }
     if (![SubscriptionManager.shared canGenerateStory]) {
         [self promptSubscription];
         return;
@@ -184,10 +250,15 @@
     [self showLoading:YES];
 
     SSStoryGenerationRequest *req = [SSStoryGenerationRequest new];
-    req.sceneText = self.sceneTextView.text;
+    req.socialScenario = self.sceneTextView.text;
+    req.difficultyDetail = self.difficultyTextView.text;
     req.childName = self.nameField.text;
+    req.gender = (self.genderControl.selectedSegmentIndex == 0) ? SSGenderBoy : SSGenderGirl;
     req.childAge = (NSInteger)self.ageStepper.value;
-    req.level = (self.levelControl.selectedSegmentIndex == 0) ? SSLanguageLevelSimple : SSLanguageLevelStandard;
+    req.diagnosisType = (SSDiagnosisType)self.diagnosisControl.selectedSegmentIndex;
+    req.level = (SSLanguageLevel)self.levelControl.selectedSegmentIndex;
+    req.tone = (SSToneStyle)self.toneControl.selectedSegmentIndex;
+    req.preferredInterest = self.interestField.text;
 
     __weak typeof(self) weakSelf = self;
     [[SSStoryAPIClient shared] generateStoryWithRequest:req completion:^(SSStory *story, NSError *error) {

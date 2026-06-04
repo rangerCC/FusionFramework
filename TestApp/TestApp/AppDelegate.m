@@ -41,7 +41,7 @@
                                                                         callback:nil];
         [_navigator gotoPage:message];
     }
-    
+
     return YES;
 }
 

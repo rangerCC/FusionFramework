@@ -13,8 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shared;
 
-/// Cloudflare Worker endpoint that proxies the Coze workflow. Empty by default.
+/// Cloudflare Worker / Coze endpoint that generates a story.
 @property (nonatomic, copy) NSString *workerURLString;
+
+/// Bearer token for the endpoint. WARNING: shipping this in the client is a
+/// leak risk; proxy via a Worker in production.
+@property (nonatomic, copy) NSString *authToken;
 
 /// When YES, the API client returns canned data instead of hitting the network.
 @property (nonatomic, assign) BOOL useMock;

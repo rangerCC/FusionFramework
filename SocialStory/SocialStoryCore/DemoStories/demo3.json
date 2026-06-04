@@ -1,0 +1,83 @@
+{
+  "story_id": "demo-3",
+  "story_title": "我可以和伙伴一起玩我的世界积木",
+  "total_duration_seconds": 57,
+  "pages": [
+    {
+      "page_number": 1,
+      "page_title": "课间的我",
+      "content": "[主角:]课间我坐在座位上玩我的世界方块积木。",
+      "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_147509f2-e268-40e9-9038-4a695a056e6a.jpeg?sign=1811893906-19f917b211-0-4e1512cc4e8b8c085dd4736538d68781fc16581d911b5ab5a317f02a7335c5d0",
+      "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_8e5026ad-724f-4d2f-b2c0-fd17d5592e15.mp3?sign=1811893861-a7ae40d1c1-0-91656bc727facec569ad7b92eb66bb475a20e32509f8f9fd0ec1f823115e8723",
+      "page_duration_seconds": 8
+    },
+    {
+      "page_number": 2,
+      "page_title": "同学走过来",
+      "content": "[主角:]我看到浩浩笑着朝我走过来。",
+      "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_ec18b6d6-ddca-4f81-b165-c3f24af3af7c.jpeg?sign=1811893911-14e9dc2f89-0-e32994fc2d2a8abee623c6a58f75c1216b59f6b07bf80ad7132c469ed72765e8",
+      "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_74cb1e3e-caff-42ec-917f-e13befc24594.mp3?sign=1811893863-0ad839c95d-0-93c11151aac33033b030dd8a86a472f7e5ad32db8545a10243e0ba8b6551061b",
+      "page_duration_seconds": 7
+    },
+    {
+      "page_number": 3,
+      "page_title": "他的邀请",
+      "content": "[小朋友-男:]我也喜欢我的世界，我们一起搭好不好？",
+      "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_e72903a1-ecd8-4b70-bef3-4e32256bb450.jpeg?sign=1811893918-242d7f3f58-0-8dbdbcf3f85b3babff7dbf829dc47d1d03fab105dae57c8540a62cd7cdbb3c9f",
+      "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_dd93885e-f020-4433-a6ad-24105ab8d9ec.mp3?sign=1811893864-e91fa2802a-0-5e05f23567ff2f9fc138673ffa530f34880cb08f37d7a086efe7a221142896a0",
+      "page_duration_seconds": 8
+    },
+    {
+      "page_number": 4,
+      "page_title": "我的想法",
+      "content": "[主角:]一起搭就像游戏里组队建大房子，会更酷。",
+      "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_881855fb-a383-47ff-a799-07bd42ebbeb4.jpeg?sign=1811893933-3cbdc4de0c-0-072ccdd569fa907541e59b05cc8b32bf20969a15ddbe5f588ce2eb55f23a0f05",
+      "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_e2b656ed-13cb-44e9-a726-7d3297990f10.mp3?sign=1811893867-9c19c28093-0-1eef202b347638eed599b941797dfcbae0df542b550196e955cddbc27c610c39",
+      "page_duration_seconds": 8
+    },
+    {
+      "page_number": 5,
+      "page_title": "我的回应",
+      "content": "[主角:]好呀，我有草地方块，我们搭个农场吧。",
+      "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_f76aad7d-4acc-4a19-a624-637173effcaa.jpeg?sign=1811893942-3c80947973-0-1a77dacfb369ef90b58b0f90b0826cd780370573918652ab05aa24f34c2e2007",
+      "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_60546f51-b2c9-4b63-a117-64f539b07e7b.mp3?sign=1811893868-bbde819489-0-84b3307011184cd14d7a9742b9179e9a967861e3f8802669a7813f1e98eddd38",
+      "page_duration_seconds": 9
+    },
+    {
+      "page_number": 6,
+      "page_title": "一起搭建",
+      "content": "[主角:]我们一起用积木搭出了带围栏的小农场。",
+      "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_5ca191f0-30ac-47e6-bd53-66cc4ed2b060.jpeg?sign=1811893952-88cfb4faca-0-c33f623fd864f31c97b339495faa72de870384b0b1f852d74e3958d1bc527f8f",
+      "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_89eb4e4c-ab4b-4823-9434-23712a3e8121.mp3?sign=1811893870-ab4cd0fa68-0-b50788d4e717e5c973251126adf1930e8094edf3e3eefc8f46efb6602348f724",
+      "page_duration_seconds": 8
+    },
+    {
+      "page_number": 7,
+      "page_title": "很棒的体验",
+      "content": "[主角:]下次有人和我聊我的世界，我也可以和他分享。",
+      "illustration_url": "",
+      "audio_url": "",
+      "page_duration_seconds": 9
+    }
+  ],
+  "parent_guide": {
+    "before_reading": "提前准备1-2个我的世界相关小玩具放在旁边，让孩子先玩两分钟，建立熟悉放松的状态，读故事前告诉孩子「今天我们讲一个和你喜欢的我的世界有关的小故事哦」",
+    "during_reading": "读到和游戏相关的内容时，可以停下来问问孩子「你在游戏里有没有建过农场呀？」，读到主角回应邀请的部分，可以轻轻点头给孩子积极的暗示，不要强迫孩子跟读",
+    "after_reading": "和孩子一起用家里的积木/乐高模拟故事里的搭农场场景，家长可以扮演同学发出邀请，让孩子自己决定要不要回应，不要强迫孩子必须互动",
+    "reinforcement_tips": "平时孩子和别人分享游戏相关内容时，立刻用具体的语言表扬他，比如「你刚才和小朋友说你建的城堡，太棒啦」，不要笼统说「你真乖」；如果孩子暂时不想回应别人，不要批评他，给他足够的空间"
+  },
+  "comprehension_questions": [
+    {
+      "question": "故事里的同学邀请我一起做什么呀？",
+      "expected_answer": "一起玩我的世界积木，搭农场"
+    },
+    {
+      "question": "如果有小朋友和你聊我的世界，你可以怎么做呀？",
+      "expected_answer": "可以和他分享我玩游戏的内容，或者一起玩相关的玩具"
+    }
+  ],
+  "voice_params": {
+    "voice_name": "儿童有声书温柔女声",
+    "speaking_rate": 0.75
+  }
+}

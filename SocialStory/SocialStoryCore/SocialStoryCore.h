@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 
 #import <SocialStoryCore/SSStory.h>
+#import <SocialStoryCore/SSDemoStories.h>
 #import <SocialStoryCore/SSConfig.h>
 #import <SocialStoryCore/SSTheme.h>
 #import <SocialStoryCore/SSNavigation.h>

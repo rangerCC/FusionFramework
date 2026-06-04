@@ -1,0 +1,25 @@
+{
+  "story_id": "demo-2",
+  "story_title": "我和同学聊我的世界",
+  "total_duration_seconds": 47,
+  "pages": [
+    {"page_number": 1, "page_title": "课间我玩我的世界积木", "content": "[主角:]我在教室玩我的世界积木，很开心。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_f04f1cf5-d2bb-43f7-95a9-d5dd7bbbdcef.jpeg?sign=1812014341-d114f3b537-0-6b80ef0f11f04a3a1a8575671448d76f0d886a9171e0b66f9173bbdfe8b59533", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_cc1b24ca-ed75-4fbf-a5d7-21ca258b975c.mp3?sign=1812014289-f2cf9c5320-0-a763eee4ad691364820d94a69b5aa488c9d08f30216771fce3ae49d1549d54cd", "page_duration_seconds": 8},
+    {"page_number": 2, "page_title": "有同学走过来", "content": "[主角:]我看到男同学走到我身边停下。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_68769a0b-bbed-4f82-ad32-3bfd9bc1481d.jpeg?sign=1812014340-a5dd00c1f7-0-b3971b56a08be770f90f7b88204edb6d01c0c95548120cdb4961fbd287386fc2", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_b571571c-3467-4c03-8b63-2b3fdcd406cc.mp3?sign=1812014290-5690281423-0-0b6042df121489b94353a6e2024166c3fbc8cb9341c2657a7f4e3e81b2092f01", "page_duration_seconds": 7},
+    {"page_number": 3, "page_title": "同学问我积木的事", "content": "[小朋友-男:]你也喜欢我的世界吗？", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_9eb46b39-c84b-405c-953d-232c89213105.jpeg?sign=1812014340-bdb94a1404-0-4f54df1f71e2d158e89e362e17eddc997ee88781e85bfba7550c5f2984a5a0eb", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_d7f82265-7a82-4c70-ada1-1cca7fb60b4c.mp3?sign=1812014291-8e08d3f806-0-4d7416b7cddb306412f69aa8d6999e4a5736fd6c1ad75e4d8dc5eee33eb569f5", "page_duration_seconds": 8},
+    {"page_number": 4, "page_title": "我回答他的问题", "content": "[主角:]对呀，我会用红石做电路。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_59c245db-a5a8-454a-b6be-140e2895050a.jpeg?sign=1812014368-a3fd6e3c98-0-64a28fa816c7c9a4abee79111eabaa529242ecb7bb833b0b81b622151a10741b", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_353d20cb-9f5d-458b-a748-18860e0ccbd8.mp3?sign=1812014292-52d953db59-0-30e01523586504d01b2114552b2a6c1dac954351433240697beef6411e7bceb8", "page_duration_seconds": 8},
+    {"page_number": 5, "page_title": "我们聊建造房子", "content": "[小朋友-男:]我会建带花园的大房子！", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_93560b19-af6b-4bde-8a4f-19d530b52c6f.jpeg?sign=1812014369-b7d255e82c-0-76fc7426b586ef4e9cba3e7863bb2f05c09c14d5639100d2ba2e98d2f793a834", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_b0900402-e121-407c-8a5e-31eb97ebb0cd.mp3?sign=1812014294-1ca9c9f5cc-0-a27178b866627035692ce6aa56a8da4470f840c205575f01711c4b13f919896a", "page_duration_seconds": 7},
+    {"page_number": 6, "page_title": "我们约好下次聊新玩法", "content": "[主角:]明天我们一起讨论新玩法呀。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_89266994-457f-4492-9080-d49654e634e0.jpeg?sign=1812014374-5525a6ede2-0-f2311d63813bf9dfac357052b9f69dbea49f0b1a48604b0cf1e233d35d556de4", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_b1d9956e-e8aa-432f-979a-81b7ce558543.mp3?sign=1812014295-99ae186b04-0-fcb137a449a947a04ca2111c30cf09b9cb6bb4ffe87f4cbaabdcba01b024b436", "page_duration_seconds": 9}
+  ],
+  "parent_guide": {
+    "before_reading": "提前准备一个我的世界相关的小玩具放在旁边，让孩子先玩2分钟，放松情绪再开始读故事，不要强迫孩子立刻学习互动技巧",
+    "during_reading": "读的时候语气要轻柔，每读完一页可以停下来问问孩子对我的世界哪个内容最感兴趣，允许孩子分享自己的游戏喜好，不用着急推进故事",
+    "after_reading": "可以和孩子一起玩5分钟我的世界积木，模拟故事里的互动场景，让孩子当主动搭话的人，家长当同学，降低孩子的社交压力",
+    "reinforcement_tips": "平时孩子提到和同学聊过感兴趣的内容时，及时给予肯定，不要强迫孩子进行长时间互动，哪怕只说1句话也要表扬他的尝试，慢慢积累社交信心"
+  },
+  "comprehension_questions": [
+    {"question": "故事里的我玩的是什么玩具呀？", "expected_answer": "我的世界的积木"},
+    {"question": "同学过来和我聊了什么内容呀？", "expected_answer": "我的世界的玩法，比如红石电路、建房子"},
+    {"question": "最后我和同学约好做什么呀？", "expected_answer": "明天一起讨论我的世界的新玩法"}
+  ],
+  "voice_params": {"voice_name": "儿童有声书温柔女声", "speaking_rate": 0.75}
+}

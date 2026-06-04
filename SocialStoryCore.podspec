@@ -16,7 +16,10 @@ Pod::Spec.new do |s|
   s.public_header_files = 'SocialStory/SocialStoryCore/**/*.h'
 
   s.resource_bundles = {
-    'SocialStoryCoreResources' => ['SocialStory/SocialStoryCore/Model/SocialStory.xcdatamodeld']
+    'SocialStoryCoreResources' => [
+      'SocialStory/SocialStoryCore/Model/SocialStory.xcdatamodeld',
+      'SocialStory/SocialStoryCore/DemoStories/*.json'
+    ]
   }
 
   s.frameworks = 'Foundation', 'UIKit', 'CoreData', 'StoreKit'

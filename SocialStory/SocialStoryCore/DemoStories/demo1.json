@@ -1,0 +1,24 @@
+{
+  "story_id": "demo-1",
+  "story_title": "我和恐龙的小互动",
+  "total_duration_seconds": 53,
+  "pages": [
+    {"page_number": 1, "page_title": "课间的我", "content": "[主角:]我坐在教室角落玩霸王龙玩具。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_54c269a5-1ea2-4cb2-9980-6aa1b2773bd0.jpeg?sign=1812016682-6b8f032563-0-fffaac7743ebb00fbb5e47185a66967f86307aea1f79d8e9d1f2f4d6b3a747c2", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_a19ee9d2-5c69-4ebe-9b14-f9c3d3276c4a.mp3?sign=1812016624-4811b28aac-0-05ae12a710f53820ff03f1f4ee1f85ba9f45064f072cb8f03a18e6ac607060d8", "page_duration_seconds": 8},
+    {"page_number": 2, "page_title": "同学走过来", "content": "[主角:]我看到男同学笑着走到我身边。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_6b74dc6a-e660-4ec1-bd3a-410d056d868e.jpeg?sign=1812016678-0268fa3541-0-3e918bac3bc2a97af7ddb51b7cdb28a32bcd97dd7830f3c75901d0a3f738f300", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_24649a2d-d684-45bc-aba0-b729c64cc8f9.mp3?sign=1812016626-1795d3ceb9-0-0076b31d10c72ed93148644e79170e3a94138fe9aa59d18d9cc475dcde49d46a", "page_duration_seconds": 8},
+    {"page_number": 3, "page_title": "同学的问题", "content": "[小朋友-男:]你也喜欢恐龙吗？我有三角龙哦。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_71650fcf-1544-400f-95df-e3eb7b8c5c46.jpeg?sign=1812016677-a701fe386e-0-3269ae8245aa90774249f5bc5c987dac5091fb650c51f3bab13b80a32450ada3", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_656bba7a-4c4f-45bc-95e0-b888e1fa473d.mp3?sign=1812016632-5a43064e5a-0-36237d4c3e6dba60730572e73b83c946632023dd8233972b503b03da65f29fdf", "page_duration_seconds": 10},
+    {"page_number": 4, "page_title": "我的回应", "content": "[主角:]这是霸王龙，它的牙齿很尖哦。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_36ecabf0-9e4d-4d1b-885c-48e86ad7b72f.jpeg?sign=1812016706-38738ad02b-0-059e4a1d17de950471b04c997333f076512f5cdffec886d90111b3740ffd8bd2", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_7fe3705e-1704-40bd-b838-c95eb9e753d1.mp3?sign=1812016633-c4a08babb5-0-fdaea2878096691ba96e071f4594aebc57e757ea3aa5aaeab61bcd785a85bfb4", "page_duration_seconds": 9},
+    {"page_number": 5, "page_title": "一起玩", "content": "[主角:]他坐在我旁边，我们一起玩恐龙。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_34db53db-385c-49fb-8920-53a08c58b9ea.jpeg?sign=1812016704-23f812b40e-0-30ec03d2baa413aefff4bc4addcc19dd91e187f176c6a06fa3a9528a3ad2e08e", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_b9c29c6d-165f-438c-a9dd-8e133be5ba79.mp3?sign=1812016635-8efd5a4d6b-0-16011a287a253f96c40c481d850920b249954b83a230de59f803f60ab59ec4d4", "page_duration_seconds": 8},
+    {"page_number": 6, "page_title": "很棒的体验", "content": "[主角:]和同学聊恐龙玩恐龙，真的很有意思。", "illustration_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/image/generate_image_c75d6a2a-1ce4-417d-b882-6f89242eb4fa.jpeg?sign=1812016707-c3ff14b120-0-40467f8c0c6cf71344ccca87fd9e53b5cfb2902381bc7ea5230c3b650b8845b8", "audio_url": "https://coze-coding-project.tos.coze.site/coze_storage_7639289365012873268/audio/tts_606bbb19-94be-4a5b-ad87-5159992b126d.mp3?sign=1812016636-ab4ab4a3f1-0-39bfea0966d9f95b942eecf848067ffdf373911d1e621b6454dc8415bc35b499", "page_duration_seconds": 10}
+  ],
+  "parent_guide": {
+    "before_reading": "提前准备好霸王龙、三角龙的小玩具放在旁边，让孩子先摸一摸玩一会，建立轻松的阅读氛围，提前和孩子说我们今天要读一个和恐龙、和学校有关的小故事。",
+    "during_reading": "读的时候语气要轻柔，读到恐龙相关的内容时可以拿起对应的玩具展示，读到同学互动的情节时可以问问孩子“你看这个小朋友是不是很友好呀”，如果孩子不想回应不要强迫。",
+    "after_reading": "可以和孩子一起模拟故事里的场景，家长扮演喜欢恐龙的同学，和孩子聊几句恐龙相关的话题，让孩子熟悉这种互动的感觉，全程不要强迫孩子说话。",
+    "reinforcement_tips": "日常生活中如果孩子主动和别人说了和恐龙/玩具相关的话，或者允许别人坐在旁边一起玩，要及时肯定，比如可以说“你愿意和小朋友聊恐龙真的很棒”，也可以奖励一个恐龙小贴纸。"
+  },
+  "comprehension_questions": [
+    {"question": "故事里的同学带了什么恐龙玩具呀？", "expected_answer": "三角龙"},
+    {"question": "如果有小朋友想和你聊恐龙，你可以和他说话吗？", "expected_answer": "如果我愿意的话可以说"}
+  ],
+  "voice_params": {"voice_name": "儿童有声书温柔女声", "speaking_rate": 0.75}
+}
