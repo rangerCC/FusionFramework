@@ -7,6 +7,7 @@
 
 import Foundation
 import StoreKit
+import AccountKit
 
 @objc public class SubscriptionManager: NSObject {
 
@@ -28,7 +29,29 @@ import StoreKit
         super.init()
         // Cache the last known status synchronously for isSubscribed.
         listenForTransactions()
+        // Re-check entitlements when the account changes (login / logout).
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(accountDidChange),
+            name: Notification.Name(AccountManager.didChangeNotificationName),
+            object: nil)
     }
+
+    @objc private func accountDidChange() {
+        refreshSubscriptionStatus(completion: nil)
+    }
+
+    // MARK: - Free-quota storage keys (namespaced per account)
+
+    /// Free quota is tracked per logged-in account so switching accounts (or a
+    /// fresh install + login) doesn't inherit another account's used count.
+    /// Logged-out users fall back to a device-local bucket.
+    private var accountSuffix: String {
+        if let user = AccountManager.shared.currentUser { return "_" + user.userID }
+        return "_device"
+    }
+    private var scopedUsedCountKey: String { usedCountKey + accountSuffix }
+    private var scopedUsedMonthKey: String { usedMonthKey + accountSuffix }
 
     // MARK: - Subscription status
 
@@ -105,7 +128,13 @@ import StoreKit
                 return
             }
             do {
-                let result = try await product.purchase()
+                // Attach the account token so this purchase can be reconciled to
+                // the current account server-side (App Store Server Notifications).
+                var options: Set<Product.PurchaseOption> = []
+                if let uuid = UUID(uuidString: AccountManager.shared.appAccountToken) {
+                    options.insert(.appAccountToken(uuid))
+                }
+                let result = try await product.purchase(options: options)
                 switch result {
                 case .success(let verification):
                     if case .verified(let transaction) = verification {
@@ -147,16 +176,16 @@ import StoreKit
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM"
         let month = fmt.string(from: Date())
-        let stored = UserDefaults.standard.string(forKey: usedMonthKey)
+        let stored = UserDefaults.standard.string(forKey: scopedUsedMonthKey)
         if stored != month {
-            UserDefaults.standard.set(month, forKey: usedMonthKey)
-            UserDefaults.standard.set(0, forKey: usedCountKey)
+            UserDefaults.standard.set(month, forKey: scopedUsedMonthKey)
+            UserDefaults.standard.set(0, forKey: scopedUsedCountKey)
         }
     }
 
     @objc public var remainingFreeCount: Int {
         resetQuotaIfNeeded()
-        let used = UserDefaults.standard.integer(forKey: usedCountKey)
+        let used = UserDefaults.standard.integer(forKey: scopedUsedCountKey)
         return max(0, SubscriptionManager.monthlyFreeQuota - used)
     }
 
@@ -168,8 +197,8 @@ import StoreKit
     @objc public func consumeFreeQuota() {
         if isSubscribed { return }
         resetQuotaIfNeeded()
-        let used = UserDefaults.standard.integer(forKey: usedCountKey)
-        UserDefaults.standard.set(used + 1, forKey: usedCountKey)
+        let used = UserDefaults.standard.integer(forKey: scopedUsedCountKey)
+        UserDefaults.standard.set(used + 1, forKey: scopedUsedCountKey)
     }
 }
 

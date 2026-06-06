@@ -19,6 +19,7 @@
 @implementation SSSettingsPageController
 
 - (NSString *)pageTitle { return @"设置"; }
+- (BOOL)showsBackButton { return YES; }
 
 - (void)viewDidLoad {
     [super viewDidLoad];

@@ -4,18 +4,31 @@
 //
 
 #import "SSLibraryPageController.h"
+#import "SSSegmentTabBar.h"
+#import "SSStoryCardCell.h"
 #import <CoreData/CoreData.h>
 #import <FusionUI/FusionPageNavigator+Auto.h>
 #import <FusionUI/FusionNaviAnimeHelper.h>
 
-static const NSInteger kSectionDemo = 0;
-static const NSInteger kSectionUser = 1;
+typedef NS_ENUM(NSInteger, SSLibraryTab) {
+    SSLibraryTabDemo = 0,   // 精选故事
+    SSLibraryTabUser = 1,   // 我创建的故事
+};
 
-@interface SSLibraryPageController () <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
-@property (nonatomic, strong) UITableView *tableView;
+static const CGFloat kTabBarHeight = 44.0;
+static const CGFloat kColumnGap = 12.0;
+static const CGFloat kLineGap = 12.0;
+static const CGFloat kSectionInset = 12.0;
+static const NSInteger kColumnCount = 2;
+
+@interface SSLibraryPageController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,
+                                       NSFetchedResultsControllerDelegate, UIGestureRecognizerDelegate>
+@property (nonatomic, strong) SSSegmentTabBar *segmentTabBar;
+@property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 @property (nonatomic, strong) NSArray<SSStory *> *demoStories;
-@property (nonatomic, strong) NSDateFormatter *dateFormatter;
+@property (nonatomic, assign) SSLibraryTab currentTab;
+@property (nonatomic, strong) UILabel *emptyLabel;
 @end
 
 @implementation SSLibraryPageController
@@ -24,95 +37,161 @@ static const NSInteger kSectionUser = 1;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.dateFormatter = [NSDateFormatter new];
-    self.dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm";
+    self.currentTab = SSLibraryTabDemo;
     self.demoStories = [SSDemoStories allStories];
 
     self.frc = [[SSStoryStore shared] fetchedResultsControllerWithDelegate:self];
     [self.frc performFetch:NULL];
 }
 
+#pragma mark - Build UI
+
 - (void)buildPageContent {
     CGFloat top = [self naviBarBottom];
     CGFloat bottom = [self contentBottomInset];
-    self.tableView = [[UITableView alloc] initWithFrame:
-        CGRectMake(0, top, self.view.bounds.size.width, self.view.bounds.size.height - top - bottom)
-                                                   style:UITableViewStyleGrouped];
-    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.tableView.dataSource = self;
-    self.tableView.delegate = self;
-    self.tableView.rowHeight = 72;
-    self.tableView.backgroundColor = [SSTheme backgroundColor];
-    [self.view addSubview:self.tableView];
+    CGFloat width = self.view.bounds.size.width;
+
+    self.segmentTabBar = [[SSSegmentTabBar alloc] initWithTitles:@[@"精选故事", @"我创建的故事"]];
+    self.segmentTabBar.frame = CGRectMake(0, top, width, kTabBarHeight);
+    self.segmentTabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.segmentTabBar.selectedIndex = self.currentTab;
+    __weak typeof(self) weakSelf = self;
+    self.segmentTabBar.onSelect = ^(NSInteger index) {
+        [weakSelf switchToTab:(SSLibraryTab)index];
+    };
+    [self.view addSubview:self.segmentTabBar];
+
+    CGFloat listTop = top + kTabBarHeight;
+    UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+    layout.minimumInteritemSpacing = kColumnGap;
+    layout.minimumLineSpacing = kLineGap;
+    layout.sectionInset = UIEdgeInsetsMake(kSectionInset, kSectionInset, kSectionInset, kSectionInset);
+
+    self.collectionView = [[UICollectionView alloc] initWithFrame:
+        CGRectMake(0, listTop, width, self.view.bounds.size.height - listTop - bottom)
+                                                            collectionViewLayout:layout];
+    self.collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.collectionView.backgroundColor = [SSTheme backgroundColor];
+    self.collectionView.alwaysBounceVertical = YES;
+    self.collectionView.dataSource = self;
+    self.collectionView.delegate = self;
+    [self.collectionView registerClass:[SSStoryCardCell class]
+            forCellWithReuseIdentifier:[SSStoryCardCell reuseID]];
+    [self.view addSubview:self.collectionView];
 
     UIRefreshControl *refresh = [UIRefreshControl new];
     [refresh addTarget:self action:@selector(onRefresh:) forControlEvents:UIControlEventValueChanged];
-    self.tableView.refreshControl = refresh;
+    self.collectionView.refreshControl = refresh;
 
-    [self.tableView reloadData];
+    // Long-press to delete (user stories only).
+    UILongPressGestureRecognizer *longPress =
+        [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onLongPress:)];
+    longPress.delegate = self;
+    [self.collectionView addGestureRecognizer:longPress];
+
+    // Empty-state label, shown via collectionView.backgroundView when needed.
+    self.emptyLabel = [UILabel new];
+    self.emptyLabel.numberOfLines = 0;
+    self.emptyLabel.textAlignment = NSTextAlignmentCenter;
+    self.emptyLabel.font = [UIFont systemFontOfSize:15];
+    self.emptyLabel.textColor = [SSTheme secondaryTextColor];
+    self.emptyLabel.text = @"还没有故事\n去「生成」创建一个吧";
+
+    [self.collectionView reloadData];
+    [self updateEmptyState];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self.frc performFetch:NULL];
-    [self.tableView reloadData];
+#pragma mark - Tab switching
+
+- (void)switchToTab:(SSLibraryTab)tab {
+    if (tab == self.currentTab) { return; }
+    self.currentTab = tab;
+    [self.collectionView setContentOffset:CGPointZero animated:NO];
+    [self.collectionView reloadData];
+    [self updateEmptyState];
 }
 
-- (void)onRefresh:(UIRefreshControl *)refresh {
-    [self.frc performFetch:NULL];
-    [self.tableView reloadData];
-    [refresh endRefreshing];
+#pragma mark - Data
+
+- (NSInteger)currentCount {
+    return (self.currentTab == SSLibraryTabDemo) ? (NSInteger)self.demoStories.count
+                                                 : (NSInteger)self.frc.fetchedObjects.count;
 }
 
-#pragma mark - Helpers
-
-- (NSInteger)userCount { return self.frc.fetchedObjects.count; }
-
-- (SSStory *)storyAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == kSectionDemo) {
-        return self.demoStories[indexPath.row];
+- (SSStory *)storyAtIndex:(NSInteger)index {
+    if (self.currentTab == SSLibraryTabDemo) {
+        if (index < 0 || index >= (NSInteger)self.demoStories.count) { return nil; }
+        return self.demoStories[index];
     }
-    NSManagedObject *obj = [self.frc objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+    NSManagedObject *obj = [self.frc objectAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     return [[SSStoryStore shared] storyFromManagedObject:obj];
 }
 
-#pragma mark - Table
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 2; }
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return (section == kSectionDemo) ? self.demoStories.count : [self userCount];
+- (void)updateEmptyState {
+    BOOL empty = (self.currentTab == SSLibraryTabUser) && ([self currentCount] == 0);
+    self.collectionView.backgroundView = empty ? self.emptyLabel : nil;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == kSectionDemo) { return @"精选故事"; }
-    return ([self userCount] > 0) ? @"我创建的故事" : @"我创建的故事（还没有，去「生成」创建吧）";
+#pragma mark - Refresh
+
+- (void)onRefresh:(UIRefreshControl *)refresh {
+    [self.frc performFetch:NULL];
+    [self.collectionView reloadData];
+    [self updateEmptyState];
+    [refresh endRefreshing];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cid = @"StoryCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cid];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
-        cell.textLabel.textColor = [SSTheme primaryTextColor];
-        cell.detailTextLabel.textColor = [SSTheme secondaryTextColor];
+// The navigator adds pages via addSubview (no UIViewController containment), so
+// viewWillAppear is not reliably re-driven on pop — enterAnimeFinish is. Refresh
+// user stories here so a story created and then backed-out-to shows up. (User
+// edits made while this page is live already arrive via the FRC delegate.)
+- (void)enterAnimeFinish {
+    [super enterAnimeFinish];
+    if (![self contentBuilt]) { return; }
+    [self.frc performFetch:NULL];
+    if (self.currentTab == SSLibraryTabUser) {
+        [self.collectionView reloadData];
+        [self updateEmptyState];
     }
-    SSStory *story = [self storyAtIndexPath:indexPath];
-    cell.textLabel.text = story.title;
-    if (indexPath.section == kSectionDemo) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"内置 · %ld 页", (long)story.pages.count];
-    } else {
-        NSString *dateStr = story.createdAt ? [self.dateFormatter stringFromDate:story.createdAt] : @"";
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ · %ld 字", dateStr, (long)story.wordCount];
-    }
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+}
+
+#pragma mark - UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return [self currentCount];
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
+                  cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    SSStoryCardCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:[SSStoryCardCell reuseID]
+                                                                     forIndexPath:indexPath];
+    SSStory *story = [self storyAtIndex:indexPath.item];
+    [cell configureWithStory:story isDemo:(self.currentTab == SSLibraryTabDemo)];
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    SSStory *story = [self storyAtIndexPath:indexPath];
+#pragma mark - UICollectionViewDelegateFlowLayout
+
+- (CGFloat)columnWidth {
+    CGFloat available = self.collectionView.bounds.size.width - kSectionInset * 2;
+    available -= kColumnGap * (kColumnCount - 1);
+    return floor(available / (CGFloat)kColumnCount);
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout *)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat w = [self columnWidth];
+    SSStory *story = [self storyAtIndex:indexPath.item];
+    CGFloat h = story ? [SSStoryCardCell heightForStory:story width:w] : w;
+    return CGSizeMake(w, h);
+}
+
+#pragma mark - Selection
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    SSStory *story = [self storyAtIndex:indexPath.item];
+    if (!story) { return; }
     FusionPageMessage *m = [[FusionPageMessage alloc] initWithPageName:SSPageReader
                                                               pageNick:nil
                                                                command:nil
@@ -122,24 +201,44 @@ static const NSInteger kSectionUser = 1;
     [[self getNavigator] gotoPage:m];
 }
 
-// Only user stories can be deleted; demo stories are read-only.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.section == kSectionUser;
-}
+#pragma mark - Long-press delete (user stories only)
 
-- (void)tableView:(UITableView *)tableView
-    commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
-     forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete && indexPath.section == kSectionUser) {
-        SSStory *story = [self storyAtIndexPath:indexPath];
+- (void)onLongPress:(UILongPressGestureRecognizer *)gesture {
+    if (gesture.state != UIGestureRecognizerStateBegan) { return; }
+    if (self.currentTab != SSLibraryTabUser) { return; }
+
+    CGPoint point = [gesture locationInView:self.collectionView];
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:point];
+    if (!indexPath) { return; }
+
+    SSStory *story = [self storyAtIndex:indexPath.item];
+    if (!story) { return; }
+
+    UIAlertController *sheet = [UIAlertController alertControllerWithTitle:story.title
+                                                                  message:@"删除这个故事？此操作不可撤销。"
+                                                           preferredStyle:UIAlertControllerStyleActionSheet];
+    [sheet addAction:[UIAlertAction actionWithTitle:@"删除" style:UIAlertActionStyleDestructive
+                                            handler:^(UIAlertAction *a) {
         [[SSStoryStore shared] deleteStoryWithID:story.storyID];
-    }
+        // FRC's controllerDidChangeContent: will refresh the list.
+    }]];
+    [sheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+
+    // iPad: anchor the action sheet to the pressed cell.
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+    sheet.popoverPresentationController.sourceView = cell ?: self.collectionView;
+    sheet.popoverPresentationController.sourceRect = cell ? cell.bounds : CGRectMake(point.x, point.y, 1, 1);
+
+    [self presentViewController:sheet animated:YES completion:nil];
 }
 
 #pragma mark - FRC
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    [self.tableView reloadData];
+    if (self.currentTab == SSLibraryTabUser) {
+        [self.collectionView reloadData];
+        [self updateEmptyState];
+    }
 }
 
 @end

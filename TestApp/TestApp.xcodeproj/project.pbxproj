@@ -243,6 +243,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TestApp/Pods-TestApp-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AccountKit/AccountKit.framework",
 				"${BUILT_PRODUCTS_DIR}/CoreService/CoreService.framework",
 				"${BUILT_PRODUCTS_DIR}/Enviroment/Enviroment.framework",
 				"${BUILT_PRODUCTS_DIR}/FusionBase/FusionBase.framework",
@@ -252,6 +253,7 @@
 				"${BUILT_PRODUCTS_DIR}/SocialStoryCore/SocialStoryCore.framework",
 				"${BUILT_PRODUCTS_DIR}/StoryGeneration/StoryGeneration.framework",
 				"${BUILT_PRODUCTS_DIR}/StoryLibrary/StoryLibrary.framework",
+				"${BUILT_PRODUCTS_DIR}/StoryProfile/StoryProfile.framework",
 				"${BUILT_PRODUCTS_DIR}/StoryReader/StoryReader.framework",
 				"${BUILT_PRODUCTS_DIR}/StorySettings/StorySettings.framework",
 				"${BUILT_PRODUCTS_DIR}/StorySubscription/StorySubscription.framework",
@@ -260,6 +262,7 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AccountKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreService.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Enviroment.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionBase.framework",
@@ -269,6 +272,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocialStoryCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StoryGeneration.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StoryLibrary.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StoryProfile.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StoryReader.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StorySettings.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StorySubscription.framework",

@@ -15,6 +15,8 @@
 #define SSPageTemplate       @"StoryTemplatePage"
 #define SSPageSettings       @"StorySettingsPage"
 #define SSPageHelp           @"StoryHelpPage"
+#define SSPageProfile        @"StoryProfilePage"
+#define SSPageLogin          @"StoryLoginPage"
 
 #define SSTabBarName         @"SocialStoryTabBar"
 

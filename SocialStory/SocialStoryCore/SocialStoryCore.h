@@ -16,6 +16,7 @@
 #import <SocialStoryCore/SSPageControllerBase.h>
 #import <SocialStoryCore/SSStoryStore.h>
 #import <SocialStoryCore/SSStoryAPIClient.h>
+#import <SocialStoryCore/SSImageLoader.h>
 
 FOUNDATION_EXPORT double SocialStoryCoreVersionNumber;
 FOUNDATION_EXPORT const unsigned char SocialStoryCoreVersionString[];

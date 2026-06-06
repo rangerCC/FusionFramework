@@ -199,6 +199,15 @@
 
 #pragma mark - Audio playback
 
+// Playback rate priority: the story's own rate (from generation), else the
+// user's global default (ss_speech_rate, set in Settings), else 1.0.
+- (CGFloat)effectiveRate {
+    if (self.story.speakingRate > 0) { return self.story.speakingRate; }
+    id v = [[NSUserDefaults standardUserDefaults] objectForKey:@"ss_speech_rate"];
+    CGFloat global = v ? (CGFloat)[v floatValue] : 0.0;
+    return global > 0 ? global : 1.0;
+}
+
 - (void)playCurrentPage {
     NSArray<SSStoryPage *> *pages = [self pages];
     if (self.currentIndex < 0 || self.currentIndex >= (NSInteger)pages.count) { return; }
@@ -210,7 +219,7 @@
         NSURL *url = [NSURL URLWithString:page.audioURL];
         if (url) {
             self.player = [AVPlayer playerWithURL:url];
-            CGFloat rate = self.story.speakingRate > 0 ? self.story.speakingRate : 1.0;
+            CGFloat rate = [self effectiveRate];
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(onAudioFinished:)
                                                          name:AVPlayerItemDidPlayToEndTimeNotification
@@ -274,7 +283,7 @@
     } else {
         if (self.player) {
             [self.player play];
-            self.player.rate = self.story.speakingRate > 0 ? (float)self.story.speakingRate : 1.0;
+            self.player.rate = (float)[self effectiveRate];
         } else {
             [self playCurrentPage];
         }

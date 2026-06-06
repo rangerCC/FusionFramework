@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
   s.dependency 'FusionCore'
   s.dependency 'FusionUI'
   s.dependency 'CoreService'
+  s.dependency 'AccountKit'
 
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/FusionBase/FusionBase/CommonHeader'

@@ -14,7 +14,8 @@ target 'TestApp' do
   pod 'CoreService', :path => '.'
   pod 'Enviroment', :path => '.'
 
-  # Social Story Generator: shared core + 6 feature pods
+  # Social Story Generator: shared core + feature pods
+  pod 'AccountKit', :path => '.'
   pod 'SocialStoryCore', :path => '.'
   pod 'StoryGeneration', :path => '.'
   pod 'StoryLibrary', :path => '.'
@@ -22,6 +23,7 @@ target 'TestApp' do
   pod 'StorySubscription', :path => '.'
   pod 'StoryTemplates', :path => '.'
   pod 'StorySettings', :path => '.'
+  pod 'StoryProfile', :path => '.'
   
   pod 'LookinServer', :configurations => ['Debug']
 

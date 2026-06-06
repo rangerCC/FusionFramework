@@ -24,7 +24,7 @@
     if (self) {
         [self setBackgroundColor:[SSTheme cardColor]];
         _currentIndex = 0;
-        _pageNames = @[SSPageLibrary, SSPageGenerate, SSPageSettings];
+        _pageNames = @[SSPageLibrary, SSPageGenerate, SSPageProfile];
         NSArray *titles = @[
             @{@"title": @"我的故事", @"icon_normal":@"icon_story_normal", @"icon_selected":@"icon_story_selected"},
             @{@"title": @"创建", @"icon_normal":@"icon_createstory_normal", @"icon_selected":@"icon_createstory_selected"},
