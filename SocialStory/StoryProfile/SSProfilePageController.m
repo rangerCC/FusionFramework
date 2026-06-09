@@ -197,7 +197,7 @@ typedef NS_ENUM(NSInteger, SSProfileSection) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case SSProfileSectionMembership: return 2;   // upgrade, restore
-        case SSProfileSectionSettings:   return 3;   // speech rate, help, data
+        case SSProfileSectionSettings:   return 4;   // children, speech rate, help, data
         case SSProfileSectionAbout:      return [AccountManager shared].isLoggedIn ? 2 : 1; // about(+logout)
         default: return 0;
     }
@@ -234,9 +234,11 @@ typedef NS_ENUM(NSInteger, SSProfileSection) {
             break;
         case SSProfileSectionSettings:
             if (indexPath.row == 0) {
+                cell.textLabel.text = @"我的孩子";
+            } else if (indexPath.row == 1) {
                 cell.textLabel.text = @"默认朗读语速";
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f", [self storedRate]];
-            } else if (indexPath.row == 1) {
+            } else if (indexPath.row == 2) {
                 cell.textLabel.text = @"社交故事法 & 使用帮助";
             } else {
                 cell.textLabel.text = @"数据管理";
@@ -265,8 +267,14 @@ typedef NS_ENUM(NSInteger, SSProfileSection) {
             else { [self onRestore]; }
             break;
         case SSProfileSectionSettings:
-            // All settings detail lives in the existing settings page.
-            [self gotoPage:(indexPath.row == 1) ? SSPageHelp : SSPageSettings];
+            if (indexPath.row == 0) {
+                [self gotoPage:SSPageChildList];
+            } else if (indexPath.row == 2) {
+                [self gotoPage:SSPageHelp];
+            } else {
+                // speech rate (1) and data management (3) live in settings page.
+                [self gotoPage:SSPageSettings];
+            }
             break;
         case SSProfileSectionAbout:
             if (indexPath.row == 1) { [self onLogout]; }

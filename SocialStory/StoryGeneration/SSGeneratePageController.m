@@ -14,17 +14,18 @@
 @property (nonatomic, strong) UILabel *scenePlaceholder;
 @property (nonatomic, strong) UITextView *difficultyTextView;
 @property (nonatomic, strong) UILabel *difficultyPlaceholder;
-@property (nonatomic, strong) UITextField *nameField;
-@property (nonatomic, strong) UISegmentedControl *genderControl;
-@property (nonatomic, strong) UIStepper *ageStepper;
-@property (nonatomic, strong) UILabel *ageLabel;
-@property (nonatomic, strong) UISegmentedControl *diagnosisControl;
-@property (nonatomic, strong) UISegmentedControl *levelControl;
-@property (nonatomic, strong) UITextField *interestField;
 @property (nonatomic, strong) UISegmentedControl *toneControl;
+@property (nonatomic, strong) UITextField *interestField;
 @property (nonatomic, strong) UIButton *generateButton;
 @property (nonatomic, strong) UIView *loadingOverlay;
 @property (nonatomic, copy) NSString *pendingScene;
+
+// Current-child card
+@property (nonatomic, strong) UIView *childCard;
+@property (nonatomic, strong) UILabel *childNameLabel;
+@property (nonatomic, strong) UILabel *childMetaLabel;
+@property (nonatomic, strong) UIButton *changeChildButton;
+@property (nonatomic, strong) SSChild *selectedChild;
 @end
 
 @implementation SSGeneratePageController
@@ -33,10 +34,33 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onChildrenChanged)
+                                                 name:SSChildrenDidChangeNotification
+                                               object:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)buildPageContent {
     [self buildForm];
+    // Pull the latest children so the card reflects the current default.
+    [[SSChildStore shared] reloadWithCompletion:nil];
+    [self refreshChildCard];
+}
+
+- (void)enterAnimeFinish {
+    [super enterAnimeFinish];
+    if ([self contentBuilt]) {
+        [[SSChildStore shared] reloadWithCompletion:nil];
+        [self refreshChildCard];
+    }
+}
+
+- (void)onChildrenChanged {
+    if ([self contentBuilt]) { [self refreshChildCard]; }
 }
 
 - (void)buildForm {
@@ -52,6 +76,36 @@
     CGFloat margin = 16;
     CGFloat width = self.view.bounds.size.width - margin * 2;
     CGFloat y = 16;
+
+    // Current-child card (replaces the manual name/gender/age/diagnosis/level form).
+    y = [self addSectionLabel:@"为谁创建" atY:y margin:margin];
+    self.childCard = [[UIView alloc] initWithFrame:CGRectMake(margin, y, width, 72)];
+    self.childCard.backgroundColor = [SSTheme cardColor];
+    self.childCard.layer.cornerRadius = 12;
+    self.childCard.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.scrollView addSubview:self.childCard];
+
+    self.childNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(14, 12, width - 90, 24)];
+    self.childNameLabel.font = [UIFont boldSystemFontOfSize:17];
+    self.childNameLabel.textColor = [SSTheme primaryTextColor];
+    self.childNameLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.childCard addSubview:self.childNameLabel];
+
+    self.childMetaLabel = [[UILabel alloc] initWithFrame:CGRectMake(14, 38, width - 90, 20)];
+    self.childMetaLabel.font = [UIFont systemFontOfSize:13];
+    self.childMetaLabel.textColor = [SSTheme secondaryTextColor];
+    self.childMetaLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.childCard addSubview:self.childMetaLabel];
+
+    self.changeChildButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.changeChildButton.frame = CGRectMake(width - 76, 20, 64, 32);
+    [self.changeChildButton setTitle:@"更换" forState:UIControlStateNormal];
+    [self.changeChildButton setTitleColor:[SSTheme accentColor] forState:UIControlStateNormal];
+    self.changeChildButton.titleLabel.font = [UIFont systemFontOfSize:15];
+    self.changeChildButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [self.changeChildButton addTarget:self action:@selector(onChangeChild) forControlEvents:UIControlEventTouchUpInside];
+    [self.childCard addSubview:self.changeChildButton];
+    y += 72 + 16;
 
     // Social scenario
     y = [self addSectionLabel:@"社交情境描述（50-500字）" atY:y margin:margin];
@@ -75,50 +129,13 @@
     self.difficultyPlaceholder = [self addPlaceholder:@"例如：会紧张、不敢主动说话" forTextView:self.difficultyTextView];
     y += 70 + 16;
 
-    // Child name
-    y = [self addSectionLabel:@"孩子名字" atY:y margin:margin];
-    self.nameField = [self addTextFieldAtY:y margin:margin width:width placeholder:@"小朋友"];
-    y += 44 + 16;
-
-    // Gender
-    y = [self addSectionLabel:@"性别" atY:y margin:margin];
-    self.genderControl = [self addSegmentAtY:y margin:margin width:width items:@[@"男孩", @"女孩"]];
-    y += 36 + 16;
-
-    // Age
-    y = [self addSectionLabel:@"年龄" atY:y margin:margin];
-    self.ageStepper = [[UIStepper alloc] initWithFrame:CGRectMake(margin, y, 0, 0)];
-    self.ageStepper.minimumValue = 2;
-    self.ageStepper.maximumValue = 16;
-    self.ageStepper.value = 6;
-    [self.ageStepper addTarget:self action:@selector(onAgeChanged) forControlEvents:UIControlEventValueChanged];
-    [self.scrollView addSubview:self.ageStepper];
-    self.ageLabel = [[UILabel alloc] initWithFrame:CGRectMake(margin + 110, y, width - 110, 32)];
-    self.ageLabel.font = [UIFont systemFontOfSize:16];
-    self.ageLabel.textColor = [SSTheme primaryTextColor];
-    [self.scrollView addSubview:self.ageLabel];
-    [self onAgeChanged];
-    y += 40 + 16;
-
-    // Diagnosis type
-    y = [self addSectionLabel:@"诊断类型" atY:y margin:margin];
-    self.diagnosisControl = [self addSegmentAtY:y margin:margin width:width
-                                          items:@[@"自闭症", @"多动症", @"社交焦虑", @"其他"]];
-    self.diagnosisControl.apportionsSegmentWidthsByContent = YES;
-    y += 36 + 16;
-
-    // Language level
-    y = [self addSectionLabel:@"语言水平" atY:y margin:margin];
-    self.levelControl = [self addSegmentAtY:y margin:margin width:width items:@[@"简单句", @"复合句", @"复杂句"]];
-    y += 36 + 16;
-
     // Tone style
     y = [self addSectionLabel:@"语气风格" atY:y margin:margin];
     self.toneControl = [self addSegmentAtY:y margin:margin width:width items:@[@"温和", @"欢快", @"平静"]];
     y += 36 + 16;
 
-    // Interest (optional)
-    y = [self addSectionLabel:@"兴趣点（选填）" atY:y margin:margin];
+    // Interest (optional; overrides the child's interests for this story)
+    y = [self addSectionLabel:@"兴趣点（选填，覆盖默认）" atY:y margin:margin];
     self.interestField = [self addTextFieldAtY:y margin:margin width:width placeholder:@"如：恐龙、火车、太空"];
     y += 44 + 28;
 
@@ -141,6 +158,70 @@
         self.scenePlaceholder.hidden = YES;
         self.pendingScene = nil;
     }
+}
+
+#pragma mark - Child card
+
+- (void)refreshChildCard {
+    SSChild *child = [SSChildStore shared].defaultChild;
+    self.selectedChild = child;
+    if (child) {
+        self.childNameLabel.text = child.name;
+        self.childMetaLabel.text = [NSString stringWithFormat:@"%ld岁 · %@ · %@",
+            (long)child.age, [self diagnosisLabel:child.diagnosisType], [self levelLabel:child.level]];
+        [self.changeChildButton setTitle:@"更换" forState:UIControlStateNormal];
+    } else {
+        self.childNameLabel.text = @"还没有孩子档案";
+        self.childMetaLabel.text = @"点这里添加一个孩子";
+        [self.changeChildButton setTitle:@"添加" forState:UIControlStateNormal];
+    }
+}
+
+- (NSString *)diagnosisLabel:(SSDiagnosisType)d {
+    switch (d) {
+        case SSDiagnosisASD: return @"自闭症";
+        case SSDiagnosisADHD: return @"多动症";
+        case SSDiagnosisSocialAnxiety: return @"社交焦虑";
+        default: return @"其他";
+    }
+}
+- (NSString *)levelLabel:(SSLanguageLevel)l {
+    switch (l) {
+        case SSLanguageLevelSimple: return @"简单句";
+        case SSLanguageLevelModerate: return @"复合句";
+        default: return @"复杂句";
+    }
+}
+
+- (void)onChangeChild {
+    NSArray<SSChild *> *children = [SSChildStore shared].children;
+    if (children.count == 0) {
+        [self gotoChildList];
+        return;
+    }
+    UIAlertController *sheet = [UIAlertController alertControllerWithTitle:@"选择孩子" message:nil
+                                                           preferredStyle:UIAlertControllerStyleActionSheet];
+    for (SSChild *c in children) {
+        NSString *title = c.isDefault ? [c.name stringByAppendingString:@"（默认）"] : c.name;
+        [sheet addAction:[UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault
+                                                handler:^(UIAlertAction *a) {
+            [[SSChildStore shared] selectChild:c];
+            [self refreshChildCard];
+        }]];
+    }
+    [sheet addAction:[UIAlertAction actionWithTitle:@"管理孩子…" style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction *a) { [self gotoChildList]; }]];
+    [sheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    sheet.popoverPresentationController.sourceView = self.changeChildButton;
+    sheet.popoverPresentationController.sourceRect = self.changeChildButton.bounds;
+    [self presentViewController:sheet animated:YES completion:nil];
+}
+
+- (void)gotoChildList {
+    FusionPageMessage *m = [[FusionPageMessage alloc] initWithPageName:SSPageChildList
+                                                              pageNick:nil command:nil args:nil callback:nil];
+    [m setNaviAnimeType:SlideR2L_NaviAnime];
+    [[self getNavigator] gotoPage:m];
 }
 
 #pragma mark - Form helpers
@@ -196,10 +277,6 @@
     return y + 22 + 6;
 }
 
-- (void)onAgeChanged {
-    self.ageLabel.text = [NSString stringWithFormat:@"%d 岁", (int)self.ageStepper.value];
-}
-
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == self.sceneTextView) {
         self.scenePlaceholder.hidden = textView.text.length > 0;
@@ -238,6 +315,20 @@
 }
 
 - (void)onGenerate {
+    // Require at least one child profile before generating.
+    if (![SSChildStore shared].hasAnyChild) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"还没有孩子档案"
+                                                                      message:@"请先添加一位孩子，才能生成专属故事。"
+                                                               preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"去添加" style:UIAlertActionStyleDefault
+                                                handler:^(UIAlertAction *a) { [self gotoChildList]; }]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    SSChild *child = self.selectedChild ?: [SSChildStore shared].defaultChild;
+    if (!child) { [self gotoChildList]; return; }
+
     if (self.sceneTextView.text.length < 4) {
         [self showAlert:@"请完善信息" message:@"请先描述社交情境"];
         return;
@@ -252,13 +343,17 @@
     SSStoryGenerationRequest *req = [SSStoryGenerationRequest new];
     req.socialScenario = self.sceneTextView.text;
     req.difficultyDetail = self.difficultyTextView.text;
-    req.childName = self.nameField.text;
-    req.gender = (self.genderControl.selectedSegmentIndex == 0) ? SSGenderBoy : SSGenderGirl;
-    req.childAge = (NSInteger)self.ageStepper.value;
-    req.diagnosisType = (SSDiagnosisType)self.diagnosisControl.selectedSegmentIndex;
-    req.level = (SSLanguageLevel)self.levelControl.selectedSegmentIndex;
+    req.childName = child.name;
+    req.gender = child.gender;
+    req.childAge = child.age;
+    req.diagnosisType = child.diagnosisType;
+    req.level = child.level;
     req.tone = (SSToneStyle)self.toneControl.selectedSegmentIndex;
-    req.preferredInterest = self.interestField.text;
+    // The optional interest field overrides the child's stored interests for
+    // this story; otherwise fall back to the child's first interest.
+    NSString *typedInterest = [self.interestField.text stringByTrimmingCharactersInSet:
+        [NSCharacterSet whitespaceCharacterSet]];
+    req.preferredInterest = typedInterest.length ? typedInterest : [child.interests firstObject];
 
     __weak typeof(self) weakSelf = self;
     [[SSStoryAPIClient shared] generateStoryWithRequest:req completion:^(SSStory *story, NSError *error) {

@@ -22,11 +22,13 @@
   "language_level": "simple",
   "interests": ["恐龙", "火车"],
   "avatar_url": null,
+  "is_default": true,
   "created_at": "2026-01-15T03:30:00Z",
   "updated_at": "2026-01-15T03:30:00Z"
 }
 ```
 > `age` 由后端依 `birthday` 实时计算返回，客户端只读。
+> `is_default` 表示是否为该账户当前默认孩子（生成故事默认使用）。每账户至多一个默认；**新增的第一个孩子自动成为默认**。
 
 ---
 
@@ -80,3 +82,12 @@
 
 响应：`{ "code": 0, "message": "ok", "data": null }`
 执行 `children.deleted_at = now()`。错误：`4001`、`4002`。
+
+---
+
+## POST /v1/children/{child_id}/default — 设为默认
+
+把该孩子设为账户默认（生成故事默认使用）；事务内清除其他孩子的默认标记，保证每账户至多一个默认。
+
+响应：`{ "code": 0, "message": "ok", "data": null }`
+错误：`4001` 不存在 / 非本人。

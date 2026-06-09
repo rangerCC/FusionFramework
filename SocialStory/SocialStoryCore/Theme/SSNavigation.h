@@ -17,10 +17,13 @@
 #define SSPageHelp           @"StoryHelpPage"
 #define SSPageProfile        @"StoryProfilePage"
 #define SSPageLogin          @"StoryLoginPage"
+#define SSPageChildList      @"StoryChildListPage"
+#define SSPageChildEdit      @"StoryChildEditPage"
 
 #define SSTabBarName         @"SocialStoryTabBar"
 
 // args / callback keys
 #define SSArgStoryID         @"story_id"
 #define SSArgSceneText       @"scene_text"
+#define SSArgChildID         @"child_id"
 #define SSCommandFillScene   @"fill_scene"

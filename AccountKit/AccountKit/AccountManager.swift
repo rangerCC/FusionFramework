@@ -48,6 +48,20 @@ import Foundation
 
     @objc public var isLoggedIn: Bool { currentUser != nil }
 
+    /// Current bearer access token from the active service (nil if none / mock).
+    /// Authenticated API clients read this for the Authorization header.
+    @objc public var accessToken: String? { service.accessToken }
+
+    /// Ask the active service to rotate its tokens (no-op if unsupported).
+    /// Used by API clients after a 401 before retrying.
+    @objc public func refreshTokens(completion: @escaping (Bool) -> Void) {
+        if let remote = service as? SSRemoteAccountService {
+            remote.refreshTokens(completion: completion)
+        } else {
+            completion(false)
+        }
+    }
+
     /// Token to attach to StoreKit purchases. Returns the logged-in user's token,
     /// or a stable device-level token when logged out, so a purchase made before
     /// login can still be reconciled later.

@@ -12,6 +12,7 @@
 #import <FusionUI/FusionPageNavigator+Auto.h>
 #import <SocialStoryCore/SocialStoryCore.h>
 #import <SocialStoryCore/SocialStoryCore-Swift.h>
+#import <AccountKit/AccountKit-Swift.h>
 
 @interface AppDelegate () {
 @private
@@ -21,6 +22,12 @@
 
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Account backend (test env): base URL comes from LocalConfig.plist
+    // (gitignored, per-developer). Falls back to localhost for the simulator
+    // when that file is absent. Production wiring is deferred.
+    AccountManager.shared.service =
+        [SSRemoteAccountService fromLocalConfigWithDefaultBaseURL:@"http://localhost:8080"];
+
     // Warm up the store and subscription status.
     [SSStoryStore shared];
     [[SubscriptionManager shared] refreshSubscriptionStatusWithCompletion:nil];

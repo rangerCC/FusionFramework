@@ -27,3 +27,8 @@ Pods/
 .DS_Store
 Workspace/.DS_Store
 Workspace/FusionWorkspace.xcworkspace/xcshareddata/
+
+# Local-only dev/test config (per-developer base URLs etc.).
+# The committed template is LocalConfig.example.plist.
+LocalConfig.plist
+TestApp/TestApp/LocalConfig.plist

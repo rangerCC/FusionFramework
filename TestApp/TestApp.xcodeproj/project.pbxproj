@@ -22,6 +22,7 @@
 		A673D9212FD018A200C48257 /* icon_story_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = A673D91D2FD018A200C48257 /* icon_story_selected.png */; };
 		A673D9222FD018A200C48257 /* icon_story_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = A673D91E2FD018A200C48257 /* icon_story_normal.png */; };
 		A673D9232FD018A200C48257 /* icon_createstory_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = A673D91F2FD018A200C48257 /* icon_createstory_normal.png */; };
+		A673D9252FD80F9800C48257 /* LocalConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = A673D9242FD80F9800C48257 /* LocalConfig.plist */; };
 		EA21D9C2679A193CCDCEDC8F /* Pods_TestApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BBC6A28015EE352032A3147 /* Pods_TestApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,7 @@
 		A673D91D2FD018A200C48257 /* icon_story_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_story_selected.png; sourceTree = "<group>"; };
 		A673D91E2FD018A200C48257 /* icon_story_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_story_normal.png; sourceTree = "<group>"; };
 		A673D91F2FD018A200C48257 /* icon_createstory_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_createstory_normal.png; sourceTree = "<group>"; };
+		A673D9242FD80F9800C48257 /* LocalConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = LocalConfig.plist; sourceTree = "<group>"; };
 		ACD7B84F8C1D9DA3DD51885D /* Pods-TestApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.debug.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.debug.xcconfig"; sourceTree = "<group>"; };
 		E6BFBA9FFE5B70F90866133E /* Pods-TestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.release.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,6 +117,7 @@
 		20969D971A64019F00E9C377 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A673D9242FD80F9800C48257 /* LocalConfig.plist */,
 				20969D981A64019F00E9C377 /* Info.plist */,
 				20969D991A64019F00E9C377 /* main.m */,
 			);
@@ -200,6 +203,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A673D9252FD80F9800C48257 /* LocalConfig.plist in Resources */,
 				A673D9202FD018A200C48257 /* icon_createstory_selected.png in Resources */,
 				A673D9222FD018A200C48257 /* icon_story_normal.png in Resources */,
 				A673D91B2FD013C000C48257 /* icon_home_normal.png in Resources */,

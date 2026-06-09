@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 
 #import <SocialStoryCore/SSStory.h>
+#import <SocialStoryCore/SSChild.h>
 #import <SocialStoryCore/SSDemoStories.h>
 #import <SocialStoryCore/SSConfig.h>
 #import <SocialStoryCore/SSTheme.h>
@@ -15,7 +16,9 @@
 #import <SocialStoryCore/SSNaviBar.h>
 #import <SocialStoryCore/SSPageControllerBase.h>
 #import <SocialStoryCore/SSStoryStore.h>
+#import <SocialStoryCore/SSChildStore.h>
 #import <SocialStoryCore/SSStoryAPIClient.h>
+#import <SocialStoryCore/SSChildrenClient.h>
 #import <SocialStoryCore/SSImageLoader.h>
 
 FOUNDATION_EXPORT double SocialStoryCoreVersionNumber;

@@ -1,0 +1,10 @@
+# bin
+/bin/
+# local env
+.env
+.env.test
+.env.prod
+# Apple key
+*.p8
+# go
+vendor/

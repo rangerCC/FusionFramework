@@ -36,6 +36,8 @@ static TestAdapter *_TestAdapter_Instance = nil;
                               @"tabbar_name": SSTabBarName, @"singleton": @YES},
         SSPageSettings:     @{@"class": @"SSSettingsPageController"},
         SSPageLogin:        @{@"class": @"SSLoginPageController"},
+        SSPageChildList:    @{@"class": @"SSChildListPageController"},
+        SSPageChildEdit:    @{@"class": @"SSChildEditPageController"},
         SSPageReader:       @{@"class": @"SSReaderPageController"},
         SSPageTemplate:     @{@"class": @"SSTemplatePageController"},
         SSPageSubscription: @{@"class": @"SSSubscriptionPageController"},
@@ -47,6 +49,10 @@ static TestAdapter *_TestAdapter_Instance = nil;
     config[@"pageName"] = pageName;
     // Use the safe-area-aware navigation bar on all pages.
     config[@"navi_class"] = @"SSNaviBar";
+    // Disable the framework's interactive left-edge swipe-back: every page has a
+    // back button, and the gesture's manual-pop path crashes in garbageCollection
+    // (nil page-nick key). Back is driven by the nav-bar button instead.
+    config[@"no_gesture_navi"] = @YES;
     return config;
 }
 

@@ -28,7 +28,9 @@ static const NSInteger kColumnCount = 2;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 @property (nonatomic, strong) NSArray<SSStory *> *demoStories;
 @property (nonatomic, assign) SSLibraryTab currentTab;
+@property (nonatomic, strong) UIView *emptyContainer;
 @property (nonatomic, strong) UILabel *emptyLabel;
+@property (nonatomic, strong) UIButton *emptyButton;
 @end
 
 @implementation SSLibraryPageController
@@ -42,6 +44,20 @@ static const NSInteger kColumnCount = 2;
 
     self.frc = [[SSStoryStore shared] fetchedResultsControllerWithDelegate:self];
     [self.frc performFetch:NULL];
+
+    // Keep the user-tab empty-state guidance (add-child vs generate) in sync.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onChildrenChanged)
+                                                 name:SSChildrenDidChangeNotification
+                                               object:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)onChildrenChanged {
+    if ([self contentBuilt]) { [self updateEmptyState]; }
 }
 
 #pragma mark - Build UI
@@ -89,13 +105,26 @@ static const NSInteger kColumnCount = 2;
     longPress.delegate = self;
     [self.collectionView addGestureRecognizer:longPress];
 
-    // Empty-state label, shown via collectionView.backgroundView when needed.
-    self.emptyLabel = [UILabel new];
+    // Empty-state view (label + action button), shown via collectionView.backgroundView.
+    self.emptyContainer = [[UIView alloc] initWithFrame:self.collectionView.bounds];
+    self.emptyContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+    self.emptyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.collectionView.bounds.size.width, 60)];
     self.emptyLabel.numberOfLines = 0;
     self.emptyLabel.textAlignment = NSTextAlignmentCenter;
     self.emptyLabel.font = [UIFont systemFontOfSize:15];
     self.emptyLabel.textColor = [SSTheme secondaryTextColor];
-    self.emptyLabel.text = @"还没有故事\n去「生成」创建一个吧";
+    self.emptyLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.emptyContainer addSubview:self.emptyLabel];
+
+    self.emptyButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.emptyButton.backgroundColor = [SSTheme accentColor];
+    [self.emptyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.emptyButton.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    self.emptyButton.layer.cornerRadius = 10;
+    self.emptyButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    [self.emptyButton addTarget:self action:@selector(onEmptyAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.emptyContainer addSubview:self.emptyButton];
 
     [self.collectionView reloadData];
     [self updateEmptyState];
@@ -129,7 +158,40 @@ static const NSInteger kColumnCount = 2;
 
 - (void)updateEmptyState {
     BOOL empty = (self.currentTab == SSLibraryTabUser) && ([self currentCount] == 0);
-    self.collectionView.backgroundView = empty ? self.emptyLabel : nil;
+    if (!empty) {
+        self.collectionView.backgroundView = nil;
+        return;
+    }
+    // Rule: a parent must add a child before creating/owning stories. If there's
+    // no child yet, guide to the child list; otherwise guide to generation.
+    BOOL hasChild = [SSChildStore shared].hasAnyChild;
+    if (hasChild) {
+        self.emptyLabel.text = @"还没有故事\n去「生成」创建一个吧";
+        [self.emptyButton setTitle:@"去生成" forState:UIControlStateNormal];
+    } else {
+        self.emptyLabel.text = @"先添加一位孩子\n才能创建专属社交故事";
+        [self.emptyButton setTitle:@"添加孩子" forState:UIControlStateNormal];
+    }
+    [self layoutEmptyContainer];
+    self.collectionView.backgroundView = self.emptyContainer;
+}
+
+- (void)layoutEmptyContainer {
+    CGFloat w = self.collectionView.bounds.size.width;
+    CGFloat h = self.collectionView.bounds.size.height;
+    self.emptyContainer.frame = CGRectMake(0, 0, w, h);
+    self.emptyLabel.frame = CGRectMake(0, h / 2 - 80, w, 50);
+    CGFloat btnW = 160;
+    self.emptyButton.frame = CGRectMake((w - btnW) / 2, h / 2 - 16, btnW, 44);
+}
+
+- (void)onEmptyAction {
+    // No child → child list; has child → generation page.
+    NSString *page = [SSChildStore shared].hasAnyChild ? SSPageGenerate : SSPageChildList;
+    FusionPageMessage *m = [[FusionPageMessage alloc] initWithPageName:page
+                                                              pageNick:nil command:nil args:nil callback:nil];
+    [m setNaviAnimeType:SlideR2L_NaviAnime];
+    [[self getNavigator] gotoPage:m];
 }
 
 #pragma mark - Refresh
@@ -149,6 +211,8 @@ static const NSInteger kColumnCount = 2;
     [super enterAnimeFinish];
     if (![self contentBuilt]) { return; }
     [self.frc performFetch:NULL];
+    // Refresh children so the empty-state guidance reflects the latest state.
+    [[SSChildStore shared] reloadWithCompletion:nil];
     if (self.currentTab == SSLibraryTabUser) {
         [self.collectionView reloadData];
         [self updateEmptyState];

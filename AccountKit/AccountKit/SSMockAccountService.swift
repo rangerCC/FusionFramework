@@ -14,6 +14,9 @@ import Foundation
     /// The fixed code the mock accepts.
     @objc public static let acceptedCode = "1234"
 
+    /// The mock has no real session token.
+    @objc public var accessToken: String? { nil }
+
     private let tokenStorePrefix = "ss_mock_appacct_"
 
     @objc public func requestSMSCode(phone: String,

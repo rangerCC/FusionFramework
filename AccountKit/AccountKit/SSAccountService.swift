@@ -11,6 +11,11 @@ import Foundation
 
 @objc public protocol SSAccountService: NSObjectProtocol {
 
+    /// Current bearer access token for authenticated API calls, or nil if the
+    /// implementation has none (e.g. the mock). Authenticated clients
+    /// (children, profile, subscription...) read this for the Authorization header.
+    @objc var accessToken: String? { get }
+
     /// Request an SMS verification code for the given phone number.
     /// completion(success, errorMessage) on the main thread.
     @objc func requestSMSCode(phone: String,

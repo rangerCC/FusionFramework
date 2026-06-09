@@ -1,0 +1,55 @@
+# Test-environment stack. Isolated from the default dev compose:
+# distinct project containers, distinct host ports, distinct DB name and
+# Redis key prefix (ss:test:). Use:  docker compose -f docker-compose.test.yml up -d
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ss_test
+      POSTGRES_PASSWORD: ss_test
+      POSTGRES_DB: socialstory_test
+    ports:
+      - "55432:5432"          # distinct host port to avoid clashing with prod/dev pg
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ss_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis-test:
+    image: redis:7-alpine
+    ports:
+      - "56379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  server-test:
+    build: .
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    environment:
+      APP_ENV: test
+      PORT: "8080"
+      DATABASE_URL: postgres://ss_test:ss_test@postgres-test:5432/socialstory_test?sslmode=disable
+      REDIS_ADDR: redis-test:6379
+      REDIS_KEY_PREFIX: "ss:test:"
+      JWT_SECRET: test-only-secret-change-me
+      SMS_DEV_MODE: "true"
+      SMS_DEV_CODE: "1234"
+      APPLE_ENVIRONMENT: Sandbox
+      STRICT_APPLE_ENV: "true"
+      MONTHLY_FREE_QUOTA: "3"
+      MIGRATIONS_DIR: /app/migrations
+    ports:
+      - "18080:8080"          # test API on :18080, prod/dev on :8080
+
+volumes:
+  pgdata_test:
