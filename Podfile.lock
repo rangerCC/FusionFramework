@@ -27,6 +27,9 @@ PODS:
   - LookinServer (1.2.8):
     - LookinServer/Core (= 1.2.8)
   - LookinServer/Core (1.2.8)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
   - SocialStoryCore (1.0.0):
     - AccountKit
     - CoreService
@@ -38,10 +41,12 @@ PODS:
     - SocialStoryCore
   - StoryLibrary (1.0.0):
     - FusionUI
+    - SDWebImage (~> 5.0)
     - SocialStoryCore
   - StoryProfile (1.0.0):
     - AccountKit
     - FusionUI
+    - SDWebImage (~> 5.0)
     - SocialStoryCore
   - StoryReader (1.0.0):
     - FusionUI
@@ -67,6 +72,7 @@ DEPENDENCIES:
   - FusionCore (from `.`)
   - FusionUI (from `.`)
   - LookinServer
+  - SDWebImage (~> 5.0)
   - SocialStoryCore (from `.`)
   - StoryGeneration (from `.`)
   - StoryLibrary (from `.`)
@@ -80,6 +86,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - LookinServer
+    - SDWebImage
 
 EXTERNAL SOURCES:
   AccountKit:
@@ -121,16 +128,17 @@ SPEC CHECKSUMS:
   FusionCore: 3093f3420f9ee331d244a03f9f3878ab672db3db
   FusionUI: e7caafbb549aeec95682397e2b3a04b2d1b074b9
   LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SocialStoryCore: 36abc1e67735d8ae1654d076a196a07d0f42a24a
   StoryGeneration: b53add16a699883c623e13fde6fa231cdd10acf2
-  StoryLibrary: 8c01f5edd9756e4785a88d7c177d9f6be8e20cb8
-  StoryProfile: 7e14c2cc0c3d10a9991c7aa62c07447c20e32502
+  StoryLibrary: d63871f992fdfd656acc9b61d9ed335f0df063d3
+  StoryProfile: 10bc52f84e438bdaf35988b4407312e1a6cb833c
   StoryReader: 554c5769b642ba11e7015be06846d057ec39733a
   StorySettings: 51f558235ad61f94b91c2c17576e35aa23b9f7c3
   StorySubscription: 06655a5a33ffc78795588b5e3914352946f49b5a
   StoryTemplates: 0b6e9b9b55610e158776da69aa3fcaf32fc84186
   Utility: 9007ef782e4ff29e38ac6657bad72d00725c75e7
 
-PODFILE CHECKSUM: 12130b9a231c455df6d70de335f0697a8deef3ea
+PODFILE CHECKSUM: 2c252715422c851b0e405a32f04b0896c0eb9c6c
 
 COCOAPODS: 1.16.2

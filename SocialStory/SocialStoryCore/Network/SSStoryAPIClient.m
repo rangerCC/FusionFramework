@@ -70,6 +70,16 @@
 
 - (NSDictionary *)payloadForRequest:(SSStoryGenerationRequest *)r {
     NSString *interest = r.preferredInterest.length ? r.preferredInterest : @"";
+    // difficulty_detail must never be empty: the Coze workflow derives a
+    // `difficulties` variable from it and crashes ("cannot access local
+    // variable 'difficulties'") when the branch that assigns it is skipped for
+    // an empty input. Fall back to a sensible default built from the scenario.
+    NSString *difficulty = [r.difficultyDetail stringByTrimmingCharactersInSet:
+        [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (difficulty.length == 0) {
+        NSString *scene = r.socialScenario.length ? r.socialScenario : @"这个社交情境";
+        difficulty = [NSString stringWithFormat:@"在「%@」时会感到紧张、不太知道怎么应对", scene];
+    }
     // The backend validates preferred_interest / tone_style as plain strings
     // (despite the API doc labeling them "object").
     return @{
@@ -77,7 +87,7 @@
         @"child_age": @(r.childAge),
         @"diagnosis_type": [self diagnosisString:r.diagnosisType],
         @"social_scenario": r.socialScenario ?: @"",
-        @"difficulty_detail": r.difficultyDetail ?: @"",
+        @"difficulty_detail": difficulty,
         @"preferred_interest": interest,
         @"language_level": [self levelString:r.level],
         @"tone_style": [self toneString:r.tone],
@@ -103,8 +113,25 @@
     req.HTTPBody = bodyData;
     req.timeoutInterval = 240;  // generation can take a while
 
+    // Debug log: URL / method / headers (Authorization masked) / body.
+    NSLog(@"[SSStoryAPIClient] 正在调用 Coze API 生成故事...");
+    NSLog(@"[SSStoryAPIClient] 请求 URL: %@", [SSConfig shared].workerURLString);
+    NSLog(@"[SSStoryAPIClient] 请求方法: %@", req.HTTPMethod);
+    NSLog(@"[SSStoryAPIClient] 请求头: %@", [self maskedHeaders:req.allHTTPHeaderFields]);
+    NSLog(@"[SSStoryAPIClient] 请求体: %@",
+          [[NSString alloc] initWithData:bodyData encoding:NSUTF8StringEncoding] ?: @"<nil>");
+
     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:req
         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSInteger status = [response isKindOfClass:[NSHTTPURLResponse class]]
+            ? ((NSHTTPURLResponse *)response).statusCode : -1;
+        NSLog(@"[SSStoryAPIClient] 响应状态码: %ld", (long)status);
+        if (error) {
+            NSLog(@"[SSStoryAPIClient] 网络错误: %@", error.localizedDescription);
+        } else {
+            NSString *raw = data ? [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] : nil;
+            NSLog(@"[SSStoryAPIClient] 响应体: %@", raw ?: @"<空>");
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error) { if (completion) completion(nil, error); return; }
             NSError *parseError = nil;
@@ -120,6 +147,18 @@
         });
     }];
     [task resume];
+}
+
+// Returns a copy of the headers with the Authorization bearer token masked,
+// so logs never leak the real credential.
+- (NSDictionary *)maskedHeaders:(NSDictionary *)headers {
+    NSMutableDictionary *masked = [headers mutableCopy] ?: [NSMutableDictionary dictionary];
+    NSString *auth = masked[@"Authorization"];
+    if (auth.length) {
+        NSString *suffix = auth.length > 6 ? [auth substringFromIndex:auth.length - 4] : @"";
+        masked[@"Authorization"] = [NSString stringWithFormat:@"Bearer ****%@", suffix];
+    }
+    return masked;
 }
 
 - (SSStory *)parseStoryFromData:(NSData *)data error:(NSError **)error {

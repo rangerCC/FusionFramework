@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.frameworks = 'Foundation', 'UIKit', 'CoreData'
   s.dependency 'SocialStoryCore'
   s.dependency 'FusionUI'
+  s.dependency 'SDWebImage', '~> 5.0'
 
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/FusionBase/FusionBase/CommonHeader'

@@ -12,6 +12,7 @@
 #import <FusionUI/FusionNaviAnimeHelper.h>
 #import <SocialStoryCore/SocialStoryCore-Swift.h>
 #import <AccountKit/AccountKit-Swift.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 typedef NS_ENUM(NSInteger, SSProfileSection) {
     SSProfileSectionMembership = 0,
@@ -131,10 +132,10 @@ typedef NS_ENUM(NSInteger, SSProfileSection) {
     if (loggedIn) {
         self.nameLabel.text = user.nickname;
         self.subLabel.text = [self maskedPhone:user.phone];
-        [[SSImageLoader shared] loadImageURL:user.avatarURL into:self.avatarView];
-        if (user.avatarURL.length == 0) {
-            self.avatarView.image = [self defaultAvatar];
-        }
+        // Default avatar doubles as the placeholder (shown while loading, on
+        // failure, or when the user has no avatar URL).
+        NSURL *avatarURL = user.avatarURL.length ? [NSURL URLWithString:user.avatarURL] : nil;
+        [self.avatarView sd_setImageWithURL:avatarURL placeholderImage:[self defaultAvatar]];
     } else {
         self.avatarView.image = [self defaultAvatar];
     }

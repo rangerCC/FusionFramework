@@ -34,14 +34,14 @@ static TestAdapter *_TestAdapter_Instance = nil;
                               @"tabbar_name": SSTabBarName, @"singleton": @YES},
         SSPageProfile:      @{@"class": @"SSProfilePageController",
                               @"tabbar_name": SSTabBarName, @"singleton": @YES},
-        SSPageSettings:     @{@"class": @"SSSettingsPageController"},
+        SSPageSettings:     @{@"class": @"SSSettingsPageController", @"singleton": @YES},
         SSPageLogin:        @{@"class": @"SSLoginPageController"},
-        SSPageChildList:    @{@"class": @"SSChildListPageController"},
+        SSPageChildList:    @{@"class": @"SSChildListPageController", @"singleton": @YES},
         SSPageChildEdit:    @{@"class": @"SSChildEditPageController"},
         SSPageReader:       @{@"class": @"SSReaderPageController"},
         SSPageTemplate:     @{@"class": @"SSTemplatePageController"},
         SSPageSubscription: @{@"class": @"SSSubscriptionPageController"},
-        SSPageHelp:         @{@"class": @"SSHelpPageController"},
+        SSPageHelp:         @{@"class": @"SSHelpPageController", @"singleton": @YES},
     };
     NSDictionary *base = map[pageName];
     if (!base) return nil;

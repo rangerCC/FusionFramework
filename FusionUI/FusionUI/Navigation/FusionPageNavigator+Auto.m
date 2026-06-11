@@ -17,9 +17,29 @@
 
 @implementation FusionPageNavigator(Auto)
 + (NSURL *)generateCallbackUrl:(UIViewController<IFusionPageProtocol>*)controller {
+    // The callback URL must round-trip through -[FusionPageMessage initWithURL:],
+    // which reads the PAGE NAME from the path and the instance NICK from the
+    // "nick" query parameter. A non-singleton page's nick is "pageName_<ts>",
+    // so putting it in the path (as the old code did) made initWithURL: treat
+    // the whole string as the page name → getPageConfig: lookup failed → back
+    // button did nothing. Mirror -[FusionPageMessage generateURL]: path = page
+    // name, nick only in the query when it differs from the page name.
+    NSString *pageName = [controller getPageName];
+    NSString *pageNick = [controller getPageNick];
+    NSString *path;
+    if (pageName.length && ![pageNick isEqualToString:pageName]) {
+        NSMutableDictionary *queryDic = [NSMutableDictionary new];
+        [queryDic setValue:pageNick forKey:@"nick"];
+        NSString *queryText = [NSURL generateQueryText:queryDic];
+        SafeRelease(queryDic);
+        path = [NSString stringWithFormat:@"/%@?%@", pageName, queryText];
+    } else {
+        // Singleton (nick == page name) or missing page name: page name alone.
+        path = [NSString stringWithFormat:@"/%@", (pageName.length ? pageName : pageNick)];
+    }
     NSURL *url = [[NSURL alloc] initWithScheme:FusionScheme
                                           host:FusionPageHost
-                                          path:[NSString stringWithFormat:@"/%@",[controller getPageNick]]];
+                                          path:path];
     return SafeAutoRelease(url);
 }
 

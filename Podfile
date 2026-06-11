@@ -24,7 +24,8 @@ target 'TestApp' do
   pod 'StoryTemplates', :path => '.'
   pod 'StorySettings', :path => '.'
   pod 'StoryProfile', :path => '.'
-  
+
+  pod 'SDWebImage', '~> 5.0'
   pod 'LookinServer', :configurations => ['Debug']
 
 end

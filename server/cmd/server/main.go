@@ -62,7 +62,7 @@ func main() {
 	// --- platform adapters ---
 	var smsSender sms.Sender = sms.DevSender{}
 	if !cfg.SMSDevMode {
-		smsSender = sms.AliyunSender{
+		smsSender = &sms.AliyunSender{
 			AccessKey: cfg.AliyunSMSKey, AccessSecret: cfg.AliyunSMSSecret,
 			SignName: cfg.SMSSignName, TemplateCode: cfg.SMSTemplateCode,
 		}

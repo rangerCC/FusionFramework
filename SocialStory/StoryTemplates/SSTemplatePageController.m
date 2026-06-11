@@ -92,7 +92,7 @@
         // Pop back to the generate page, delivering the chosen scene text.
         FusionPageMessage *message = [[FusionPageMessage alloc] initWithURL:callback
                                                                        args:@{SSArgSceneText: item.scene}];
-        [message setNaviAnimeType:SlideL2R_NaviAnime];
+        [message setNaviAnimeType:SlideR2L_NaviAnime];
         [message setNaviAnimeDirection:FusionNaviAnimeBackward];
         [[self getNavigator] poptoPage:message];
     } else {

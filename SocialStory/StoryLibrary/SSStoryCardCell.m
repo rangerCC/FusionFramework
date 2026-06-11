@@ -5,6 +5,7 @@
 
 #import "SSStoryCardCell.h"
 #import <SocialStoryCore/SocialStoryCore.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 // Shared layout metrics — used by both -layoutSubviews and +heightForStory:.
 static const CGFloat kImageRatio = 0.75;   // image height = width * 3/4
@@ -90,7 +91,8 @@ static const NSInteger kTitleMaxLines = 2;
     } else {
         self.metaLabel.text = [NSString stringWithFormat:@"%ld 字", (long)story.wordCount];
     }
-    [[SSImageLoader shared] loadImageURL:story.imageURL into:self.coverView];
+    NSURL *coverURL = story.imageURL.length ? [NSURL URLWithString:story.imageURL] : nil;
+    [self.coverView sd_setImageWithURL:coverURL];
     [self setNeedsLayout];
 }
 
