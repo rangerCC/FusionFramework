@@ -99,20 +99,16 @@
     UIViewController<IFusionPageProtocol> *targetController = nil;
     if ([pageConfig valueForKey:@"singleton"] &&
         [[pageConfig valueForKey:@"singleton"] boolValue]) {
-        targetController = SafeRetain([_pageDic valueForKey:message.pageName]);
+        assert(_adapter);
+        targetController = SafeRetain([_adapter generateFusionPageController:pageConfig]);
     } else {
         targetController = SafeRetain([_pageDic valueForKey:message.pageNick]);
     }
     if (targetController == nil) {
-        assert(_adapter);
-        targetController = SafeRetain([_adapter generateFusionPageController:pageConfig]);
+        targetController =
+            [[NSClassFromString([pageConfig valueForKey:@"class"]) alloc] initWithConfig:pageConfig];
         [targetController setPageName:message.pageName];
-        if ([pageConfig valueForKey:@"singleton"] &&
-            [[pageConfig valueForKey:@"singleton"] boolValue]) {
-            [targetController setPageNick:message.pageName];
-        } else {
-            [targetController setPageNick:message.pageNick];
-        }
+        [targetController setPageNick:message.pageNick];
     }
     [targetController setNavigator:self];
     return SafeAutoRelease(targetController);

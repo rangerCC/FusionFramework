@@ -223,11 +223,11 @@
 
 #pragma NaviBar
 - (void)onNavigationLeftButtonClick:(id)sender {
-    
+    //子类根据各自情况来决定是否需要继承
 }
 
 - (void)onNavigationRightButtonClick:(id)sender {
-    
+    //子类根据各自情况来决定是否需要继承
 }
 
 #pragma UserTrack

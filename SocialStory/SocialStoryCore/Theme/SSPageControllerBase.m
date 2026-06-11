@@ -72,7 +72,7 @@
         [back setTitleColor:[SSTheme accentColor] forState:UIControlStateNormal];
         [back.titleLabel setFont:[UIFont systemFontOfSize:16]];
         back.accessibilityLabel = @"返回上一页";
-        [back addTarget:self action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
+        [back addTarget:self action:@selector(onNavigationLeftButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [_naviBar setLeftView:back];
     }
 }
@@ -122,7 +122,7 @@
     return message;
 }
 
-- (void)goBack {
+- (void)onNavigationLeftButtonClick:(id)sender {
     if (![self canPopBack]) { return; }
     [[self getNavigator] poptoPage:[self backMessage]];
 }

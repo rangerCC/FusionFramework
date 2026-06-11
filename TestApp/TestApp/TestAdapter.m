@@ -7,6 +7,11 @@
 #import <SocialStoryCore/SocialStoryCore.h>
 #import "SafeARC.h"
 
+@interface TestAdapter ()
+@property (nonatomic, strong) NSMutableDictionary *pages;
+@property (nonatomic, strong) NSLock *pagesLock;
+@end
+
 @implementation TestAdapter
 
 static TestAdapter *_TestAdapter_Instance = nil;
@@ -19,9 +24,41 @@ static TestAdapter *_TestAdapter_Instance = nil;
     return _TestAdapter_Instance;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _pages = [NSMutableDictionary new];
+        _pagesLock = [NSLock new];
+    }
+    return self;
+}
+
 - (UIViewController<IFusionPageProtocol> *)generateFusionPageController:(NSDictionary *)pageConfig {
-    UIViewController<IFusionPageProtocol> *target =
-        [[NSClassFromString([pageConfig valueForKey:@"class"]) alloc] initWithConfig:pageConfig];
+    UIViewController<IFusionPageProtocol> *target = nil;
+    
+    NSString *pageName = pageConfig[@"pageName"];
+    if ([pageName isKindOfClass:[NSString class]] && pageName.length>=0) {
+        [self.pagesLock lock];
+        target = self.pages[pageName];
+        [self.pagesLock unlock];
+    }
+    
+    if (!target) {
+        target =
+            [[NSClassFromString([pageConfig valueForKey:@"class"]) alloc] initWithConfig:pageConfig];
+        assert(target != nil);
+        
+        [target setPageName:pageName];
+        if ([pageConfig valueForKey:@"singleton"] &&
+            [[pageConfig valueForKey:@"singleton"] boolValue]) {
+            [target setPageNick:pageName];
+        }
+        
+        [self.pagesLock lock];
+        self.pages[pageName] = target;
+        [self.pagesLock unlock];
+    }
+    
     return SafeAutoRelease(target);
 }
 
