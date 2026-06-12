@@ -37,6 +37,8 @@ func (h *Handler) RegisterAuthed(r *gin.RouterGroup) {
 	r.GET("/admin/users/:id", h.userDetail)
 	r.POST("/admin/users/:id/quota", h.adjustQuota)
 	r.POST("/admin/users/:id/status", h.setStatus)
+	r.GET("/admin/subscriptions", h.listSubscriptions)
+	r.GET("/admin/audit-logs", h.listAuditLogs)
 	r.GET("/admin/dashboard", h.dashboard)
 }
 
@@ -143,13 +145,69 @@ func (h *Handler) listUsers(c *gin.Context) {
 }
 
 func (h *Handler) userDetail(c *gin.Context) {
-	// Aggregation kept light here; returns the user list row shape plus ids.
-	uid, err := h.repo.userIDByPublic(c.Request.Context(), c.Param("id"))
-	if err != nil || uid == 0 {
+	d, err := h.repo.userDetailByPublic(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		httpx.Fail(c, err)
+		return
+	}
+	if d == nil {
 		httpx.Fail(c, httpx.ErrNotFound)
 		return
 	}
-	httpx.OK(c, gin.H{"user_id": c.Param("id"), "internal_id": uid})
+	httpx.OK(c, gin.H{
+		"profile":      d.Profile,
+		"bindings":     d.Bindings,
+		"children":     d.Children,
+		"subscription": d.Subscription,
+		"usage":        d.Usage,
+	})
+}
+
+func (h *Handler) listSubscriptions(c *gin.Context) {
+	status := c.Query("status")
+	env := c.Query("environment")
+	keyword := c.Query("keyword")
+	page, size := pageParams(c)
+	rows, total, err := h.repo.listSubscriptions(c.Request.Context(), status, env, keyword, size, (page-1)*size)
+	if err != nil {
+		httpx.Fail(c, err)
+		return
+	}
+	items := []subRow{}
+	if rows != nil {
+		items = rows
+	}
+	httpx.OK(c, gin.H{"items": items, "total": total, "page": page, "page_size": size})
+}
+
+func (h *Handler) listAuditLogs(c *gin.Context) {
+	actor := c.Query("actor")
+	action := c.Query("action")
+	target := c.Query("target")
+	page, size := pageParams(c)
+	rows, total, err := h.repo.listAuditLogs(c.Request.Context(), actor, action, target, size, (page-1)*size)
+	if err != nil {
+		httpx.Fail(c, err)
+		return
+	}
+	items := []auditRow{}
+	if rows != nil {
+		items = rows
+	}
+	httpx.OK(c, gin.H{"items": items, "total": total, "page": page, "page_size": size})
+}
+
+// pageParams parses page / page_size query params with sane defaults.
+func pageParams(c *gin.Context) (page, size int) {
+	page, _ = strconv.Atoi(c.DefaultQuery("page", "1"))
+	if page < 1 {
+		page = 1
+	}
+	size, _ = strconv.Atoi(c.DefaultQuery("page_size", "20"))
+	if size < 1 || size > 100 {
+		size = 20
+	}
+	return page, size
 }
 
 type quotaReq struct {
@@ -222,6 +280,7 @@ func (h *Handler) dashboard(c *gin.Context) {
 		httpx.Fail(c, err)
 		return
 	}
+	data["stories_generated_today"] = h.repo.storiesGeneratedToday(c.Request.Context())
 	httpx.OK(c, data)
 }
 

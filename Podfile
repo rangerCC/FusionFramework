@@ -26,6 +26,7 @@ target 'TestApp' do
   pod 'StoryProfile', :path => '.'
 
   pod 'SDWebImage', '~> 5.0'
+  pod 'FMDB', '~> 2.7'
   pod 'LookinServer', :configurations => ['Debug']
 
 end

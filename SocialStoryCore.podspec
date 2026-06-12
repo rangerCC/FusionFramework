@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
   s.name             = 'SocialStoryCore'
   s.version          = '1.0.0'
   s.summary          = 'Shared core for the Social Story Generator app'
-  s.description      = 'Data model, Core Data store, story API client, theme, base page controller and the StoreKit 2 subscription manager.'
+  s.description      = 'Data model, FMDB story store, story/featured/children API clients, theme, base page controller and the StoreKit 2 subscription manager.'
   s.homepage         = 'https://github.com/alitrip/FusionFramework'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Ryou Zhang' => 'zhangryou@gmail.com' }
@@ -17,18 +17,18 @@ Pod::Spec.new do |s|
 
   s.resource_bundles = {
     'SocialStoryCoreResources' => [
-      'SocialStory/SocialStoryCore/Model/SocialStory.xcdatamodeld',
       'SocialStory/SocialStoryCore/DemoStories/*.json'
     ]
   }
 
-  s.frameworks = 'Foundation', 'UIKit', 'CoreData', 'StoreKit'
+  s.frameworks = 'Foundation', 'UIKit', 'StoreKit'
 
   s.dependency 'FusionBase'
   s.dependency 'FusionCore'
   s.dependency 'FusionUI'
   s.dependency 'CoreService'
   s.dependency 'AccountKit'
+  s.dependency 'FMDB'
 
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/FusionBase/FusionBase/CommonHeader'

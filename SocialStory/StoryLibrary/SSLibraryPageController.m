@@ -6,7 +6,6 @@
 #import "SSLibraryPageController.h"
 #import "SSSegmentTabBar.h"
 #import "SSStoryCardCell.h"
-#import <CoreData/CoreData.h>
 #import <FusionUI/FusionPageNavigator+Auto.h>
 #import <FusionUI/FusionNaviAnimeHelper.h>
 
@@ -22,11 +21,11 @@ static const CGFloat kSectionInset = 12.0;
 static const NSInteger kColumnCount = 2;
 
 @interface SSLibraryPageController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,
-                                       NSFetchedResultsControllerDelegate, UIGestureRecognizerDelegate>
+                                       UIGestureRecognizerDelegate>
 @property (nonatomic, strong) SSSegmentTabBar *segmentTabBar;
 @property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic, strong) NSFetchedResultsController *frc;
-@property (nonatomic, strong) NSArray<SSStory *> *demoStories;
+@property (nonatomic, copy) NSArray<SSStory *> *featuredStories; // 精选 (FMDB featured table)
+@property (nonatomic, copy) NSArray<SSStory *> *userStories;     // 我创建的 (FMDB user table)
 @property (nonatomic, assign) SSLibraryTab currentTab;
 @property (nonatomic, strong) UIView *emptyContainer;
 @property (nonatomic, strong) UILabel *emptyLabel;
@@ -40,12 +39,18 @@ static const NSInteger kColumnCount = 2;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.currentTab = SSLibraryTabDemo;
-    self.demoStories = [SSDemoStories allStories];
 
-    self.frc = [[SSStoryStore shared] fetchedResultsControllerWithDelegate:self];
-    [self.frc performFetch:NULL];
+    // First launch: seed the featured table from bundled demos so the 精选 tab
+    // works offline before the first server sync.
+    [[SSStoryDB shared] seedFeaturedIfEmpty:[SSDemoStories allStories]];
+    [self loadLocalData];
 
-    // Keep the user-tab empty-state guidance (add-child vs generate) in sync.
+    // User stories change (save / delete) → re-query and refresh.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onUserStoriesChanged)
+                                                 name:SSUserStoriesDidChangeNotification
+                                               object:nil];
+    // Children change → empty-state guidance (add-child vs generate).
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onChildrenChanged)
                                                  name:SSChildrenDidChangeNotification
@@ -56,8 +61,36 @@ static const NSInteger kColumnCount = 2;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+// Re-read both tables from FMDB into the cached arrays.
+- (void)loadLocalData {
+    self.featuredStories = [[SSStoryStore shared] allFeaturedStories];
+    self.userStories = [[SSStoryStore shared] allUserStories];
+}
+
+- (void)onUserStoriesChanged {
+    if (![self contentBuilt]) { return; }
+    self.userStories = [[SSStoryStore shared] allUserStories];
+    if (self.currentTab == SSLibraryTabUser) {
+        [self.collectionView reloadData];
+        [self updateEmptyState];
+    }
+}
+
 - (void)onChildrenChanged {
     if ([self contentBuilt]) { [self updateEmptyState]; }
+}
+
+// Pull server featured stories; refresh the 精选 tab only if changed.
+- (void)syncFeatured {
+    __weak typeof(self) weakSelf = self;
+    [[SSFeaturedStoryClient shared] refreshWithCompletion:^(BOOL changed, NSError *error) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self || !changed) { return; }
+        self.featuredStories = [[SSStoryStore shared] allFeaturedStories];
+        if (self.currentTab == SSLibraryTabDemo) {
+            [self.collectionView reloadData];
+        }
+    }];
 }
 
 #pragma mark - Build UI
@@ -128,6 +161,9 @@ static const NSInteger kColumnCount = 2;
 
     [self.collectionView reloadData];
     [self updateEmptyState];
+
+    // Pull the latest featured stories from the server (refreshes if changed).
+    [self syncFeatured];
 }
 
 #pragma mark - Tab switching
@@ -143,17 +179,14 @@ static const NSInteger kColumnCount = 2;
 #pragma mark - Data
 
 - (NSInteger)currentCount {
-    return (self.currentTab == SSLibraryTabDemo) ? (NSInteger)self.demoStories.count
-                                                 : (NSInteger)self.frc.fetchedObjects.count;
+    return (self.currentTab == SSLibraryTabDemo) ? (NSInteger)self.featuredStories.count
+                                                 : (NSInteger)self.userStories.count;
 }
 
 - (SSStory *)storyAtIndex:(NSInteger)index {
-    if (self.currentTab == SSLibraryTabDemo) {
-        if (index < 0 || index >= (NSInteger)self.demoStories.count) { return nil; }
-        return self.demoStories[index];
-    }
-    NSManagedObject *obj = [self.frc objectAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
-    return [[SSStoryStore shared] storyFromManagedObject:obj];
+    NSArray<SSStory *> *list = (self.currentTab == SSLibraryTabDemo) ? self.featuredStories : self.userStories;
+    if (index < 0 || index >= (NSInteger)list.count) { return nil; }
+    return list[index];
 }
 
 - (void)updateEmptyState {
@@ -197,26 +230,23 @@ static const NSInteger kColumnCount = 2;
 #pragma mark - Refresh
 
 - (void)onRefresh:(UIRefreshControl *)refresh {
-    [self.frc performFetch:NULL];
+    [self loadLocalData];
     [self.collectionView reloadData];
     [self updateEmptyState];
+    [self syncFeatured];                 // pull server featured (refreshes if changed)
     [refresh endRefreshing];
 }
 
 // The navigator adds pages via addSubview (no UIViewController containment), so
 // viewWillAppear is not reliably re-driven on pop — enterAnimeFinish is. Refresh
-// user stories here so a story created and then backed-out-to shows up. (User
-// edits made while this page is live already arrive via the FRC delegate.)
+// local data + children so a story created and then backed-out-to shows up.
 - (void)enterAnimeFinish {
     [super enterAnimeFinish];
     if (![self contentBuilt]) { return; }
-    [self.frc performFetch:NULL];
-    // Refresh children so the empty-state guidance reflects the latest state.
+    [self loadLocalData];
     [[SSChildStore shared] reloadWithCompletion:nil];
-    if (self.currentTab == SSLibraryTabUser) {
-        [self.collectionView reloadData];
-        [self updateEmptyState];
-    }
+    [self.collectionView reloadData];
+    [self updateEmptyState];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -284,7 +314,7 @@ static const NSInteger kColumnCount = 2;
     [sheet addAction:[UIAlertAction actionWithTitle:@"删除" style:UIAlertActionStyleDestructive
                                             handler:^(UIAlertAction *a) {
         [[SSStoryStore shared] deleteStoryWithID:story.storyID];
-        // FRC's controllerDidChangeContent: will refresh the list.
+        // SSUserStoriesDidChangeNotification → onUserStoriesChanged refreshes.
     }]];
     [sheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
 
@@ -294,15 +324,6 @@ static const NSInteger kColumnCount = 2;
     sheet.popoverPresentationController.sourceRect = cell ? cell.bounds : CGRectMake(point.x, point.y, 1, 1);
 
     [self presentViewController:sheet animated:YES completion:nil];
-}
-
-#pragma mark - FRC
-
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    if (self.currentTab == SSLibraryTabUser) {
-        [self.collectionView reloadData];
-        [self updateEmptyState];
-    }
 }
 
 @end

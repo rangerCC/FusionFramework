@@ -32,6 +32,11 @@
     [SSStoryStore shared];
     [[SubscriptionManager shared] refreshSubscriptionStatusWithCompletion:nil];
 
+    // Featured stories: seed from bundled demos on first launch (offline-ready),
+    // then pull the server list (ETag-cached; refreshes the library if changed).
+    [[SSStoryDB shared] seedFeaturedIfEmpty:[SSDemoStories allStories]];
+    [[SSFeaturedStoryClient shared] refreshWithCompletion:nil];
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     _navigator = [FusionPageNavigator new];
     [_navigator.view setBackgroundColor:[SSTheme backgroundColor]];

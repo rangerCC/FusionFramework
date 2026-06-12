@@ -49,8 +49,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat speakingRate;        // default 0.75
 @property (nonatomic, copy, nullable) NSString *voiceName;
 
+// Full original coze JSON string (lossless). Persisted so fields not mapped to
+// properties (playback_tips, voice_id, format_spec, ...) survive a round-trip.
+@property (nonatomic, copy, nullable) NSString *rawJSON;
+
 /// Build a story from the Coze response dictionary.
 + (instancetype)storyFromCozeResponse:(NSDictionary *)json;
+
+/// Build a story from a stored raw coze JSON string (round-trips rawJSON).
++ (nullable instancetype)storyFromRawJSON:(NSString *)rawJSON;
 
 @end
 

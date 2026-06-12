@@ -39,17 +39,24 @@ Query：`?keyword=138****&page=1&page_size=20&status=1`
 
 ---
 
-## GET /v1/admin/users/{user_id} — 用户详情
+## GET /v1/admin/users/{user_id} — 用户详情（聚合）
 
-响应聚合：资料、绑定、孩子列表、订阅状态、当月额度。
+响应聚合：资料、登录绑定、孩子列表、最新订阅、当月额度。
 ```json
 { "code": 0, "data": {
-    "profile": { ... },
-    "children": [ ... ],
-    "subscription": { "is_active": true, "product_id": "...", "expires_at": "..." },
+    "profile": { "user_id": "u_...", "nickname": "家长_8000", "avatar_url": null,
+                 "status": 1, "app_account_token": "uuid", "created_at": "..." },
+    "bindings": [ { "provider": "phone", "identifier": "138****8000" } ],
+    "children": [ { "child_id": "c_...", "name": "乐乐", "gender": "boy",
+                    "birthday": "2019-05-01", "diagnosis_type": "asd",
+                    "language_level": "simple", "is_default": true } ],
+    "subscription": { "product_id": "...", "status": "active", "expires_at": "...",
+                      "auto_renew": true, "environment": "Production" },
     "usage": { "period": "2026-06", "used": 2, "quota": 3 }
   } }
 ```
+- `subscription` 为 `null` 表示无订阅记录；`usage.quota` 为 `null` 表示当月尚无额度行（视为默认配额）。
+- 错误：`1004`（用户不存在）。
 
 ---
 
@@ -92,13 +99,63 @@ Query：`?keyword=138****&page=1&page_size=20&status=1`
 
 ---
 
-## GET /v1/admin/subscriptions — 订阅流水
+## GET /v1/admin/subscriptions — 订阅列表
 
-Query：`?status=active&page=1&page_size=20`
-返回 `subscriptions` join 用户的分页列表，用于核对 Apple 通知处理情况。
+`subscriptions` join 用户的分页列表，用于核对 Apple 通知处理情况。
+
+Query：`?status=active&environment=Production&keyword=138****&page=1&page_size=20`
+（`status` / `environment` / `keyword` 均可选；keyword 匹配昵称或手机号）
+
+响应：
+```json
+{ "code": 0, "data": {
+    "items": [
+      { "user_id": "u_...", "nickname": "家长_8000", "product_id": "com.alitrip.socialstory.yearly",
+        "status": "active", "expires_at": "...", "auto_renew": true,
+        "environment": "Production", "updated_at": "..." }
+    ],
+    "total": 12, "page": 1, "page_size": 20
+  } }
+```
+
+---
+
+## GET /v1/admin/audit-logs — 审计日志
+
+所有写操作（改额度、封禁等）的流水，倒序。
+
+Query：`?actor=admin&action=quota&target=u_xxx&page=1&page_size=20`（均可选，模糊匹配）
+
+响应：
+```json
+{ "code": 0, "data": {
+    "items": [
+      { "actor": "admin", "action": "quota.adjust", "target": "u_...",
+        "detail": { "delta": 3, "reason": "客诉补偿" }, "created_at": "..." }
+    ],
+    "total": 34, "page": 1, "page_size": 20
+  } }
+```
+
+---
+
+## GET /v1/admin/featured-stories — 精选故事管理列表
+
+管理用全量列表（不走 ETag/304，含 `sort`）。增删见 [07-featured-stories.md](07-featured-stories.md)。
+
+响应：
+```json
+{ "code": 0, "data": {
+    "items": [
+      { "story_id": "feat_...", "title": "我和爸爸妈妈去聚餐", "image_url": "https://...",
+        "word_count": 75, "sort": 1, "created_at": "..." }
+    ],
+    "total": 3
+  } }
+```
 
 ---
 
 ## 审计
 
-所有写操作（改额度、封禁、注销）写 `audit_logs(actor, action, target, detail, created_at)`，便于追责。
+所有写操作（改额度、封禁、注销）写 `audit_logs(actor, action, target, detail, created_at)`，便于追责。可经 `GET /v1/admin/audit-logs` 查询。

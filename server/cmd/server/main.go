@@ -24,6 +24,7 @@ import (
 	"github.com/alitrip/socialstory-server/internal/platform/oss"
 	"github.com/alitrip/socialstory-server/internal/platform/redisx"
 	"github.com/alitrip/socialstory-server/internal/platform/sms"
+	"github.com/alitrip/socialstory-server/internal/stories"
 	"github.com/alitrip/socialstory-server/internal/subscription"
 	"github.com/alitrip/socialstory-server/internal/usage"
 )
@@ -86,6 +87,7 @@ func main() {
 	usageH := usage.NewHandler(pool, subSvc, cfg.MonthlyFreeQuota) // subSvc implements SubChecker
 	adminOps := usage.NewAdminOps(pool, cfg.MonthlyFreeQuota)
 	adminH := admin.NewHandler(pool, ids, jwtMgr, adminOps)
+	storiesH := stories.NewHandler(pool, ids)
 
 	// --- router ---
 	if !cfg.IsDev() {
@@ -100,8 +102,9 @@ func main() {
 
 	// public
 	authH.Register(v1)
-	subH.RegisterPublic(v1)   // Apple webhook
-	adminH.RegisterPublic(v1) // admin login
+	subH.RegisterPublic(v1)     // Apple webhook
+	adminH.RegisterPublic(v1)   // admin login
+	storiesH.RegisterPublic(v1) // featured stories list (public, ETag-cached)
 
 	// authed (app user)
 	authed := v1.Group("")
@@ -116,6 +119,7 @@ func main() {
 	adminG := v1.Group("")
 	adminG.Use(adminH.AdminAuth())
 	adminH.RegisterAuthed(adminG)
+	storiesH.RegisterAdmin(adminG) // featured stories insert/delete
 
 	// --- serve with graceful shutdown ---
 	srv := &http.Server{Addr: ":" + cfg.Port, Handler: r}

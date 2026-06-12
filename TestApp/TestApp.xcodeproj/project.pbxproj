@@ -250,6 +250,7 @@
 				"${BUILT_PRODUCTS_DIR}/AccountKit/AccountKit.framework",
 				"${BUILT_PRODUCTS_DIR}/CoreService/CoreService.framework",
 				"${BUILT_PRODUCTS_DIR}/Enviroment/Enviroment.framework",
+				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/FusionBase/FusionBase.framework",
 				"${BUILT_PRODUCTS_DIR}/FusionCore/FusionCore.framework",
 				"${BUILT_PRODUCTS_DIR}/FusionUI/FusionUI.framework",
@@ -270,6 +271,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AccountKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreService.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Enviroment.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionBase.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionUI.framework",
@@ -413,7 +415,7 @@
 				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.TestApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.ssgen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -428,7 +430,7 @@
 				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.TestApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.ssgen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

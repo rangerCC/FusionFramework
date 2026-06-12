@@ -42,6 +42,10 @@ var (
 	// Usage 6xxx
 	ErrQuotaExhausted = NewError(6001, http.StatusForbidden, "本月免费次数已用完")
 
+	// Featured stories 7xxx
+	ErrStoryBadFormat = NewError(7001, http.StatusBadRequest, "故事数据格式错误")
+	ErrStoryNotFound  = NewError(7002, http.StatusNotFound, "故事不存在")
+
 	// Admin 9xxx
 	ErrAdminUnauth    = NewError(9001, http.StatusUnauthorized, "管理员未登录")
 	ErrAdminForbidden = NewError(9002, http.StatusForbidden, "权限不足")

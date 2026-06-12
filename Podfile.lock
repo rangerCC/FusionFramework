@@ -18,6 +18,11 @@ PODS:
     - Utility
   - Enviroment (1.0.0):
     - FusionBase
+  - FMDB (2.7.12):
+    - FMDB/standard (= 2.7.12)
+  - FMDB/Core (2.7.12)
+  - FMDB/standard (2.7.12):
+    - FMDB/Core
   - FusionBase (1.0.0)
   - FusionCore (1.0.0):
     - FusionBase
@@ -33,6 +38,7 @@ PODS:
   - SocialStoryCore (1.0.0):
     - AccountKit
     - CoreService
+    - FMDB
     - FusionBase
     - FusionCore
     - FusionUI
@@ -68,6 +74,7 @@ DEPENDENCIES:
   - AccountKit (from `.`)
   - CoreService (from `.`)
   - Enviroment (from `.`)
+  - FMDB (~> 2.7)
   - FusionBase (from `.`)
   - FusionCore (from `.`)
   - FusionUI (from `.`)
@@ -85,6 +92,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - FMDB
     - LookinServer
     - SDWebImage
 
@@ -124,12 +132,13 @@ SPEC CHECKSUMS:
   AccountKit: 2de5359db9f7db4a4e0c8339274c4d82eed1e00f
   CoreService: 95d5c79ffb006fb5c286b9ee06d89677619d5c40
   Enviroment: 19515c3183d2b85c5e3764097638c7783f0bf608
+  FMDB: 728731dd336af3936ce00f91d9d8495f5718a0e6
   FusionBase: 3e39e3812b3c60499bc129158f3160a633a3fd69
   FusionCore: 3093f3420f9ee331d244a03f9f3878ab672db3db
   FusionUI: e7caafbb549aeec95682397e2b3a04b2d1b074b9
   LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
-  SocialStoryCore: 36abc1e67735d8ae1654d076a196a07d0f42a24a
+  SocialStoryCore: 2f91fd6e5535e585eeb96d866b7eacb2542d9454
   StoryGeneration: b53add16a699883c623e13fde6fa231cdd10acf2
   StoryLibrary: d63871f992fdfd656acc9b61d9ed335f0df063d3
   StoryProfile: 10bc52f84e438bdaf35988b4407312e1a6cb833c
@@ -139,6 +148,6 @@ SPEC CHECKSUMS:
   StoryTemplates: 0b6e9b9b55610e158776da69aa3fcaf32fc84186
   Utility: 9007ef782e4ff29e38ac6657bad72d00725c75e7
 
-PODFILE CHECKSUM: 2c252715422c851b0e405a32f04b0896c0eb9c6c
+PODFILE CHECKSUM: 9085b884915d4a1badc7a5ced17271882dbed177
 
 COCOAPODS: 1.16.2

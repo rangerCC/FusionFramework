@@ -75,7 +75,21 @@ static NSString *SSStr(id v) {
     CGFloat rate = [voice[@"speaking_rate"] respondsToSelector:@selector(doubleValue)] ? [voice[@"speaking_rate"] doubleValue] : 0.0;
     story.speakingRate = (rate > 0.0) ? rate : 0.75;
 
+    // Keep the full original JSON (lossless) so unmapped fields survive storage.
+    NSData *raw = [NSJSONSerialization dataWithJSONObject:json options:0 error:NULL];
+    if (raw) {
+        story.rawJSON = [[NSString alloc] initWithData:raw encoding:NSUTF8StringEncoding];
+    }
+
     return story;
+}
+
++ (instancetype)storyFromRawJSON:(NSString *)rawJSON {
+    if (rawJSON.length == 0) { return nil; }
+    NSData *data = [rawJSON dataUsingEncoding:NSUTF8StringEncoding];
+    id json = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL] : nil;
+    if (![json isKindOfClass:[NSDictionary class]]) { return nil; }
+    return [self storyFromCozeResponse:json];
 }
 
 @end

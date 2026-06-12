@@ -87,7 +87,7 @@ static const NSInteger kTitleMaxLines = 2;
     self.titleLabel.text = story.title;
     self.coverView.accessibilityLabel = story.title;
     if (isDemo) {
-        self.metaLabel.text = [NSString stringWithFormat:@"内置 · %ld 页", (long)story.pages.count];
+        self.metaLabel.text = [NSString stringWithFormat:@"精选 · %ld 页", (long)story.pages.count];
     } else {
         self.metaLabel.text = [NSString stringWithFormat:@"%ld 字", (long)story.wordCount];
     }

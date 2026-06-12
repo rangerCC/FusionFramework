@@ -2,43 +2,50 @@
 //  SSStoryStore.h
 //  SocialStoryCore
 //
-//  Core Data persistence for stories. Currently backed by a local
-//  NSPersistentContainer; see `useCloudKit` for the CloudKit switch point.
+//  Facade over local story storage (FMDB, see SSStoryDB). User-created stories
+//  live in the user table; server-synced featured stories live in the featured
+//  table. Demo stories are seeded into the featured table on first launch.
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
 
 @class SSStory;
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Posted when user stories change (save / delete / clear). UI re-queries.
+extern NSString *const SSUserStoriesDidChangeNotification;
+
 @interface SSStoryStore : NSObject
 
 + (instancetype)shared;
 
-@property (nonatomic, readonly) NSManagedObjectContext *viewContext;
+#pragma mark - User stories
 
-/// Insert or update a story, then save.
+/// Insert or update a user-created story, then notify observers.
 - (void)saveStory:(SSStory *)story;
 
-/// Delete by storyID, then save (and, when enabled, sync the delete to iCloud).
+/// Delete a user story by id, then notify observers.
 - (void)deleteStoryWithID:(NSString *)storyID;
 
-/// Update lastReadAt for a story.
+/// Update lastReadAt for a user story.
 - (void)markStoryReadWithID:(NSString *)storyID;
 
-/// Remove every stored story.
+/// Remove every user story, then notify observers.
 - (void)deleteAllStories;
 
-/// Convert a managed object into a plain model.
-- (SSStory *)storyFromManagedObject:(NSManagedObject *)object;
+/// All user-created stories, newest first.
+- (NSArray<SSStory *> *)allUserStories;
 
-/// Fetch a single story model by id (nil if missing).
+#pragma mark - Featured stories
+
+/// All featured (精选) stories from the local table.
+- (NSArray<SSStory *> *)allFeaturedStories;
+
+#pragma mark - Lookup
+
+/// Fetch a single story by id (featured or user), nil if missing.
 - (nullable SSStory *)storyWithID:(NSString *)storyID;
-
-/// FetchedResultsController over CDStory sorted by createdAt desc.
-- (NSFetchedResultsController *)fetchedResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 @end
 
