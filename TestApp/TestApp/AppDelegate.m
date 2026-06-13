@@ -8,7 +8,9 @@
 
 #import "AppDelegate.h"
 #import "TestAdapter.h"
+#import "CozeService.h"
 #import <FusionUI/FusionUI.h>
+#import <FusionCore/FusionCore.h>
 
 @interface AppDelegate () {
 @private
@@ -19,6 +21,8 @@
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [self registerSystemThinkerServices];
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     _navigator = [FusionPageNavigator new];
     [_navigator.view setBackgroundColor:[UIColor whiteColor]];
@@ -27,14 +31,31 @@
     [self.window setRootViewController:_navigator];
     [self.window makeKeyAndVisible];
     {
-        FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:@"TestPageA"
+        FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:@"ChatPage"
                                                                         pageNick:nil
                                                                          command:@"init"
-                                                                            args:@{@"user":@"good"}
+                                                                            args:@{}
                                                                         callback:nil];
         [_navigator gotoPage:message];
     }
     return YES;
+}
+
+// 代码直接注册 CozeService（TestApp 无 Lua 运行时引导，故在此手动注册）。
+// 服务名/Actor 名须与 TestApp/Script/Service/CozeService.lua 一致，
+// 以便 MacroMaker 生成的 COZESERVICE_SERVICE / WORKFLOW_ACTOR 宏可用。
+- (void)registerSystemThinkerServices {
+    NSDictionary *config = @{
+        @"name": @"cozeService",
+        @"class": @"CozeService",
+        @"thread_type": @(FusionService_NET),
+        @"actors": @{
+            @"workflow": @{ @"class": @"CozeWorkflowActor" }
+        }
+    };
+    CozeService *service = [[CozeService alloc] initWithConfig:config];
+    [service setName:@"cozeService"];
+    [[FusionCore getInstance] registerCoreService:service];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -1,0 +1,80 @@
+/* bubble.css — 助手气泡 Markdown 样式（含 GFM 表格、暗色适配） */
+* { -webkit-user-select: text; -webkit-touch-callout: none; box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: transparent;
+  font: 16px/1.5 -apple-system, "PingFang SC", Helvetica, sans-serif;
+  color: #1a1a1a;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+#content { padding: 0; }
+
+h1, h2, h3, h4, h5, h6 { margin: 0.5em 0 0.3em; font-weight: 600; line-height: 1.3; }
+h1 { font-size: 1.4em; } h2 { font-size: 1.25em; } h3 { font-size: 1.12em; }
+h4, h5, h6 { font-size: 1em; }
+p { margin: 0.4em 0; }
+ul, ol { margin: 0.4em 0; padding-left: 1.4em; }
+li { margin: 0.2em 0; }
+strong { font-weight: 600; }
+em { font-style: italic; }
+a { color: #0a84ff; text-decoration: none; }
+
+code {
+  font-family: Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  background: rgba(0,0,0,0.06);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  color: #c7254e;
+}
+pre {
+  background: rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+pre code { background: none; padding: 0; color: inherit; }
+
+blockquote {
+  margin: 0.5em 0; padding: 0.2em 0.8em;
+  border-left: 3px solid #c7c7cc;
+  color: #6b6b6b;
+}
+hr { border: none; border-top: 1px solid #d1d1d6; margin: 0.8em 0; }
+
+/* GFM 表格 */
+table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  width: auto;
+  max-width: 100%;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid #d1d1d6;
+  padding: 6px 10px;
+  text-align: left;
+}
+th { background: rgba(0,0,0,0.04); font-weight: 600; }
+tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+
+/* 打字机光标 */
+.tw-cursor::after {
+  content: "▋";
+  color: #0a84ff;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { 0%,50% { opacity: 1; } 50.01%,100% { opacity: 0; } }
+
+@media (prefers-color-scheme: dark) {
+  html, body { color: #e5e5e7; }
+  code { background: rgba(255,255,255,0.12); color: #ff8aae; }
+  pre { background: rgba(255,255,255,0.08); }
+  blockquote { border-left-color: #48484a; color: #aeaeb2; }
+  th, td { border-color: #48484a; }
+  th { background: rgba(255,255,255,0.06); }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+  hr { border-top-color: #48484a; }
+}

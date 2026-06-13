@@ -8,6 +8,12 @@ require('Script/FusionTimerTask')
 
 print('Start executing MacroMaker')
 
+-- Lua 5.2+ removed the global `loadstring` (use `load`). Shim for forward compat
+-- so this script runs on Lua 5.1 through 5.5.
+if loadstring == nil then
+	loadstring = load
+end
+
 os.execute('rm -rf Script.bundle')
 os.execute('mkdir Script.bundle')
 

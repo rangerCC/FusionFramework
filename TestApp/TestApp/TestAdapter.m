@@ -44,6 +44,25 @@ static TestAdapter *_TestAdapter_Instance = nil;
                  @"class": @"TestCPageController",
                  @"title": @"Hello world"
                  };
+    } else if ([pageName isEqualToString:@"ChatPage"]) {
+        return @{
+                 @"pageName": @"ChatPage",
+                 @"class": @"STChatPageController",
+                 @"title": @"SystemThinker",
+                 @"singleton": @YES
+                 };
+    } else if ([pageName isEqualToString:@"HistoryPage"]) {
+        return @{
+                 @"pageName": @"HistoryPage",
+                 @"class": @"STHistoryPageController",
+                 @"title": @"历史记录"
+                 };
+    } else if ([pageName isEqualToString:@"SettingsPage"]) {
+        return @{
+                 @"pageName": @"SettingsPage",
+                 @"class": @"STSettingsPageController",
+                 @"title": @"设置"
+                 };
     }
     return nil;
 }

@@ -35,14 +35,34 @@
 }
 
 - (CGFloat)getNaviBarHeight {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
-        return 44.0;        
-    }
     if (self.superview.frame.size.width > self.superview.frame.size.height) {
         return 44.0;
-    } else {
-        return 64.0;
     }
+    return [self safeTopInset] + 44.0;
+}
+
+// 状态栏 / 安全区顶部内边距。iOS 11+ 用 safeAreaInsets.top
+// （刘海屏 44/47/59pt，非刘海 20pt）；更早版本回退到 20pt。
+- (CGFloat)safeTopInset {
+    CGFloat top = 0.0;
+    if (@available(iOS 11.0, *)) {
+        top = self.safeAreaInsets.top;
+        if (top <= 0.0) {
+            // Before this bar is in the hierarchy, fall back to the key window.
+            UIWindow *window = nil;
+            for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                if ([scene isKindOfClass:[UIWindowScene class]]) {
+                    for (UIWindow *w in ((UIWindowScene *)scene).windows) {
+                        if (w.isKeyWindow) { window = w; break; }
+                    }
+                }
+            }
+            top = window ? window.safeAreaInsets.top : 0.0;
+        }
+    }
+    // Status-bar fallback for non-notched devices.
+    if (top <= 0.0) { top = 20.0; }
+    return top;
 }
 
 - (void)setLeftView:(UIView *)leftView {
@@ -77,30 +97,42 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
-    CGFloat topOffset = 0.0;
-    if ([self getNaviBarHeight] == 64.0) {
-        topOffset = 20.0;
+
+    CGFloat topOffset = [self isNotchScreen] ? [self safeTopInset] : 0.0;
+    CGFloat h = self.frame.size.height - topOffset;
+
+    if (self.leftView) {
+        self.leftView.frame = CGRectMake(0, topOffset, self.leftViewWidth, h);
     }
-    
-    if (_leftView) {
-        [_leftView setFrame:CGRectMake(0,
-                                       topOffset,
-                                       _leftViewWidth,
-                                       self.frame.size.height - topOffset)];
+    if (self.centerView) {
+        self.centerView.frame = CGRectMake(self.leftViewWidth, topOffset,
+                                           self.frame.size.width - self.leftViewWidth - self.rightViewWidth, h);
     }
-    if (_centerView) {
-        [_centerView setFrame:CGRectMake(_leftViewWidth,
-                                         topOffset,
-                                         self.frame.size.width - _leftViewWidth - _rightViewWidth,
-                                         self.frame.size.height - topOffset)];
+    if (self.rightView) {
+        self.rightView.frame = CGRectMake(self.frame.size.width - self.rightViewWidth, topOffset,
+                                          self.rightViewWidth, h);
     }
-    if (_rightView) {
-        [_rightView setFrame:CGRectMake(self.frame.size.width - _rightViewWidth,
-                                        topOffset,
-                                        _rightViewWidth,
-                                        self.frame.size.height - topOffset)];
+}
+
+- (BOOL)isNotchScreen {
+    // iPad直接返回NO
+    if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPhone) {
+        return NO;
     }
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+        if (!window) return NO;
+        if(window.safeAreaInsets.bottom <= 0) return NO;
+        
+        // iOS16区分灵动岛
+        if (@available(iOS 16.0, *)) {
+            CGFloat topInset = window.safeAreaInsets.top;
+            // top≈44=刘海，top≈59=灵动岛
+            return topInset < 50;
+        }
+        return YES;
+    }
+    return NO;
 }
 
 - (void)dealloc {

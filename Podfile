@@ -13,6 +13,11 @@ target 'TestApp' do
   pod 'FusionUI', :path => '.'
   pod 'CoreService', :path => '.'
   pod 'Enviroment', :path => '.'
+  pod 'WebViewKit', :path => '.'
+
+  pod 'AFNetworking', '~> 4.0'
+  pod 'FMDB', '~> 2.7'
+  pod 'LookinServer', :configurations => ['Debug']
 end
 
 post_install do |installer|
