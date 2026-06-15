@@ -175,7 +175,7 @@
 				TargetAttributes = {
 					20969D931A64019F00E9C377 = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 6547856335;
+						DevelopmentTeam = M3LNPXU799;
 					};
 				};
 			};
@@ -410,12 +410,12 @@
 			baseConfigurationReference = ACD7B84F8C1D9DA3DD51885D /* Pods-TestApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 6547856335;
+				DEVELOPMENT_TEAM = M3LNPXU799;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.ssgen;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.ssgen.socialstory;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -425,12 +425,12 @@
 			baseConfigurationReference = E6BFBA9FFE5B70F90866133E /* Pods-TestApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 6547856335;
+				DEVELOPMENT_TEAM = M3LNPXU799;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = TestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.ssgen;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.ssgen.socialstory;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

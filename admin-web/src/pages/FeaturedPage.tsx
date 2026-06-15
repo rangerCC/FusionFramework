@@ -13,6 +13,7 @@ export default function FeaturedPage() {
   const [rows, setRows] = useState<FeaturedRow[]>([])
   const [loading, setLoading] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
+  const [detail, setDetail] = useState<FeaturedRow | null>(null)
   const [form] = Form.useForm()
   const canManage = hasRole('super', 'support')
 
@@ -48,6 +49,16 @@ export default function FeaturedPage() {
     load()
   }
 
+  const detailText = detail
+    ? (() => {
+        try {
+          return JSON.stringify(detail.raw, null, 2)
+        } catch {
+          return String(detail.raw)
+        }
+      })()
+    : ''
+
   const columns: ColumnsType<FeaturedRow> = [
     {
       title: '封面', dataIndex: 'image_url', width: 90,
@@ -58,6 +69,12 @@ export default function FeaturedPage() {
     { title: '排序', dataIndex: 'sort', width: 80 },
     { title: '故事ID', dataIndex: 'story_id', width: 200, render: (v) => <Text copyable>{v}</Text> },
     { title: '创建时间', dataIndex: 'created_at', width: 180, render: (v) => new Date(v).toLocaleString() },
+    {
+      title: '详情', width: 80,
+      render: (_: unknown, r: FeaturedRow) => (
+        <Button size="small" type="link" onClick={() => setDetail(r)}>详情</Button>
+      ),
+    },
     ...(canManage
       ? [{
           title: '操作', width: 100,
@@ -90,6 +107,34 @@ export default function FeaturedPage() {
             <TextArea rows={14} placeholder='{ "story_title": "...", "pages": [ ... ], ... }' />
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="故事详情"
+        open={!!detail}
+        onCancel={() => setDetail(null)}
+        width={760}
+        footer={[
+          <Button
+            key="copy"
+            type="primary"
+            onClick={() => {
+              navigator.clipboard.writeText(detailText)
+                .then(() => message.success('已复制故事原始数据'))
+                .catch(() => message.error('复制失败，请手动选择复制'))
+            }}
+          >
+            一键复制
+          </Button>,
+          <Button key="close" onClick={() => setDetail(null)}>关闭</Button>,
+        ]}
+      >
+        <TextArea
+          value={detailText}
+          readOnly
+          autoSize={{ minRows: 16, maxRows: 24 }}
+          style={{ fontFamily: 'monospace', fontSize: 12 }}
+        />
       </Modal>
     </Card>
   )

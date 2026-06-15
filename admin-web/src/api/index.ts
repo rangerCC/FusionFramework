@@ -52,6 +52,7 @@ export interface FeaturedRow {
   word_count: number
   sort: number
   created_at: string
+  raw: unknown
 }
 
 export interface DashboardData {

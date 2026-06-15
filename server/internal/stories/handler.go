@@ -49,6 +49,7 @@ func (h *Handler) adminList(c *gin.Context) {
 			"word_count": s.WordCount,
 			"sort":       s.Sort,
 			"created_at": s.CreatedAt,
+			"raw":        json.RawMessage(s.RawJSON), // full coze JSON for the detail view
 		})
 	}
 	httpx.OK(c, gin.H{"items": items, "total": len(items)})
