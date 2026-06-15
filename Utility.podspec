@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Ryou Zhang' => 'zhangryou@gmail.com' }
   s.source           = { :git => 'https://github.com/alitrip/FusionFramework.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '15.0'
   s.requires_arc = true
 
   s.source_files = 'Utility/Utility/**/*.{h,m,c}'

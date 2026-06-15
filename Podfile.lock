@@ -1,4 +1,22 @@
 PODS:
+  - AFNetworking (4.0.1):
+    - AFNetworking/NSURLSession (= 4.0.1)
+    - AFNetworking/Reachability (= 4.0.1)
+    - AFNetworking/Security (= 4.0.1)
+    - AFNetworking/Serialization (= 4.0.1)
+    - AFNetworking/UIKit (= 4.0.1)
+  - AFNetworking/NSURLSession (4.0.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (4.0.1)
+  - AFNetworking/Security (4.0.1)
+  - AFNetworking/Serialization (4.0.1)
+  - AFNetworking/UIKit (4.0.1):
+    - AFNetworking/NSURLSession
+  - CocoaLumberjack (3.9.1):
+    - CocoaLumberjack/Core (= 3.9.1)
+  - CocoaLumberjack/Core (3.9.1)
   - CoreService (1.0.0):
     - CoreService/Core (= 1.0.0)
     - CoreService/Reachability (= 1.0.0)
@@ -16,23 +34,51 @@ PODS:
     - Utility
   - Enviroment (1.0.0):
     - FusionBase
+  - FMDB (2.7.12):
+    - FMDB/standard (= 2.7.12)
+  - FMDB/Core (2.7.12)
+  - FMDB/standard (2.7.12):
+    - FMDB/Core
   - FusionBase (1.0.0)
   - FusionCore (1.0.0):
     - FusionBase
     - Utility
   - FusionUI (1.0.0):
     - FusionBase
+  - IQKeyboardManager (6.5.19)
+  - Masonry (1.1.0)
+  - MJRefresh (3.7.9)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
   - Utility (1.0.0):
     - Enviroment
     - FusionBase
 
 DEPENDENCIES:
+  - AFNetworking (~> 4.0)
+  - CocoaLumberjack (~> 3.9)
   - CoreService (from `.`)
   - Enviroment (from `.`)
+  - FMDB (~> 2.7)
   - FusionBase (from `.`)
   - FusionCore (from `.`)
   - FusionUI (from `.`)
+  - IQKeyboardManager
+  - Masonry (~> 1.1)
+  - MJRefresh (~> 3.7)
+  - SDWebImage (~> 5.21)
   - Utility (from `.`)
+
+SPEC REPOS:
+  trunk:
+    - AFNetworking
+    - CocoaLumberjack
+    - FMDB
+    - IQKeyboardManager
+    - Masonry
+    - MJRefresh
+    - SDWebImage
 
 EXTERNAL SOURCES:
   CoreService:
@@ -49,13 +95,20 @@ EXTERNAL SOURCES:
     :path: "."
 
 SPEC CHECKSUMS:
+  AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
+  CocoaLumberjack: e4ba3b414dfca8c1916c6303d37f63b3a95134c6
   CoreService: 851ec8f6805af18839467b8e3b261778b9d2f6db
   Enviroment: 444f7205daba90f59f2bd5b223b99a8f908b79b1
+  FMDB: 728731dd336af3936ce00f91d9d8495f5718a0e6
   FusionBase: 711aedc5079fe4a2d3471d47c7f5833578d82523
   FusionCore: 866ecce87cfbf74db3756222062e6e2fe43d3708
   FusionUI: 394aa482e48829ccd3d645032258b7dc197106db
+  IQKeyboardManager: c8665b3396bd0b79402b4c573eac345a31c7d485
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   Utility: 84b9c3cfda5275846a3ff4a20b490a5f031ba6e6
 
-PODFILE CHECKSUM: ba999fad0c3fc00e5a39bb06ae5e514b51f7c786
+PODFILE CHECKSUM: 3ca1e89c2b38f4bf70ae0468a30acdeeb7154b7b
 
 COCOAPODS: 1.16.2

@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "TestAdapter.h"
 #import <FusionUI/FusionUI.h>
+#import <IQKeyboardManager/IQKeyboardManager.h>
 
 @interface AppDelegate () {
 @private
@@ -19,6 +20,8 @@
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [[IQKeyboardManager sharedManager] setEnable:YES];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     _navigator = [FusionPageNavigator new];
     [_navigator.view setBackgroundColor:[UIColor whiteColor]];
