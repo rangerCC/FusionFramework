@@ -3,19 +3,7 @@ PODS:
     - FusionBase
   - CoreService (1.0.0):
     - CoreService/Core (= 1.0.0)
-    - CoreService/Reachability (= 1.0.0)
-    - FusionBase
-    - FusionCore
-    - Utility
-  - CoreService/Core (1.0.0):
-    - CoreService/Reachability
-    - FusionBase
-    - FusionCore
-    - Utility
-  - CoreService/Reachability (1.0.0):
-    - FusionBase
-    - FusionCore
-    - Utility
+  - CoreService/Core (1.0.0)
   - Enviroment (1.0.0):
     - FusionBase
   - FMDB (2.7.12):
@@ -130,7 +118,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AccountKit: 2de5359db9f7db4a4e0c8339274c4d82eed1e00f
-  CoreService: 95d5c79ffb006fb5c286b9ee06d89677619d5c40
+  CoreService: 66c69a344a66171f09d8f0cd91a14d22a026fad5
   Enviroment: 19515c3183d2b85c5e3764097638c7783f0bf608
   FMDB: 728731dd336af3936ce00f91d9d8495f5718a0e6
   FusionBase: 3e39e3812b3c60499bc129158f3160a633a3fd69
