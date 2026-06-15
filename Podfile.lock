@@ -18,17 +18,7 @@ PODS:
     - CocoaLumberjack/Core (= 3.9.1)
   - CocoaLumberjack/Core (3.9.1)
   - CoreService (1.0.0):
-    - CoreService/Core (= 1.0.0)
-    - CoreService/Reachability (= 1.0.0)
-    - FusionBase
-    - FusionCore
-    - Utility
-  - CoreService/Core (1.0.0):
-    - CoreService/Reachability
-    - FusionBase
-    - FusionCore
-    - Utility
-  - CoreService/Reachability (1.0.0):
+    - AFNetworking (~> 4.0)
     - FusionBase
     - FusionCore
     - Utility
@@ -97,18 +87,18 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
   CocoaLumberjack: e4ba3b414dfca8c1916c6303d37f63b3a95134c6
-  CoreService: 851ec8f6805af18839467b8e3b261778b9d2f6db
-  Enviroment: 444f7205daba90f59f2bd5b223b99a8f908b79b1
+  CoreService: c56e3c1b10113dbaaf39a4561820f455a4216c6a
+  Enviroment: 19515c3183d2b85c5e3764097638c7783f0bf608
   FMDB: 728731dd336af3936ce00f91d9d8495f5718a0e6
-  FusionBase: 711aedc5079fe4a2d3471d47c7f5833578d82523
-  FusionCore: 866ecce87cfbf74db3756222062e6e2fe43d3708
-  FusionUI: 394aa482e48829ccd3d645032258b7dc197106db
+  FusionBase: 3e39e3812b3c60499bc129158f3160a633a3fd69
+  FusionCore: 3093f3420f9ee331d244a03f9f3878ab672db3db
+  FusionUI: e7caafbb549aeec95682397e2b3a04b2d1b074b9
   IQKeyboardManager: c8665b3396bd0b79402b4c573eac345a31c7d485
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
-  Utility: 84b9c3cfda5275846a3ff4a20b490a5f031ba6e6
+  Utility: 2943aa983991e2b1ccac82cc58c38bb27380ebe6
 
-PODFILE CHECKSUM: 3ca1e89c2b38f4bf70ae0468a30acdeeb7154b7b
+PODFILE CHECKSUM: dbd08b218a8848e1be6a0d4f57b3fbe7c7cebee6
 
 COCOAPODS: 1.16.2

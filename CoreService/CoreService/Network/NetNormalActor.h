@@ -8,11 +8,12 @@
 
 #import <FusionCore/FusionCore.h>
 
+@class AFHTTPSessionManager;
+
 @interface NetNormalActor : FusionActor {
 @protected
-    NSMutableArray*         _waitingQueue;
-    NSUInteger              _concurrency;
-    NSMutableDictionary*    _connectionDic;
+    AFHTTPSessionManager*   _manager;
+    NSMutableDictionary*    _taskDic;   // message 指针(NSValue) -> NSURLSessionDataTask
 }
 
 @end

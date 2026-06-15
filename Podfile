@@ -30,4 +30,19 @@ post_install do |installer|
       config.build_settings['SWIFT_VERSION'] = '5.0'
     end
   end
+
+  # AFNetworking 4.0.1 redundantly imports the private system header
+  # <netinet6/in6.h>, which Xcode 26.4+ rejects under use_frameworks! with
+  # "Use of private header from outside its module". <netinet/in.h> already
+  # provides what's needed, so strip the offending imports.
+  ['AFNetworkReachabilityManager.m', 'AFHTTPSessionManager.m'].each do |file|
+    path = File.join(installer.sandbox.root, 'AFNetworking', 'AFNetworking', file)
+    next unless File.exist?(path)
+    text = File.read(path)
+    patched = text.gsub(/^\s*#import\s+<netinet6\/in6\.h>\s*\n/, '')
+    if patched != text
+      File.chmod(0644, path)
+      File.write(path, patched)
+    end
+  end
 end

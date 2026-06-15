@@ -7,21 +7,51 @@
 //
 
 #import "NetNormalActor.h"
-#import "NeoHttpTask.h"
-#import "NeoHttpPostTask.h"
-#import "NeoNetEngine.h"
 #import "NetworkCommon.h"
 #import "FusionNativeMessage+Error.h"
+#import <AFNetworking/AFNetworking.h>
+#import <objc/runtime.h>
 #import "SafeARC.h"
+
+// 把 FusionNativeMessage 关联到其 NSURLSessionTask 上,供共享的重定向 block 反查。
+static const void *kNetTaskMessageKey = &kNetTaskMessageKey;
 
 @implementation NetNormalActor
 
 - (id)initWithConfig:(NSDictionary *)config {
     self = [super initWithConfig:config];
     if (self) {
-        _waitingQueue = [NSMutableArray new];
-        _connectionDic = [NSMutableDictionary new];
-        _concurrency = 16;
+        _taskDic = [NSMutableDictionary new];
+
+        _manager = [[AFHTTPSessionManager alloc] init];
+        _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        AFHTTPResponseSerializer *responseSerializer = [AFHTTPResponseSerializer serializer];
+        // 接受任意状态码与内容类型:状态码原样上报,由调用方判断,与旧实现一致。
+        responseSerializer.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(100, 500)];
+        responseSerializer.acceptableContentTypes = nil;
+        _manager.responseSerializer = responseSerializer;
+
+        __weak typeof(self) weakSelf = self;
+        [_manager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest *(NSURLSession *session,
+                                                                        NSURLSessionTask *task,
+                                                                        NSURLResponse *response,
+                                                                        NSURLRequest *request) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf == nil) {
+                return request;
+            }
+            FusionNativeMessage *message = objc_getAssociatedObject(task, kNetTaskMessageKey);
+            if (message != nil &&
+                [message.args valueForKey:HTTP_DISABLE_FOLLOW] &&
+                [[message.args valueForKey:HTTP_DISABLE_FOLLOW] boolValue]) {
+                // 不跟随重定向,把当前 3xx 响应当作最终结果。
+                return nil;
+            }
+            if (message != nil && request.URL != nil) {
+                [message setValue:[request.URL absoluteString] ToDataTableWith:HTTP_EFFECTIVE_URL];
+            }
+            return request;
+        }];
     }
     return self;
 }
@@ -32,177 +62,111 @@
         [message setErrorDomainCode:ERROR_DOMAIN_NETWORK
                           errorCode:ERROR_INVALID_URL
                            errorMsg:@"无效的URL"];
-        
         [message setState:FusionNativeMessageFailed];
         return;
     }
-    [_waitingQueue addObject:message];
-    [self schedulerNetConnection];
-}
 
-- (void)schedulerNetConnection {
-    @autoreleasepool {
-        while ([_connectionDic count] < _concurrency)
-        {
-            if([_waitingQueue count] == 0)
-                break;
-            FusionNativeMessage* message = SafeRetain([_waitingQueue objectAtIndex:0]);
-            [_waitingQueue removeObjectAtIndex:0];
-            
-            NeoHttpTask *task = nil;
-            if ([message.args valueForKey:NET_HTTP_METHOD] &&
-                [[message.args valueForKey:NET_HTTP_METHOD] isEqualToString:HTTP_POST_METHOD]) {
-                
-                task = [NeoHttpPostTask new];
-                if ([message.args valueForKey:NET_DNS_RESOLVE]) {
-                    [task setResolveArray:@[[message.args valueForKey:NET_DNS_RESOLVE]]];
-                }
-                [task setUrl:[NSURL URLWithString:[message.args valueForKey:NET_REMOTE_URL]]];
-                [task setHeaderDic:[message.args valueForKey:NET_HTTP_HEADER]];
-                [(NeoHttpPostTask*)task setPostFields:[message.args valueForKey:NET_HTTP_PARAMS]];
-                
-            } else {
-                task = [NeoHttpTask new];
-                if ([message.args valueForKey:NET_DNS_RESOLVE]) {
-                    [task setResolveArray:@[[message.args valueForKey:NET_DNS_RESOLVE]]];
-                }
-                [task setUrl:[NSURL URLWithString:[message.args valueForKey:NET_REMOTE_URL]]];
-                [task setHeaderDic:[message.args valueForKey:NET_HTTP_HEADER]];
-            }
-            
-            [task setSource:message];
-            SafeRelease(message);
-            [_connectionDic setObject:task forKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
+    NSDictionary *headers = [message.args valueForKey:NET_HTTP_HEADER];
+    NSDictionary *params = [message.args valueForKey:NET_HTTP_PARAMS];
 
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(processNeoHttpTaskFinish:)
-                                                         name:NeoNetTask_Finish
-                                                       object:task];
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(processNeoHttpTaskFailed:)
-                                                         name:NeoNetTask_Failed
-                                                       object:task];            
-//            if ([[NeoNetEngine getInstance] hostThread] == nil) {
-//                [[NeoNetEngine getInstance] setHostThread:[[FusionCore getInstance] getNetworkThread]];
-//            }
-            [[NeoNetEngine getInstance] startTask:task];
-            SafeRelease(task);
-        }
-    }
-}
+    NSString *method = [message.args valueForKey:NET_HTTP_METHOD];
+    BOOL isPost = (method != nil && [method isEqualToString:HTTP_POST_METHOD]);
 
-- (void)processNeoHttpTaskFinish:(NSNotification*)notify {
-    NeoHttpTask *task = SafeRetain([notify object]);
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NeoNetTask_Failed object:task];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NeoNetTask_Finish object:task];
+    __weak typeof(self) weakSelf = self;
+    void (^successBlock)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, id responseObject) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf onNetThread:^{
+            [strongSelf handleFinishMessage:message task:task data:responseObject];
+        }];
+    };
+    void (^failureBlock)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf onNetThread:^{
+            [strongSelf handleFailMessage:message task:task error:error];
+        }];
+    };
 
-    FusionNativeMessage *message = SafeRetain((FusionNativeMessage*)[task source]);
-    if (message == nil) {
-        [self schedulerNetConnection];
-        SafeRelease(task);
-        return;
-    }
-    
-    [message setValue:[task rawData] ToDataTableWith:HTTP_RESPONSE_DATA];
-    [message setValue:[task responseHeader] ToDataTableWith:HTTP_RESPONSE_HEADER];
-    [message setValue:[NSNumber numberWithInteger:[task getResponseCode]]
-      ToDataTableWith:HTTP_RESPONSE_CODE];
-
-    [task setSource:nil];
-    [_connectionDic removeObjectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
-    
-    if ([message.args valueForKey:HTTP_DISABLE_FOLLOW] &&
-        [[message.args valueForKey:HTTP_DISABLE_FOLLOW] boolValue]) {
-        [message setState:FusionNativeMessageFinish];
-        SafeRelease(message);
-        [self schedulerNetConnection];
-        SafeRelease(task);
-        return;
-    }
-    NSInteger statusCode = [[message getValueFromDataTableWith:HTTP_RESPONSE_CODE] integerValue];
-    if (statusCode == 302 || statusCode == 301) {
-        NSDictionary *responseHeader = [message getValueFromDataTableWith:HTTP_RESPONSE_HEADER];
-        NSString *location = [responseHeader valueForKey:@"Location"];
-        if (location == nil) {
-            location = [responseHeader valueForKey:@"location"];
-        }
-        if (location == nil) {
-            [message setState:FusionNativeMessageFinish];
-            SafeRelease(message);
-            [self schedulerNetConnection];
-            return;
-        }
-        NeoHttpTask *neoTask = [NeoHttpTask new];
-        [neoTask setUrl:[NSURL URLWithString:location]];
-        
-        [message setValue:location ToDataTableWith:HTTP_EFFECTIVE_URL];
-   
-        [neoTask setSource:message];
-        SafeRelease(message);
-        [_connectionDic setObject:neoTask forKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(processNeoHttpTaskFinish:)
-                                                     name:NeoNetTask_Finish
-                                                   object:neoTask];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(processNeoHttpTaskFailed:)
-                                                     name:NeoNetTask_Failed
-                                                   object:neoTask];
-        [[NeoNetEngine getInstance] startTask:neoTask];
-        SafeRelease(neoTask);
+    NSURLSessionDataTask *dataTask = nil;
+    if (isPost) {
+        dataTask = [_manager POST:url parameters:params headers:headers progress:nil
+                          success:successBlock failure:failureBlock];
     } else {
-        [message setState:FusionNativeMessageFinish];
-        SafeRelease(message);
-        [self schedulerNetConnection];
+        dataTask = [_manager GET:url parameters:params headers:headers progress:nil
+                         success:successBlock failure:failureBlock];
     }
-    SafeRelease(task);
+
+    if (dataTask != nil) {
+        objc_setAssociatedObject(dataTask, kNetTaskMessageKey, message, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [_taskDic setObject:dataTask forKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
+    }
 }
 
-- (void)processNeoHttpTaskFailed:(NSNotification*)notify {
-    NeoHttpTask *task = [notify object];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NeoNetTask_Failed object:task];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NeoNetTask_Finish object:task];
-    
-    FusionNativeMessage* message = SafeRetain((FusionNativeMessage*)[task source]);
-    if (message == nil) {
-        [self schedulerNetConnection];
+#pragma mark - 网络线程回调处理
+
+- (void)handleFinishMessage:(FusionNativeMessage *)message
+                       task:(NSURLSessionDataTask *)task
+                       data:(NSData *)data {
+    [self fillResponseInfoForMessage:message task:task];
+    if (data != nil) {
+        [message setValue:data ToDataTableWith:HTTP_RESPONSE_DATA];
+    }
+    [_taskDic removeObjectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
+    [message setState:FusionNativeMessageFinish];
+}
+
+- (void)handleFailMessage:(FusionNativeMessage *)message
+                     task:(NSURLSessionDataTask *)task
+                    error:(NSError *)error {
+    [self fillResponseInfoForMessage:message task:task];
+    [message setErrorDomainCode:ERROR_DOMAIN_NETWORK
+                      errorCode:error.code
+                       errorMsg:[error localizedDescription]];
+    [_taskDic removeObjectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
+    [message setState:FusionNativeMessageFailed];
+}
+
+- (void)fillResponseInfoForMessage:(FusionNativeMessage *)message task:(NSURLSessionTask *)task {
+    NSURLResponse *response = task.response;
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        [message setValue:[NSNumber numberWithInteger:httpResponse.statusCode]
+          ToDataTableWith:HTTP_RESPONSE_CODE];
+        if (httpResponse.allHeaderFields != nil) {
+            [message setValue:httpResponse.allHeaderFields ToDataTableWith:HTTP_RESPONSE_HEADER];
+        }
+    }
+}
+
+- (void)onNetThread:(dispatch_block_t)block {
+    if (block == nil) {
         return;
     }
-    
-    [task setSource:nil];
-    [message setValue:[NSNumber numberWithInteger:[task getResponseCode]]
-      ToDataTableWith:HTTP_RESPONSE_CODE];
-    [message setValue:[task responseHeader]
-      ToDataTableWith:HTTP_RESPONSE_HEADER];
-    [message setErrorDomainCode:ERROR_DOMAIN_NETWORK
-                      errorCode:task.code
-                       errorMsg:[task errorMsg]];
-    
-    [_connectionDic removeObjectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
-    [message setState:FusionNativeMessageFailed];
-    SafeRelease(message);
-    [self schedulerNetConnection];
+    NSThread *netThread = [[FusionCore getInstance] getNetworkThread];
+    if (netThread == nil || [NSThread currentThread] == netThread) {
+        block();
+        return;
+    }
+    [self performSelector:@selector(runBlock:) onThread:netThread withObject:[block copy] waitUntilDone:NO];
+}
+
+- (void)runBlock:(dispatch_block_t)block {
+    if (block) {
+        block();
+    }
 }
 
 - (void)cancelFusionNativeMessage:(FusionNativeMessage *)message {
-    [_waitingQueue removeObject:message];
-
-    NeoHttpTask* task = [_connectionDic objectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
-    if(task != nil) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NeoNetTask_Failed object:task];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NeoNetTask_Finish object:task];
-        [task setSource:nil];
-        [[NeoNetEngine getInstance] cancelTask:task];
-        [_connectionDic removeObjectForKey:[NSValue valueWithPointer:(__bridge const void *)(message)]];
-        [self schedulerNetConnection];
+    NSValue *key = [NSValue valueWithPointer:(__bridge const void *)(message)];
+    NSURLSessionDataTask *task = [_taskDic objectForKey:key];
+    if (task != nil) {
+        [task cancel];
+        [_taskDic removeObjectForKey:key];
     }
 }
 
--(void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    SafeRelease(_waitingQueue);
-    SafeRelease(_connectionDic);
+- (void)dealloc {
+    SafeRelease(_manager);
+    SafeRelease(_taskDic);
     SafeSuperDealloc(super);
 }
 

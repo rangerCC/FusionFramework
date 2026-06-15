@@ -8,12 +8,13 @@
 
 #import <FusionCore/FusionCore.h>
 
+@class AFURLSessionManager;
+
 @interface DownloadFileActor : FusionActor {
 @protected
-    NSMutableArray *_waitingQueue;
-    NSUInteger _concurrency;
-    NSMutableDictionary *_connectionDic;
-    NSMutableDictionary *_clusterDic;
+    AFURLSessionManager*    _manager;
+    NSMutableDictionary*    _clusterDic;   // url(NSString) -> DownloadFileCluster
+    NSMutableDictionary*    _taskDic;      // cluster 指针(NSValue) -> NSURLSessionDownloadTask
 }
 
 @end
