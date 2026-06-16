@@ -4,19 +4,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build System
 
-This is a modular iOS framework using Xcode workspaces:
+This is a modular iOS framework managed by **CocoaPods**. Each module is a local pod
+(a `*.podspec` at the repo root) consumed by the `TestApp` target via `:path => '.'`.
 
-- **Main Workspace**: `Workspace/FusionWorkspace.xcworkspace` - Open this in Xcode to build all modules
-- **Module Projects**: Each module has its own `.xcodeproj` under its directory:
-  - `FusionBase/FusionBase.xcodeproj` (base utilities, no dependencies)
-  - `FusionCore/FusionCore.xcodeproj` (message core, depends on FusionBase)
-  - `Utility/Utility.xcodeproj` (Crypto, FileKit, Zip, Lua, depends on FusionBase)
-  - `Enviroment/Enviroment.xcodeproj` (app configuration, depends on FusionBase)
-  - `CoreService/CoreService.xcodeproj` (network engine, depends on FusionBase, Utility)
-  - `FusionUI/FusionUI.xcodeproj` (navigation & UI, depends on FusionCore, FusionBase)
-  - `TestApp/TestApp.xcodeproj` (demo app, depends on all)
+**Setup** (run after cloning, and whenever a podspec or the Podfile changes):
+```bash
+pod install
+```
 
-**Build order**: FusionBase → (FusionCore, Utility, Enviroment) → (FusionUI, CoreService) → TestApp
+**Workspace**: open `Workspace/FusionWorkspace.xcworkspace` in Xcode. It references only
+`TestApp/TestApp.xcodeproj` and the generated `Pods/Pods.xcodeproj` — CocoaPods compiles
+each module from its podspec source globs. (The per-module `.xcodeproj` files still exist on
+disk but are no longer the build targets.)
+
+**Local module pods** (root `*.podspec`):
+- `FusionBase` — base message/utility layer, no module dependencies
+- `Enviroment` — app configuration, depends on FusionBase
+- `Utility` — Crypto, FileKit, Zip, Lua; vendors `libcrypto.a`/`libssl.a`, links `z`/`sqlite3`; depends on FusionBase, Enviroment
+- `FusionCore` — Actor model & message dispatch; depends on FusionBase, Utility
+- `FusionUI` — navigation & UI; depends on FusionBase
+- `CoreService` — network actors (built on AFNetworking); depends on FusionCore, FusionBase, Utility, AFNetworking
+
+**Third-party pods** (TestApp target): SDWebImage, AFNetworking, FMDB, CocoaLumberjack,
+MJRefresh, Masonry, IQKeyboardManager.
+
+**Deployment target**: Podfile pins iOS 15.0 (forced for all pods in `post_install`). The
+`post_install` hook also strips a private-header import from AFNetworking 4.0.1
+(`<netinet6/in6.h>`) that Xcode 26.4+ rejects under `use_frameworks!`.
+
+**Build / run the demo app**:
+```bash
+xcodebuild -workspace Workspace/FusionWorkspace.xcworkspace \
+           -scheme TestApp \
+           -configuration Debug \
+           -sdk iphonesimulator \
+           -derivedDataPath /tmp/FusionBuild
+```
 
 ## Architecture Overview
 
@@ -71,7 +94,8 @@ FusionCore (singleton message dispatcher)
 
 **Threading Model**:
 
-FusionCore maintains multiple dedicated threads. Service `threadType` determines execution thread:
+FusionCore maintains multiple dedicated threads. A service's `threadType` (read from its
+config `thread_type` key, not set by subclassing) determines the execution thread:
 
 - `FusionService_Default` (0) → WorkerThread pool (CPU*2 threads, round-robin allocation)
 - `FusionService_NET` (1) → NetworkThread (dedicated for I/O)
@@ -284,41 +308,43 @@ FusionPageMessage *msg = [[FusionPageMessage alloc]
 [navigator gotoPage:msg];
 ```
 
-### Network Architecture (NeoNetEngine)
+### Network Architecture (CoreService)
 
-**NeoNetEngine** (`CoreService/CoreService/Network/NeoNetEngine/NeoNetEngine.h`):
-- Multi-socket event-driven HTTP/HTTPS engine built on libcurl
-- Dedicated NetworkThread for async I/O
-- DNS resolution via c-ares with optional caching
-- Connection pooling and reuse via `CURLSH` (share handle)
+CoreService exposes networking through two **FusionActors** built on **AFNetworking**
+(`NSURLSession`). There is no longer a custom network engine — the legacy NeoNetEngine
+(libcurl + c-ares) was removed. Network actors run on a service whose `threadType` is
+`FusionService_NET`, so their methods execute on the Fusion network thread.
 
-**Task Types**:
-- `NeoHttpTask` - Basic GET request
-- `NeoHttpPostTask` - POST with body data
-- `NeoHttpDownloadTask` - Large file download
+**Actors** (`CoreService/CoreService/Network/`):
+- `NetNormalActor` — GET/POST via a shared `AFHTTPSessionManager`. Accepts any status code
+  and content type (raw `NSData` response). Honors `HTTP_DISABLE_FOLLOW` via a redirection
+  block (NSURLSession auto-follows 301/302 otherwise).
+- `DownloadFileActor` — file download via `AFURLSessionManager` download tasks. Reuses
+  `DownloadFileCluster` to dedupe concurrent requests for the same URL; short-circuits when
+  the file already exists unless `force_download` is set.
 
-**Engine Configuration**:
+**Threading note**: AFNetworking completion blocks fire on the main queue. Both actors
+marshal completion back to the Fusion network thread (`[[FusionCore getInstance]
+getNetworkThread]`) before mutating actor state and calling `setState:`, preserving the
+single-threaded-confinement invariant.
+
+**Message args / result keys** (`NetworkCommon.h`):
+- Inputs: `NET_REMOTE_URL`, `NET_HTTP_METHOD`, `NET_HTTP_HEADER`, `NET_HTTP_PARAMS`,
+  `NET_LOCAL_PATH`, `NET_TEMP_PATH`, `NET_FORCE_DOWNLOAD`, `HTTP_DISABLE_FOLLOW`
+- Results in dataTable: `HTTP_RESPONSE_DATA`, `HTTP_RESPONSE_HEADER`, `HTTP_RESPONSE_CODE`,
+  `HTTP_EFFECTIVE_URL`
+- Errors via the `FusionNativeMessage (Error)` category:
+  `setErrorDomainCode:errorCode:errorMsg:`
+
+**Sending a request** (through the message system, not by calling the actor directly):
 ```objc
-NSDictionary *config = @{
-    @"dns_service": @"8.8.8.8",      // Custom DNS server (optional)
-    @"dns_cache_time": @3600,         // DNS cache TTL in seconds
-    @"timeout": @30,                  // Request timeout
-    @"connect_timeout": @10           // Connection timeout
-};
-[[NeoNetEngine getInstance] setConfig:config];
-```
-
-**Starting Tasks**:
-```objc
-NeoHttpTask *task = [[NeoHttpTask alloc] init];
-task.url = @"https://api.example.com/data";
-task.method = @"GET";
-task.callback = ^(NSData *response, NSError *error) {
-    if (!error) {
-        // Handle response
-    }
-};
-[[NeoNetEngine getInstance] startTask:task];
+FusionNativeMessage *msg = [[FusionNativeMessage alloc]
+    initWithSerivice:@"netService"
+               actor:@"netNormal"
+                args:@{NET_REMOTE_URL: @"https://api.example.com/data",
+                       NET_HTTP_METHOD: HTTP_GET_METHOD}];
+[[FusionCore getInstance] asyncSendMessage:msg];
+// On completion the callback fires on the originating thread; read results from dataTable.
 ```
 
 ### Common Headers
@@ -332,29 +358,17 @@ task.callback = ^(NSData *response, NSError *error) {
 
 ### Adding a New Service
 
-1. **Create Service class**:
-   ```objc
-   // MyServiceName.h
-   @interface MyServiceName : FusionService
-   @end
-   
-   // MyServiceName.m
-   @implementation MyServiceName
-   - (id)initWithConfig:(NSDictionary *)config {
-       self = [super initWithConfig:config];
-       if (self) {
-           _threadType = FusionService_NET;  // or _Default, or _UI
-       }
-       return self;
-   }
-   @end
-   ```
+A Service's attributes — including its **thread type** — come from its config dictionary
+(supplied by the Lua `Script/Service/*.lua` definition, bundled into `config.zip`, or built
+directly in code). You do not override `_threadType` in a subclass; `FusionService
+initWithConfig:` reads the `thread_type` key. Subclassing is only needed for custom
+container behavior (e.g. `canConcurrentExecute:`).
 
-2. **Create Actor class(es)**:
+1. **Create Actor class(es)** (your handler logic):
    ```objc
    @interface MyActor : FusionActor
    @end
-   
+
    @implementation MyActor
    - (void)processFusionNativeMessage:(FusionNativeMessage *)message {
        // Process message
@@ -363,21 +377,28 @@ task.callback = ^(NSData *response, NSError *error) {
    @end
    ```
 
-3. **Add Lua configuration** (`{Module}/Script/Service/MyService.lua`):
+2. **Define the Service via Lua** (`{Module}/Script/Service/MyService.lua`). The Lua table
+   carries the full config — service class, actors, and attributes like thread type:
    ```lua
-   local service = FusionService.new("myService", "MyServiceName")
+   local service = FusionService.new("myService", "FusionService")  -- or a subclass
+   service.thread_type = 1   -- 0=Default(worker pool) 1=NET 2=UI(main)
    service:addActor(FusionActor.new("myActor", "MyActor"))
    register_core_service(service)
    ```
+   Equivalent config dictionary (what the framework consumes at runtime):
+   ```objc
+   @{ @"name": @"myService", @"class": @"FusionService", @"thread_type": @(1),
+      @"actors": @{ @"myActor": @{ @"class": @"MyActor" } } }
+   ```
 
-4. **Regenerate macros**:
+3. **Regenerate macros** (also bundles the Lua config into `config.zip`):
    ```bash
    cd Workspace
    lua MacroMaker.lua
    # Generates TRIPServiceMacro.h
    ```
 
-5. **Use in code**:
+4. **Use in code**:
    ```objc
    #import "TRIPServiceMacro.h"
    
@@ -434,9 +455,13 @@ task.callback = ^(NSData *response, NSError *error) {
                pageNick:nil
                 command:@"init"
                    args:@{@"data": @"value"}
-               callback:nil];
+               callback:nil];   // callback is an NSURL (not a block); see below
    [navigator gotoPage:msg];
    ```
+   The `callback:` parameter is an **`NSURL`**, not a block. To get a result back to the
+   current page, generate one with `[FusionPageNavigator generateCallbackUrl:self]`, append
+   params and a `#command` fragment; the framework delivers that command to the originating
+   page's `processPageCommand:args:` when the opened page finishes.
 
 ### Debugging Message Flow
 
@@ -466,16 +491,16 @@ This regenerates macro headers. If you get Lua errors, the script will fail but 
 - Actor model, message dispatch, threading
 - Included by: FusionUI, CoreService, custom services
 
-**Utility** (depends on FusionBase):
-- Crypto, file operations, Zip, Lua engine
-- Optional dependency; included only by modules needing specific utils
+**Utility** (depends on FusionBase, Enviroment):
+- Crypto, file operations, Zip, Lua engine; vendors OpenSSL static libs
+- Included by modules needing specific utils
 
 **Enviroment** (depends on FusionBase):
 - App configuration, user defaults wrapper
 - Optional; used for environment-specific settings
 
-**CoreService** (depends on FusionBase, Utility):
-- Network engine, HTTP tasks
+**CoreService** (depends on FusionCore, FusionBase, Utility, AFNetworking):
+- Network actors (GET/POST + download) on AFNetworking
 - Optional if not doing network I/O
 
 **FusionUI** (depends on FusionCore, FusionBase):
@@ -493,11 +518,13 @@ The `TestApp/` directory contains a complete example:
 - `TestAppDelegate` - App initialization with navigator setup
 - `TestAdapter` - Page adapter implementation
 
-Build and run TestApp to verify framework is working:
+Build and run TestApp to verify framework is working (run `pod install` first if pods are
+out of date):
 ```bash
 xcodebuild -workspace Workspace/FusionWorkspace.xcworkspace \
            -scheme TestApp \
            -configuration Debug \
+           -sdk iphonesimulator \
            -derivedDataPath /tmp/FusionBuild
 ```
 
@@ -505,5 +532,5 @@ Key test scenarios:
 1. Page push/pop navigation
 2. TabBar switching
 3. Message dispatch to services
-4. Network requests via NeoNetEngine
+4. Network requests via CoreService network actors (AFNetworking)
 5. Page context preservation across rotations
