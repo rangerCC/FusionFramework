@@ -1,8 +1,8 @@
 # FusionFramework 架构设计文档
 
-> **版本**: 1.0  
-> **日期**: 2026/05/31  
-> **作者**: Claude Code  
+> **版本**：1.1
+> **日期**：2026/11/23
+> **作者**：Claude Code
 
 ---
 
@@ -10,7 +10,7 @@
 
 1. [框架概述](#1-框架概述)
 2. [架构设计原则](#2-架构设计原则)
-3. [核心架构 - Actor模型](#3-核心架构---actor模型)
+3. [核心架构：Actor 模型](#3-核心架构actor-模型)
 4. [模块详解](#4-模块详解)
 5. [关键技术点](#5-关键技术点)
 6. [使用指南](#6-使用指南)
@@ -23,29 +23,30 @@
 
 ### 1.1 设计理念
 
-FusionFramework 是一个基于 **Actor模型** 的模块化iOS应用框架，采用**消息驱动**的架构设计，支持**Lua配置化**的代码生成。它将复杂的应用逻辑抽象为服务（Service）和演员（Actor）的层次结构，实现高内聚、低耦合的组件化开发。
+FusionFramework 是一个基于 **Actor 模型**的模块化 iOS 应用框架。它采用**消息驱动**架构，并支持通过 **Lua 配置**生成代码。框架将应用逻辑抽象为服务（Service）与 Actor 两级结构，各组件之间只通过消息通信，从而实现高内聚、低耦合的组件化开发。
 
 ### 1.2 核心特性
 
 | 特性 | 说明 |
 |------|------|
-| **Actor模型** | 基于消息传递的并发模型，避免共享状态 |
-| **多线程架构** | 自动管理WorkerThread、NetworkThread、CoreThread、MainThread |
-| **状态机消息** | 消息自带状态机（Origin → Finish/Failed） |
-| **Lua代码生成** | 通过Lua配置自动生成Objective-C宏和服务注册代码 |
-| **ARC兼容** | SafeARC.h 提供ARC和非ARC环境的兼容宏 |
-| **网络引擎** | 基于libcurl的多socket事件驱动网络层 |
-| **页面导航** | 支持自定义动画的页面导航系统 |
+| **Actor 模型** | 基于消息传递的并发模型，组件之间不直接调用 |
+| **多线程调度** | 框架统一管理 CoreThread、NetworkThread、WorkerThread 与 MainThread |
+| **消息状态机** | 每条消息自带状态（Origin → Finish / Failed / 自定义状态） |
+| **父子消息** | 父消息可派生多个并行子消息，并在子消息完成时收到回调 |
+| **Lua 代码生成** | 根据 Lua 配置生成 Objective-C 名称宏及服务注册配置 |
+| **ARC 兼容** | `SafeARC.h` 提供同时兼容 ARC 与非 ARC 的内存管理宏 |
+| **网络层** | 基于 AFNetworking 的网络 Actor，经由消息系统调用 |
+| **页面导航** | 支持自定义转场动画的页面导航系统 |
 
 ### 1.3 技术栈
 
 ```
-├── Objective-C (主要开发语言)
-├── Lua 5.1 (配置和代码生成)
-├── libcurl (网络请求)
-├── c-ares (异步DNS解析)
-├── OpenSSL (可选，HTTPS支持)
-└── SQLite (可选，本地缓存)
+├── Objective-C（主要开发语言）
+├── CocoaPods（模块与第三方依赖管理）
+├── Lua 5.1（配置与代码生成）
+├── AFNetworking 4.x（HTTP 请求与文件下载，基于 NSURLSession）
+├── OpenSSL（Utility 模块内置 libcrypto.a / libssl.a，用于加密）
+└── SQLite / zlib（系统库，由 Utility 模块链接）
 ```
 
 ---
@@ -56,74 +57,89 @@ FusionFramework 是一个基于 **Actor模型** 的模块化iOS应用框架，�
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                      UI Layer                           │
-│         (FusionUI - 页面、导航、动画、交互)                │
+│                       UI 层                             │
+│          (FusionUI - 页面、导航、转场动画、交互)          │
 ├─────────────────────────────────────────────────────────┤
-│                   Service Layer                         │
-│      (CoreService - 网络、存储、定位、分享等)              │
+│                     服务层                              │
+│            (CoreService - 网络请求、文件下载)             │
 ├─────────────────────────────────────────────────────────┤
-│                    Core Layer                           │
-│    (FusionCore - Actor调度、消息路由、线程管理)           │
+│                     核心层                              │
+│       (FusionCore - Actor 调度、消息路由、线程管理)       │
 ├─────────────────────────────────────────────────────────┤
-│                   Base Layer                            │
-│       (FusionBase - 基础类、工具、分类扩展)                │
+│                     工具层                              │
+│           (Utility - 加密、文件、Zip、Lua)               │
 ├─────────────────────────────────────────────────────────┤
-│                  Utility Layer                          │
-│         (Utility - 加密、文件、JSON、Lua)                 │
+│                     环境层                              │
+│            (Enviroment - 环境配置、用户偏好)              │
 ├─────────────────────────────────────────────────────────┤
-│               Environment Layer                         │
-│        (Enviroment - 环境配置、用户偏好)                 │
+│                     基础层                              │
+│        (FusionBase - 消息基类、工具类、分类扩展)          │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### 2.2 依赖关系
 
+每个模块都是仓库根目录下的一个本地 Pod（`*.podspec`）。箭头表示"被依赖"：
+
 ```
-FusionBase → (FusionCore, Utility, Enviroment)
-                 ↓
-    (FusionUI, CoreService)
-                 ↓
-            TestApp
+FusionBase
+  ├──→ Enviroment
+  │       └──→ Utility ──→ FusionCore ──→ CoreService ←── AFNetworking
+  └──→ FusionUI
+                         （TestApp 依赖以上全部模块）
 ```
+
+| 模块 | 直接依赖 |
+|------|---------|
+| FusionBase | 无 |
+| Enviroment | FusionBase |
+| Utility | FusionBase、Enviroment |
+| FusionCore | FusionBase、Utility |
+| FusionUI | FusionBase |
+| CoreService | FusionCore、FusionBase、Utility、AFNetworking |
 
 ---
 
-## 3. 核心架构 - Actor模型
+## 3. 核心架构：Actor 模型
 
-### 3.1 Actor模型概述
+### 3.1 Actor 模型概述
 
-FusionFramework 实现了经典的Actor模型：
+FusionFramework 实现了经典 Actor 模型的主要概念：
 
-- **Actor**: 处理消息的基本单元
-- **Message**: 不可变的消息对象，包含指令和数据
-- **Mailbox**: 隐式的消息队列（框架内部管理）
-- **Isolation**: 每个Actor独立处理消息，不共享状态
+- **Actor**：处理消息的基本单元
+- **Message**：携带目标、参数与结果的消息对象
+- **Mailbox**：由框架内部的消息池（`FusionMessagePool`）隐式维护，开发者无需直接操作
+- **隔离性**：组件之间不直接调用，只通过消息交换数据
+
+与严格的 Actor 模型不同，每个 Actor 在其 Service 内**只有一个实例**，首次收到消息时创建，之后的消息都复用它（参见 [7.2](#72-actor-设计原则)）。
 
 ### 3.2 核心类层次
 
 ```
-FusionMessage (基类)
-    └── FusionNativeMessage (原生消息)
+FusionMessage（基类，位于 FusionBase）
+    └── FusionNativeMessage（Service / Actor 消息）
 
-FusionFilter (过滤器基类)
-    ├── FusionAndFilter (与组合)
-    ├── FusionOrFilter (或组合)
-    └── FusionNotFilter (非组合)
+FusionFilter（过滤器基类）
+    ├── FusionAndFilter（与组合）
+    ├── FusionOrFilter（或组合）
+    └── FusionNotFilter（取反）
 
-FusionService (服务容器)
-    └── [自定义Service]
+FusionService（服务容器）
+    └── [自定义 Service]
 
-FusionActor (消息处理器)
-    └── [自定义Actor]
+FusionActor（消息处理器）
+    └── [自定义 Actor]
 
-FusionCore (单例调度器)
+FusionCore（单例调度器）
+FusionMessagePool（工作线程的待调度队列）
+FusionTimerService / FusionTimerTask（定时任务）
 ```
 
 ### 3.3 消息生命周期状态机
 
 ```
                     ┌─────────────┐
-                    │   Origin    │  ← 初始状态 (0)
+                    │   Origin    │  ← 初始状态
                     │    (0)      │
                     └──────┬──────┘
                            │
@@ -136,219 +152,292 @@ FusionCore (单例调度器)
            成功          失败        自定义状态
 ```
 
-**状态常量定义** ([FusionNativeMessage.h:16-19](FusionCore/FusionCore/FusionNativeMessage.h)):
+**状态常量定义**（[FusionNativeMessage.h:16-19](FusionCore/FusionCore/FusionNativeMessage.h#L16-L19)）：
 
 ```objc
 #define FusionNativeMessageOrigin 0       // 初始状态
 #define FusionNativeMessageFinish 1       // 完成状态
 #define FusionNativeMessageFailed 2       // 失败状态
-#define FusionNativeMessageMaxNum 99999   // 最大状态值
+#define FusionNativeMessageMaxNum 99999   // 状态值上限
 ```
+
+当状态被设置为 Finish 或 Failed 时，`setState:` 会自动执行以下操作：
+
+1. 取消该消息尚未完成的全部子消息
+2. 若该消息没有父消息，则在发起线程上发送 `FusionNativeMessageNotification` 通知（`object` 为消息本身）
+3. 若该消息有父消息，则将完成事件派发给父消息所在的 Actor（参见 [4.4.3](#443-父子消息机制)）
 
 ### 3.4 线程模型
 
-FusionCore 维护4种专用线程：
+FusionCore 维护以下线程：
 
-| 线程类型 | 用途 | Actor分配 |
-|---------|------|----------|
-| **CoreThread** | 核心调度、Service管理 | 系统级Service |
-| **NetworkThread** | 网络请求处理 | `FusionService_NET` 类型的Service |
-| **WorkerThreads** | 通用业务逻辑 | `FusionService_Default` 类型的Service |
-| **MainThread** | UI更新 | `FusionService_UI` 类型的Service |
+| 线程 | 用途 | 执行的 Service |
+|------|------|---------------|
+| **CoreThread** | 消息路由、Service 懒加载、延迟消息触发、工作线程调度 | 不执行业务 Service |
+| **NetworkThread** | 网络请求处理 | `FusionService_NET` 类型 |
+| **WorkerThreads** | 通用业务逻辑 | `FusionService_Default` 类型 |
+| **MainThread** | UI 更新 | `FusionService_UI` 类型 |
 
-**线程数量计算**:
+**工作线程数量**（[FusionCoreEx.m:18](FusionCore/FusionCore/FusionCoreEx.m#L18)）：
 ```objc
-WorkerThreads = CPU核心数 × 2
+WorkerThreads = sysconf(_SC_NPROCESSORS_CONF) × 2
 ```
 
-**Service线程类型** ([FusionService.h:14-19](FusionCore/FusionCore/FusionService.h)):
+**Service 线程类型**（[FusionService.h:14-19](FusionCore/FusionCore/FusionService.h#L14-L19)）：
 
 ```objc
 typedef enum {
-    FusionService_Default   = 0,  // WorkerThread池
+    FusionService_Default   = 0,  // 工作线程池
     FusionService_NET       = 1,  // NetworkThread
     FusionService_UI        = 2,  // MainThread
 } FusionServiceThreadType;
 ```
 
-### 3.5 消息路由格式
+线程类型由 Service 配置字典中的 `thread_type` 键决定，`FusionService initWithConfig:` 会读取该键，缺省为 `FusionService_Default`。子类无需、也不应直接为 `_threadType` 赋值。
 
-消息采用URL风格的字符串格式：
+**工作线程调度规则**：
+
+- 空闲的工作线程从消息池中取任务，优先级依次为：取消 > 子消息回调 > 普通消息
+- 普通消息按 `service::actor` 分组排队，各组轮流出队，避免单个 Actor 占满线程池
+- 消息首次被调度时会记录 `workerNick`；其后续的回调与取消操作会派发到同一条工作线程
+- 若 `canConcurrentExecute:` 返回 `NO`，该消息在本轮调度中被跳过，等待下一轮
+
+### 3.5 消息寻址格式
+
+`FusionNativeMessage` 以 URL 形式描述目标：scheme 为 `native`，host 为 Service 名称，path 为 Actor 名称：
 
 ```
-native://{service_name}/{actor_name}?command={cmd}&param1=value1
+native://{service_name}/{actor_name}?param1=value1
 ```
 
-**示例**:
+**示例**：
 ```
-native://NetworkService/HttpGetActor?command=fetchUser&userId=123
-native://PageNavigator/PageActor?command=push&page=ProfilePage
+native://netService/netNormal?remote_url=https%3A%2F%2Fapi.example.com
 ```
+
+日常开发中一般通过 `initWithSerivice:actor:args:` 构造消息，无需手动拼接 URL。
 
 ---
 
 ## 4. 模块详解
 
-### 4.1 FusionCore - 核心引擎
+### 4.1 FusionCore：核心引擎
 
 #### 4.1.1 职责
 
-- 单例消息调度中心
-- Service懒加载管理
-- 线程池管理
-- 消息状态机维护
-- 子消息生命周期管理
+- 作为单例的消息调度中心
+- 创建并管理 Service（核心 Service 在启动时创建，逻辑 Service 在首次收到消息时懒加载）
+- 管理工作线程池
+- 处理延迟消息、取消消息与子消息回调
 
-#### 4.1.2 核心API
+#### 4.1.2 核心 API
 
 ```objc
 // 获取单例
 + (FusionCore *)getInstance;
 
-// 同步/异步发送消息
-- (void)syncSendMessage:(FusionNativeMessage *)message;
+// 启动时必须调用，传入实现 IFusionConfig 协议的配置提供者
+- (void)prepareWithConfig:(id<IFusionConfig>)config;
+
+// 异步发送（单条 / 批量）
 - (void)asyncSendMessage:(FusionNativeMessage *)message;
+- (void)asyncSendMessageArray:(NSArray *)messageArray;
 
-// 延迟发送
-- (void)asyncSendMessage:(FusionNativeMessage *)message 
-              withDelay:(NSTimeInterval)delay;
+// 异步取消（单条 / 批量）
+- (void)asyncCancelMessage:(FusionNativeMessage *)message;
+- (void)asyncCancelMessageArray:(NSArray *)messageArray;
 
-// 批量发送
-- (void)syncBatchMessages:(NSArray *)messages;
-- (void)asyncBatchMessages:(NSArray *)messages;
+// 获取网络线程（供网络 Actor 将回调切回该线程）
+- (NSThread *)getNetworkThread;
+```
+
+框架不提供同步发送接口。需要延迟发送时，先设置消息的 `delay` 属性（单位为秒），再调用 `asyncSendMessage:`。
+
+**配置协议**（[FusionCoreEx.h:11-18](FusionCore/FusionCore/FusionCoreEx.h#L11-L18)）：
+
+```objc
+@protocol IFusionConfig<NSObject>
+@required
+- (NSString *)appScheme;
+- (NSArray *)getCoreService;                                  // 启动时创建的核心 Service 配置
+- (NSDictionary *)getLogicServiceByName:(NSString *)serviceName; // 按需加载的逻辑 Service 配置
+@optional
+- (NSArray *)getTimeTaskArray;                                // 定时任务配置
+@end
 ```
 
 #### 4.1.3 消息处理流程
 
 ```
-[Sender] → asyncSendMessage() → [MessagePool] → [CoreThread] 
-                                              ↓
-[Service] ← 路由分发 ← [Thread Selector] ← [Dispatcher]
+[发送方] → asyncSendMessage()（记录 originThread）
    ↓
-[Filter] → filterFusionNativeMessage()
-   ↓ (通过)
-[Actor] → processFusionNativeMessage()
+[CoreThread] → 查找 / 懒加载 Service 与 Actor（找不到则丢弃）
    ↓
-[State Update] → Finish/Failed
+ delay ≠ 0 ? → 放入延迟队列，到期后重新进入路由
    ↓
-[Callback] → processCallbackMessage() (如果有父消息)
+ 按 threadType 路由：
+   NET → NetworkThread      UI → MainThread      Default → 消息池 → 空闲工作线程
+   ↓
+[Service] processFusionNativeMessage:
+   ↓
+[Actor Filter] → 未通过则直接置为 Failed
+   ↓ 通过
+[Actor] processFusionNativeMessage: → setState: Finish / Failed
+   ↓
+ 无父消息 → 在 originThread 上发送 FusionNativeMessageNotification
+ 有父消息 → 父消息所在 Actor 的 processCallbackMessage:ParentMessage:
 ```
 
-### 4.2 FusionService - 服务容器
+### 4.2 FusionService：服务容器
 
 #### 4.2.1 职责
 
-- Actor的容器和管理者
-- 消息预处理（Filter）
-- 线程类型定义
-- 并发执行控制
+- 持有并懒加载 Actor（依据配置中的 `actors` 字典）
+- 将消息转发给对应 Actor，并在转发前执行 Actor 过滤器
+- 通过配置确定线程类型
+- 通过 `canConcurrentExecute:` 控制并发执行
 
 #### 4.2.2 生命周期方法
 
 ```objc
-// 初始化
+// 初始化（读取 thread_type、actors、filter 等配置）
 - (id)initWithConfig:(NSDictionary *)config;
 
-// 消息过滤（在Actor之前执行）
+// 消息过滤
 - (BOOL)filterFusionNativeMessage:(FusionNativeMessage *)message;
 
-// 消息处理（通常转发给Actor）
+// 消息处理（默认转发给 Actor）
 - (void)processFusionNativeMessage:(FusionNativeMessage *)message;
 
-// 回调处理
+// 子消息回调处理
 - (void)processCallbackFusionNativeMessage:(FusionNativeMessage *)message;
 
 // 取消处理
 - (void)processCancelFusionNativeMessage:(FusionNativeMessage *)message;
 
-// 并发控制
+// 并发控制（默认返回 YES）
 - (BOOL)canConcurrentExecute:(FusionNativeMessage*)message;
 ```
 
-### 4.3 FusionActor - 消息处理器
+**Service 配置字典**（框架运行时读取的格式）：
+
+```objc
+@{
+    @"name":        @"myService",
+    @"class":       @"FusionService",        // 或其子类
+    @"thread_type": @(0),                    // 0=Default 1=NET 2=UI
+    @"actors": @{
+        @"myActor": @{ @"class": @"MyActor" }
+    }
+}
+```
+
+仅当需要定制容器行为（例如重写 `canConcurrentExecute:` 以串行化某类消息）时，才需要子类化 `FusionService`。
+
+### 4.3 FusionActor：消息处理器
 
 #### 4.3.1 职责
 
-- 具体业务逻辑的实现者
-- 消息的细粒度过滤
-- 子消息的发起和管理
+- 实现具体业务逻辑
+- 对消息做细粒度过滤
+- 派发并管理子消息
 
 #### 4.3.2 核心方法
 
 ```objc
-// 消息过滤
+// 消息过滤（默认读取配置中的 filter；未配置时返回 YES）
 - (BOOL)filterFusionNativeMessage:(FusionNativeMessage *)message;
 
-// 消息处理（子类必须实现）
+// 消息处理（子类必须重写）
 - (void)processFusionNativeMessage:(FusionNativeMessage *)message;
 
-// 回调处理（子消息完成时调用）
-- (void)processCallbackMessage:(FusionNativeMessage *)message 
+// 子消息完成回调（默认实现：子消息全部完成后将父消息置为 Finish）
+- (void)processCallbackMessage:(FusionNativeMessage *)message
                  ParentMessage:(FusionNativeMessage *)parent;
 
-// 取消处理
+// 取消处理（默认实现：取消并清空子消息）
 - (void)cancelFusionNativeMessage:(FusionNativeMessage *)message;
 ```
 
-### 4.4 FusionNativeMessage - 消息对象
+### 4.4 FusionNativeMessage：消息对象
 
 #### 4.4.1 核心属性
 
 ```objc
-@property(readonly, atomic) NSString *service;     // 目标服务名
-@property(readonly, atomic) NSString *actor;       // 目标Actor名
-@property(assign, nonatomic) NSUInteger state;     // 当前状态
-@property(retain, atomic) NSThread *originThread;  // 发送线程
-@property(retain, atomic) NSString *workerNick;    // 工作线程标识
-@property(retain, atomic) NSLock *locker;         // 线程安全锁
+@property(readonly, atomic) NSString *service;              // 目标 Service 名称
+@property(readonly, atomic) NSString *actor;                // 目标 Actor 名称
+@property(assign, nonatomic) NSUInteger state;              // 当前状态
+@property(readwrite, atomic) NSTimeInterval delay;          // 延迟发送时长（秒）
+@property(retain, atomic) NSThread *originThread;           // 发送线程（异步发送时有效）
+@property(retain, atomic) NSString *workerNick;             // 分配到的工作线程标识
+@property(readonly, atomic) FusionNativeMessage *parent;    // 父消息
 ```
 
 #### 4.4.2 数据传递
 
 ```objc
-// 数据表操作
+// 输入参数（创建时传入）
+- (NSDictionary *)args;
+
+// 结果数据表（线程安全）
+- (id)getDataTable;
 - (id)getValueFromDataTableWith:(NSString*)key;
 - (void)setValue:(id)value ToDataTableWith:(NSString*)key;
+- (void)removeValueFromDataTableWith:(NSString*)key;
 - (void)importToDataTable:(NSDictionary*)params;
+- (void)clearDataTable;
 
 // 子消息管理
 - (void)insertSubMessage:(FusionNativeMessage *)message;
 - (void)removeSubMessage:(FusionNativeMessage *)message;
+- (void)clearSubMessage;
 - (NSArray *)getChildren;
+- (NSInteger)getChildrenCount;
 ```
 
 #### 4.4.3 父子消息机制
 
-当消息A触发消息B时：
-1. B的parent指向A
-2. A的children包含B
-3. 当所有children完成（Finish或Failed），A自动完成
-4. 每个child完成时调用A所在Actor的 `processCallbackMessage`
+在消息 A 上调用 `[A insertSubMessage:B]` 后：
 
-### 4.5 FusionUI - 页面导航
+1. B 的 `parent` 指向 A，A 的子消息列表中包含 B
+2. B 进入 Finish 或 Failed 状态时，框架先将 B 从 A 的子消息列表中移除，再调用 A 所在 Actor 的 `processCallbackMessage:B ParentMessage:A`
+3. 该回调的默认实现会在 A 已无剩余子消息时将 A 置为 Finish。若子类重写了此方法，需调用 `[super ...]` 或自行设置 A 的状态，否则 A 不会完成
+4. 若 A 提前进入 Finish 或 Failed 状态，其尚未完成的子消息会被自动取消
+5. 子消息完成时不会发送 `FusionNativeMessageNotification`，该通知只针对顶层消息
+
+### 4.5 FusionUI：页面导航
 
 #### 4.5.1 FusionPageNavigator
 
-中央导航控制器，管理页面栈。
+中央导航控制器，负责管理页面栈。
 
-**核心协议** ([FusionPageNavigator.h:17-62](FusionUI/FusionUI/Navigation/FusionPageNavigator.h)):
+**核心协议**（[FusionPageNavigator.h:17-76](FusionUI/FusionUI/Navigation/FusionPageNavigator.h#L17-L76)，以下为节选）：
 
 ```objc
 // 页面协议
-@protocol IFusionPageProtocol <NSObject>
+@protocol IFusionPageProtocol<NSObject>
+@required
 - (id)initWithConfig:(NSDictionary *)pageConfig;
 - (NSDictionary *)getPageConfig;
 - (void)processPageCommand:(NSString *)command args:(NSDictionary *)args;
-// ... 生命周期回调
+- (void)setNavigator:(FusionPageNavigator *)navigator;
+- (FusionPageNavigator *)getNavigator;
+- (void)setTabBar:(FusionTabBar *)tabBar;
+// ... 另有 pageName / pageNick / callbackUrl / naviAnimeType 的存取方法
+@optional
+// 转场动画回调、快照视图、遮罩视图、updateSubviewsLayout、页面上下文保存与恢复
 @end
 
 // 适配器协议
-@protocol IFusionPageAdapterProtocol <NSObject>
+@protocol IFusionPageAdapterProtocol<NSObject>
+@required
 - (UIViewController<IFusionPageProtocol> *)generateFusionPageController:(NSDictionary *)pageConfig;
 - (NSDictionary *)getPageConfig:(NSString *)pageName;
 - (FusionTabBar *)generateFusionTabbar:(NSString *)tabbarName;
 @end
 ```
+
+`FusionPageController` 是实现了 `IFusionPageProtocol` 的页面基类，自定义页面通常继承它即可。
 
 #### 4.5.2 页面配置格式
 
@@ -358,85 +447,82 @@ native://PageNavigator/PageActor?command=push&page=ProfilePage
     @"class": @"ProfileViewController",
     @"title": @"个人资料",
     @"tabbar_name": @"MainTabBar",
-    @"singleton": @YES,        // 是否单例
+    @"singleton": @YES,        // 是否复用同一实例
     @"navi_anime": @"slide",   // 导航动画类型
-    @"track_name": @"profile"   // 埋点名称
+    @"track_name": @"profile"  // 埋点名称
 }
 ```
 
 #### 4.5.3 导航动画
 
-支持多种预设动画 ([FusionUI/FusionUI/Navigation/Anime/](FusionUI/FusionUI/Navigation/Anime/)):
+框架内置多种转场动画（[FusionUI/FusionUI/Navigation/Anime/](FusionUI/FusionUI/Navigation/Anime/)）：
 
 | 类名 | 动画效果 |
 |-----|---------|
-| FusionSlideL2RAnime | 从左滑入 |
-| FusionSlideR2LAnime | 从右滑入 |
-| FusionSlideT2BAnime | 从上滑入 |
-| FusionSlideB2TAnime | 从下滑入 |
-| FusionScrollL2RAnime | 滚动从左 |
-| FusionScrollR2LAnime | 滚动从右 |
-| FusionNavi2DAnime | 2D转场效果 |
+| FusionSlideL2RAnime | 从左侧滑入 |
+| FusionSlideR2LAnime | 从右侧滑入 |
+| FusionSlideT2BAnime | 从顶部滑入 |
+| FusionSlideB2TAnime | 从底部滑入 |
+| FusionScrollL2RAnime | 自左向右滚动 |
+| FusionScrollR2LAnime | 自右向左滚动 |
+| FusionNavi2DAnime | 2D 转场效果 |
 
-### 4.6 CoreService - 网络引擎
+### 4.6 CoreService：网络层
 
-#### 4.6.1 NeoNetEngine 架构
+#### 4.6.1 架构
 
-基于libcurl的多socket事件驱动架构：
+CoreService 不再包含自研网络引擎，原有的 NeoNetEngine（libcurl + c-ares）已被移除。网络能力由两个基于 AFNetworking 的 FusionActor 提供，调用方通过消息系统发送请求，不直接调用 Actor：
 
 ```
-┌─────────────────────────────────────────┐
-│           NeoNetEngine                  │
-│  ┌─────────────────────────────────┐  │
-│  │      CURLM (multi handle)         │  │
-│  │  ┌─────────┐ ┌─────────┐         │  │
-│  │  │CURL* #1 │ │CURL* #2 │  ...    │  │
-│  │  └────┬────┘ └────┬────┘         │  │
-│  │       └────────────┘               │  │
-│  │            ↓ socket                │  │
-│  │       ┌─────────┐                  │  │
-│  │       │socket_fd│                  │  │
-│  │       └────┬────┘                  │  │
-│  │            ↓ event                 │  │
-│  │       DNSSocketContext             │  │
-│  └─────────────────────────────────┘  │
-│            ↓ _updateTimer (每50ms)      │
-│       curl_multi_perform()              │
-│            ↓ callback                   │
-│       NeoNetTask (onComplete)           │
-└─────────────────────────────────────────┘
+[调用方] → FusionNativeMessage(netService / netNormal 或 download)
+   ↓ asyncSendMessage
+[FusionCore] → threadType = FusionService_NET → NetworkThread
+   ↓
+[NetNormalActor / DownloadFileActor] → 发起 AFNetworking 任务
+   ↓ 完成回调（AFNetworking 默认在主队列触发）
+ 切回 NetworkThread → 写入 dataTable → setState: Finish / Failed
+   ↓
+[调用方] 在发起线程上收到 FusionNativeMessageNotification
 ```
 
-#### 4.6.2 任务类型
+由于 AFNetworking 的完成回调运行在主队列上，两个 Actor 都会先将回调切回 Fusion 网络线程（`[[FusionCore getInstance] getNetworkThread]`），再修改 Actor 内部状态并调用 `setState:`，以保证 Actor 状态只在单一线程上被访问。
 
-```objc
-// 基础任务
-NeoNetTask (抽象基类)
-    ├── NeoHttpTask (HTTP GET/通用请求)
-    │       └── NeoHttpPostTask (POST表单)
-    │       └── NeoHttpFormTask (Multipart表单)
-    └── NeoHttpDownloadTask (文件下载)
-```
+#### 4.6.2 网络 Actor
 
-#### 4.6.3 配置选项
+源码位于 [CoreService/CoreService/Network/](CoreService/CoreService/Network/)：
 
-```objc
-@{
-    @"dns_service": @"8.8.8.8",      // DNS服务器
-    @"dns_cache_time": @600,         // DNS缓存时间(秒)
-    @"timeout": @30,                  // 请求超时
-    @"connect_timeout": @10,           // 连接超时
-    @"enable_ssl_verify": @YES       // SSL证书验证
-}
-```
+| Actor | 说明 |
+|-------|------|
+| `NetNormalActor` | 通过共享的 `AFHTTPSessionManager` 发起 GET / POST 请求。接受任意状态码与内容类型，响应为原始 `NSData`。通过重定向 block 支持 `HTTP_DISABLE_FOLLOW`（否则 NSURLSession 会自动跟随 301/302）。支持取消。 |
+| `DownloadFileActor` | 通过 `AFURLSessionManager` 下载任务下载文件。借助 `DownloadFileCluster` 对同一 URL 的并发请求去重；目标文件已存在且未设置 `NET_FORCE_DOWNLOAD` 时直接返回成功。 |
+
+#### 4.6.3 参数与结果键
+
+定义于 [NetworkCommon.h](CoreService/CoreService/Network/NetworkCommon.h)：
+
+| 类别 | 键 | 说明 |
+|------|----|------|
+| 输入 | `NET_REMOTE_URL` | 请求地址（必填） |
+| 输入 | `NET_HTTP_METHOD` | `HTTP_GET_METHOD`（默认）或 `HTTP_POST_METHOD` |
+| 输入 | `NET_HTTP_HEADER` | 请求头字典 |
+| 输入 | `NET_HTTP_PARAMS` | 请求参数字典 |
+| 输入 | `HTTP_DISABLE_FOLLOW` | 是否禁止跟随重定向（BOOL） |
+| 输入（下载） | `NET_LOCAL_PATH` | 文件保存路径 |
+| 输入（下载） | `NET_TEMP_PATH` | 临时文件路径（可选） |
+| 输入（下载） | `NET_FORCE_DOWNLOAD` | 文件已存在时是否仍重新下载（BOOL） |
+| 结果 | `HTTP_RESPONSE_CODE` | HTTP 状态码 |
+| 结果 | `HTTP_RESPONSE_HEADER` | 响应头字典 |
+| 结果 | `HTTP_RESPONSE_DATA` | 响应体（`NSData`） |
+| 结果 | `HTTP_EFFECTIVE_URL` | 发生重定向后的最终地址 |
+| 错误 | `MESSAGE_ERROR_DOMAIN` / `MESSAGE_ERROR_CODE` / `MESSAGE_ERROR_MSG` | 由 `FusionNativeMessage (Error)` 分类的 `setErrorDomainCode:errorCode:errorMsg:` 写入 |
 
 ---
 
 ## 5. 关键技术点
 
-### 5.1 SafeARC - 兼容性宏
+### 5.1 SafeARC：兼容性宏
 
-[Workspace/CommonHeader/SafeARC.h](Workspace/CommonHeader/SafeARC.h) 提供ARC/非ARC兼容：
+[FusionBase/FusionBase/CommonHeader/SafeARC.h](FusionBase/FusionBase/CommonHeader/SafeARC.h) 提供同时兼容 ARC 与非 ARC 环境的内存管理宏（各 podspec 通过 `HEADER_SEARCH_PATHS` 引入该目录）：
 
 ```objc
 #if __has_feature(objc_arc)
@@ -456,46 +542,45 @@ NeoNetTask (抽象基类)
 #endif
 ```
 
-### 5.2 Lua代码生成系统
+### 5.2 Lua 代码生成系统
 
-#### 5.2.1 配置流程
+#### 5.2.1 处理流程
 
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   *.lua      │────▶│ MacroMaker   │────▶│   *.h宏      │
+│   *.lua      │────▶│ MacroMaker   │────▶│   *.h 宏     │
 │   配置       │     │   脚本       │     │   定义       │
 └──────────────┘     └──────────────┘     └──────────────┘
                             │
                             ▼
                      ┌──────────────┐
                      │ Script.bundle│
-                     │   Lua脚本    │
+                     │  处理后脚本  │
                      └──────────────┘
                             │
                             ▼
                      ┌──────────────┐
                      │  config.zip  │
-                     │   (发布用)    │
+                     │ (运行时配置) │
                      └──────────────┘
 ```
 
-#### 5.2.2 Service配置示例
+`MacroMaker.lua` 扫描所有 `*/Script/Service/*.lua` 与 `*/Script/Page/*.lua`，生成名称宏头文件，并将配置打包进 `config.zip`，供 `IFusionConfig` 的实现者在运行时读取。
+
+#### 5.2.2 Service 配置示例
 
 ```lua
--- Script/Service/NetworkService.lua
-local service = FusionService.new("NetworkService", "TRIPNetworkService")
+-- Script/Service/NetService.lua
+local service = FusionService.new("netService", "FusionService")
+service.thread_type = 1   -- 0=Default（工作线程池） 1=NET 2=UI（主线程）
 
-service:addActor(FusionActor.new("HttpGet", "HttpGetActor"))
-service:addActor(FusionActor.new("HttpPost", "HttpPostActor"))
-service:addActor(FusionActor.new("Download", "DownloadActor"))
+service:addActor(FusionActor.new("netNormal", "NetNormalActor"))
+service:addActor(FusionActor.new("download", "DownloadFileActor"))
 
--- 添加过滤器（可选）
-service:addFilter(FusionFilter.new("NetworkFilter"))
-
-register_logic_service(service)
+register_core_service(service)   -- 启动时创建；按需加载的 Service 使用 register_logic_service()
 ```
 
-#### 5.2.3 Page配置示例
+#### 5.2.3 Page 配置示例
 
 ```lua
 -- Script/Page/MainPages.lua
@@ -504,7 +589,7 @@ page:addCommand("refresh")
 page:addCommand("loadMore")
 register_page(page)
 
--- H5页面
+-- H5 页面（按环境区分地址）
 local h5page = Page.newH5Host("WebPage", {
     test = "https://test.example.com",
     prepare = "https://pre.example.com",
@@ -515,58 +600,55 @@ register_page(h5page)
 
 #### 5.2.4 生成的宏
 
-运行 `lua Workspace/MacroMaker.lua` 后生成：
+在 `Workspace` 目录下执行 `lua MacroMaker.lua` 后生成：
 
 ```objc
 // TRIPServiceMacro.h
-#define NETWORKSERVICE_SERVICE @"NetworkService"
-#define HTTPGET_ACTOR @"HttpGet"
-#define HTTPPOST_ACTOR @"HttpPost"
-#define DOWNLOAD_ACTOR @"Download"
+#define NETSERVICE_SERVICE @"netService"
+#define NETNORMAL_ACTOR @"netNormal"
+#define DOWNLOAD_ACTOR @"download"
 
 // TRIPPageMacro.h
 #define HOMEPAGE_PAGE @"HomePage"
 #define WEBPAGE_PAGE @"WebPage"
 ```
 
-### 5.3 Filter组合模式
+### 5.3 Filter 组合模式
 
-支持Filter的逻辑组合 ([FusionCore/FusionCore/Filter/](FusionCore/FusionCore/Filter/)):
+Filter 通过配置字典声明，并在 Service / Actor 初始化时根据 `class` 键实例化（[FusionCore/FusionCore/Filter/](FusionCore/FusionCore/Filter/)）。组合型 Filter 从配置中读取子 Filter：
 
-```objc
-// 单个Filter
-FusionFilter *filter = [[FusionFilter alloc] initWithConfig:@{@"type": @"network"}];
-
-// AND组合（全部通过才算通过）
-FusionAndFilter *andFilter = [[FusionAndFilter alloc] initWithConfig:nil];
-[andFilter addFilter:filter1];
-[andFilter addFilter:filter2];
-
-// OR组合（任一通过即通过）
-FusionOrFilter *orFilter = [[FusionOrFilter alloc] initWithConfig:nil];
-[orFilter addFilter:filter1];
-[orFilter addFilter:filter2];
-
-// NOT组合（取反）
-FusionNotFilter *notFilter = [[FusionNotFilter alloc] initWithFilter:filter];
-
-// 应用到Service
-FusionService *service = [[FusionService alloc] initWithConfig:nil];
-service.filter = andFilter;
-```
-
-### 5.4 消息池优化
-
-FusionCore使用消息池复用消息对象，避免频繁创建/销毁：
+| Filter | 子 Filter 配置键 | 判定规则 |
+|--------|-----------------|---------|
+| `FusionAndFilter` | `filters`（数组） | 全部通过才算通过 |
+| `FusionOrFilter` | `filters`（数组） | 任一通过即通过 |
+| `FusionNotFilter` | `filter`（字典） | 对子 Filter 结果取反 |
 
 ```objc
-// FusionMessagePool 管理消息对象
-@interface FusionMessagePool : NSObject
-+ (FusionMessagePool *)getInstance;
-- (FusionNativeMessage *)dequeueMessage;
-- (void)enqueueMessage:(FusionNativeMessage *)message;
-@end
+// 为 Actor 配置组合过滤器：要求已登录，且不处于离线模式
+@{
+    @"class": @"MyActor",
+    @"filter": @{
+        @"class": @"FusionAndFilter",
+        @"filters": @[
+            @{ @"class": @"LoginFilter" },
+            @{ @"class": @"FusionNotFilter",
+               @"filter": @{ @"class": @"OfflineFilter" } }
+        ]
+    }
+}
 ```
+
+自定义 Filter 只需继承 `FusionFilter` 并重写 `filterFusionNativeMessage:`，返回 `YES` 表示放行。Actor 过滤器未通过时，消息会被直接置为 Failed。
+
+### 5.4 消息池（调度队列）
+
+`FusionMessagePool` 是工作线程池的待调度队列，**不负责复用消息对象**。它在 CoreThread 上维护三类队列：
+
+- **普通消息**：按 `service::actor` 分组，各组轮流出队
+- **回调消息**：按父消息的 `workerNick` 分组，确保回调回到处理父消息的工作线程
+- **取消消息**：按消息的 `workerNick` 分组；若消息尚未被调度，则直接从普通队列中移除
+
+只有 `FusionService_Default` 类型的消息会进入消息池；NET 与 UI 类型的消息直接派发到对应线程。
 
 ---
 
@@ -574,46 +656,16 @@ FusionCore使用消息池复用消息对象，避免频繁创建/销毁：
 
 ### 6.1 快速开始
 
-#### 步骤1: 创建工作空间
+#### 步骤 1：安装依赖并打开工作空间
 
 ```bash
-cd Workspace
-open FusionWorkspace.xcworkspace
+pod install
+open Workspace/FusionWorkspace.xcworkspace
 ```
 
-#### 步骤2: 创建自定义Service和Actor
+#### 步骤 2：创建自定义 Actor
 
-**MyService.h**
-```objc
-#import <FusionCore/FusionService.h>
-
-@interface MyService : FusionService
-@end
-```
-
-**MyService.m**
-```objc
-#import "MyService.h"
-#import "MyActor.h"
-
-@implementation MyService
-
-- (id)initWithConfig:(NSDictionary *)config {
-    self = [super initWithConfig:config];
-    if (self) {
-        _name = @"MyService";
-        _threadType = FusionService_Default; // WorkerThread
-        
-        // 注册Actor
-        _actorDic = [[NSMutableDictionary alloc] init];
-        [_actorDic setValue:[[MyActor alloc] initWithConfig:nil]
-                     forKey:@"MyActor"];
-    }
-    return self;
-}
-
-@end
-```
+线程类型、Actor 列表等属性均由配置提供，通常无需自定义 Service 子类，直接使用 `FusionService` 即可。
 
 **MyActor.h**
 ```objc
@@ -626,29 +678,21 @@ open FusionWorkspace.xcworkspace
 **MyActor.m**
 ```objc
 #import "MyActor.h"
+#import <FusionCore/FusionCore.h>
 
 @implementation MyActor
 
-- (id)initWithConfig:(NSDictionary *)config {
-    self = [super initWithConfig:config];
-    if (self) {
-        _name = @"MyActor";
-    }
-    return self;
-}
-
 - (void)processFusionNativeMessage:(FusionNativeMessage *)message {
-    // 获取参数
-    NSDictionary *args = [message args];
-    NSString *command = [args valueForKey:@"command"];
-    
+    // 读取参数
+    NSString *command = [[message args] valueForKey:@"command"];
+
     if ([command isEqualToString:@"doSomething"]) {
         // 执行业务逻辑
         id result = [self doSomething];
-        
-        // 设置结果到数据表
+
+        // 将结果写入数据表
         [message setValue:result ToDataTableWith:@"result"];
-        
+
         // 标记完成
         [message setState:FusionNativeMessageFinish];
     } else {
@@ -657,45 +701,54 @@ open FusionWorkspace.xcworkspace
     }
 }
 
-- (void)processCallbackMessage:(FusionNativeMessage *)message 
+- (void)processCallbackMessage:(FusionNativeMessage *)message
                  ParentMessage:(FusionNativeMessage *)parent {
-    // 处理子消息回调
+    // 汇总子消息结果
     id subResult = [message getValueFromDataTableWith:@"result"];
     [parent setValue:subResult ToDataTableWith:@"subResult"];
-    
-    // 父消息自动完成（当所有子消息完成时）
+
+    // 默认实现会在子消息全部完成后将父消息置为 Finish
+    [super processCallbackMessage:message ParentMessage:parent];
 }
 
 - (void)cancelFusionNativeMessage:(FusionNativeMessage *)message {
-    // 清理资源
+    // 释放与该消息相关的资源
+    [super cancelFusionNativeMessage:message];
 }
 
 @end
 ```
 
-#### 步骤3: 配置Lua
+#### 步骤 3：编写 Lua 配置
 
 **YourModule/Script/Service/MyService.lua**
 ```lua
-local service = FusionService.new("MyService", "MyService")
+local service = FusionService.new("MyService", "FusionService")
+service.thread_type = 0   -- 工作线程池
 service:addActor(FusionActor.new("MyActor", "MyActor"))
 register_logic_service(service)
 ```
 
-#### 步骤4: 生成宏
+#### 步骤 4：生成宏与配置
 
 ```bash
 cd Workspace
 lua MacroMaker.lua
 ```
 
-#### 步骤5: 发送消息
+#### 步骤 5：发送消息并接收结果
 
 ```objc
 #import <FusionCore/FusionCore.h>
 #import "TRIPServiceMacro.h"
 
-// 创建消息
+// 监听完成通知（在发起线程上触发）
+[[NSNotificationCenter defaultCenter] addObserver:self
+                                         selector:@selector(onMessageFinished:)
+                                             name:FusionNativeMessageNotification
+                                           object:nil];
+
+// 创建并发送消息
 FusionNativeMessage *msg = [[FusionNativeMessage alloc]
     initWithSerivice:MYSERVICE_SERVICE
                actor:MYACTOR_ACTOR
@@ -703,12 +756,20 @@ FusionNativeMessage *msg = [[FusionNativeMessage alloc]
                     @"command": @"doSomething",
                     @"param1": @"value1"
                 }];
-
-// 异步发送
 [[FusionCore getInstance] asyncSendMessage:msg];
+
+// 处理结果
+- (void)onMessageFinished:(NSNotification *)notification {
+    FusionNativeMessage *message = notification.object;
+    if (message.state == FusionNativeMessageFinish) {
+        id result = [message getValueFromDataTableWith:@"result"];
+    }
+}
 ```
 
-### 6.2 页面导航使用
+由于该通知面向所有顶层消息广播，请在回调中根据消息对象（或其 service / actor）判断是否为自己发出的消息。
+
+### 6.2 页面导航
 
 #### 创建页面
 
@@ -732,7 +793,7 @@ FusionNativeMessage *msg = [[FusionNativeMessage alloc]
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // 设置UI
+    // 搭建 UI
 }
 
 - (void)processPageCommand:(NSString *)command args:(NSDictionary *)args {
@@ -743,7 +804,7 @@ FusionNativeMessage *msg = [[FusionNativeMessage alloc]
     }
 }
 
-// 动画回调
+// 转场动画回调
 - (void)enterAnimeStart { /* 进入动画开始 */ }
 - (void)enterAnimeFinish { /* 进入动画完成 */ }
 - (void)exitAnimeStart { /* 退出动画开始 */ }
@@ -755,150 +816,164 @@ FusionNativeMessage *msg = [[FusionNativeMessage alloc]
 #### 页面跳转
 
 ```objc
-#import <FusionUI/FusionPageNavigator.h>
+#import <FusionUI/FusionUI.h>
+#import "TRIPPageMacro.h"
 
-// 获取导航器
-FusionPageNavigator *navigator = /* 获取方式 */;
-
-// 构建页面消息
-FusionPageMessage *pageMsg = [[FusionPageMessage alloc] init];
-[pageMsg setTargetPageName:MYPAGE_PAGE];
-[pageMsg setArgs:@{@"userId": @"123"}];
-
-// 发送导航消息
-[[FusionCore getInstance] asyncSendMessage:pageMsg];
+FusionPageMessage *pageMsg = [[FusionPageMessage alloc]
+    initWithPageName:MYPAGE_PAGE
+            pageNick:nil
+             command:@"init"
+                args:@{@"userId": @"123"}
+            callback:nil];
+[[self getNavigator] gotoPage:pageMsg];
 ```
 
-### 6.3 网络请求使用
+`callback:` 参数的类型是 `NSURL`，而非 block。如需将结果回传给当前页面，可调用 `[FusionPageNavigator generateCallbackUrl:self]` 生成回调 URL，并在其后追加参数与 `#command` 片段；被打开的页面结束时，框架会把该命令投递到发起页面的 `processPageCommand:args:`。
+
+### 6.3 网络请求
+
+网络请求同样通过消息系统发送：
 
 ```objc
-#import <CoreService/NeoNetEngine.h>
-#import <CoreService/NeoHttpTask.h>
+#import <FusionCore/FusionCore.h>
+#import <CoreService/NetworkCommon.h>
 
-// 创建任务
-NeoHttpTask *task = [[NeoHttpTask alloc] init];
-[task setRequestUrl:@"https://api.example.com/data"];
-[task setHeaderDic:@{@"Authorization": @"Bearer token"}];
-[task setTimeout:30.0];
+FusionNativeMessage *msg = [[FusionNativeMessage alloc]
+    initWithSerivice:@"netService"
+               actor:@"netNormal"
+                args:@{
+                    NET_REMOTE_URL:  @"https://api.example.com/data",
+                    NET_HTTP_METHOD: HTTP_GET_METHOD,
+                    NET_HTTP_HEADER: @{@"Authorization": @"Bearer token"}
+                }];
+[[FusionCore getInstance] asyncSendMessage:msg];
 
-// 设置回调
-[task setOnComplete:^(NeoNetTask *task, id result) {
-    NSData *responseData = result;
-    // 处理响应
-}];
+// 在 FusionNativeMessageNotification 回调中读取结果
+- (void)onMessageFinished:(NSNotification *)notification {
+    FusionNativeMessage *message = notification.object;
+    if (message != msg) return;
 
-[task setOnFailed:^(NeoNetTask *task, NSError *error) {
-    // 处理错误
-}];
-
-// 启动任务
-[[NeoNetEngine getInstance] startTask:task];
+    if (message.state == FusionNativeMessageFinish) {
+        NSInteger code = [[message getValueFromDataTableWith:HTTP_RESPONSE_CODE] integerValue];
+        NSData *body = [message getValueFromDataTableWith:HTTP_RESPONSE_DATA];
+        // 处理响应
+    } else {
+        NSString *errorMsg = [message getValueFromDataTableWith:MESSAGE_ERROR_MSG];
+        // 处理错误
+    }
+}
 ```
 
-### 6.4 带依赖的复杂消息
+文件下载使用 `DownloadFileActor`，需额外传入 `NET_LOCAL_PATH`。如需取消请求，调用 `[[FusionCore getInstance] asyncCancelMessage:msg]`。
+
+### 6.4 父子消息协同
+
+以下代码在父消息所在 Actor 的 `processFusionNativeMessage:` 中执行：
 
 ```objc
-// 父消息
-FusionNativeMessage *parentMsg = [[FusionNativeMessage alloc]
-    initWithSerivice:DATASERVICE_SERVICE
-               actor:AGGREGATE_ACTOR
-                args:@{@"type": @"aggregate"}];
+- (void)processFusionNativeMessage:(FusionNativeMessage *)parentMsg {
+    // 子消息 1
+    FusionNativeMessage *child1 = [[FusionNativeMessage alloc]
+        initWithSerivice:DATASERVICE_SERVICE
+                   actor:FETCHUSER_ACTOR
+                    args:@{@"userId": @"123"}];
+    [parentMsg insertSubMessage:child1];   // 由父消息挂载子消息
 
-// 子消息1
-FusionNativeMessage *child1 = [[FusionNativeMessage alloc]
-    initWithSerivice:DATASERVICE_SERVICE
-               actor:FETCHUSER_ACTOR
-                args:@{@"userId": @"123"}];
-[child1 insertSubMessage:parentMsg]; // 设置父子关系
+    // 子消息 2
+    FusionNativeMessage *child2 = [[FusionNativeMessage alloc]
+        initWithSerivice:DATASERVICE_SERVICE
+                   actor:FETCHORDER_ACTOR
+                    args:@{@"userId": @"123"}];
+    [parentMsg insertSubMessage:child2];
 
-// 子消息2
-FusionNativeMessage *child2 = [[FusionNativeMessage alloc]
-    initWithSerivice:DATASERVICE_SERVICE
-               actor:FETCHORDER_ACTOR
-                args:@{@"userId": @"123"}];
-[child2 insertSubMessage:parentMsg];
+    // 批量发送子消息
+    [[FusionCore getInstance] asyncSendMessageArray:@[child1, child2]];
 
-// 发送子消息
-[[FusionCore getInstance] asyncSendMessage:child1];
-[[FusionCore getInstance] asyncSendMessage:child2];
-
-// 当child1和child2都完成后，parentMsg自动完成
-// 并调用AGGREGATE_ACTOR的processCallbackMessage
+    // 此处不设置 parentMsg 的状态。
+    // 每个子消息完成时都会回调本 Actor 的 processCallbackMessage:ParentMessage:，
+    // 默认实现会在 child1、child2 都完成后将 parentMsg 置为 Finish。
+}
 ```
 
 ---
 
 ## 7. 最佳实践
 
-### 7.1 Service设计原则
+### 7.1 Service 设计原则
 
-1. **单一职责**：每个Service只负责一个功能领域
-2. **线程安全**：Service的方法会被多线程调用，注意加锁
-3. **懒加载**：Service在第一次收到消息时才初始化
-4. **优雅降级**：网络Service在离线时提供缓存数据
+1. **单一职责**：每个 Service 只负责一个功能领域
+2. **配置驱动**：线程类型、Actor 列表和过滤器都写在配置中，避免为此子类化 Service
+3. **按需加载**：非启动必需的 Service 使用 `register_logic_service()` 注册，首次收到消息时才创建
+4. **并发控制**：需要串行处理的 Service 应重写 `canConcurrentExecute:`，而不是在 Actor 内部加锁阻塞工作线程
 
-### 7.2 Actor设计原则
+### 7.2 Actor 设计原则
 
-1. **无状态**：Actor不保存业务状态，状态放在Message中
-2. **幂等性**：相同的消息多次处理结果一致
-3. **快速返回**：process方法尽快返回，耗时操作异步执行
-4. **异常处理**：所有异常捕获并设置Failed状态
+1. **避免保存单条请求的状态**：同一 Actor 实例会处理该 Actor 名下的所有消息，`Default` 类型下还可能在多个工作线程上并发执行。单条请求的数据应放在消息的 args 与 dataTable 中；确需保存的实例状态（如网络任务表）必须保证线程安全，或像网络 Actor 那样限定在单一线程上访问
+2. **幂等性**：同一消息重复处理时，结果应保持一致
+3. **快速返回**：`processFusionNativeMessage:` 应尽快返回，耗时操作改为异步执行，完成后再设置状态
+4. **必须收尾**：每条消息最终都要被置为 Finish 或 Failed，否则调用方永远收不到通知
 
 ### 7.3 消息设计原则
 
-1. **不可变性**：消息创建后不应修改args
-2. **小数据**：dataTable只传递必要数据，大数据用key传递
-3. **及时完成**：消息处理完成后立即设置状态
-4. **取消支持**：实现cancel方法清理资源
+1. **参数只读**：消息创建后不应修改 args，处理结果统一写入 dataTable
+2. **控制数据量**：dataTable 只传递必要数据，大块数据应写入文件或缓存，消息中只传路径或 key
+3. **及时完成**：处理完成后立即设置状态
+4. **支持取消**：长耗时 Actor 应实现 `cancelFusionNativeMessage:` 以释放资源，并调用 `super` 以取消子消息
 
 ### 7.4 目录结构规范
 
 ```
 YourModule/
 ├── Script/
-│   ├── Service/           # Service配置
+│   ├── Service/            # Service 配置
 │   │   └── YourService.lua
-│   ├── Page/               # Page配置
+│   ├── Page/               # 页面配置
 │   │   └── YourPages.lua
-│   └── Logic/              # 业务逻辑Lua
+│   └── Logic/              # 业务逻辑 Lua
 ├── Source/
-│   ├── Service/            # Service实现
-│   ├── Actor/              # Actor实现
+│   ├── Service/            # 自定义 Service（如有）
+│   ├── Actor/              # Actor 实现
 │   └── Model/              # 数据模型
-├── Resource.bundle/        # 资源文件
-└── YourModule.xcodeproj
+└── Resource.bundle/        # 资源文件
+
+YourModule.podspec          # 位于仓库根目录，由 Podfile 通过 :path => '.' 引用
 ```
 
 ---
 
 ## 8. 性能优化
 
-### 8.1 消息池复用
+### 8.1 调度开销
 
-框架自动使用消息池，开发者无需干预。注意在Actor中及时清理引用。
+所有消息都先经过 CoreThread 路由，再派发到目标线程。对于高频、轻量的操作，应合并为一条消息处理，避免拆分成大量细粒度消息。
 
-### 8.2 线程调优
+### 8.2 选择合适的线程类型
 
 ```objc
-// Service选择合适的线程类型
-// IO密集型 → FusionService_Default (WorkerThreads)
-// 网络请求 → FusionService_NET (NetworkThread)
-// UI更新 → FusionService_UI (MainThread)
+// 一般业务逻辑、CPU 密集型计算 → FusionService_Default（工作线程池，可并行）
+// 网络请求                     → FusionService_NET（单一网络线程）
+// UI 更新                      → FusionService_UI（主线程）
 ```
 
-### 8.3 批量消息处理
+NetworkThread 与 MainThread 都只有一条线程。在这两类 Service 中执行阻塞操作，会拖慢该线程上的所有其他消息。
+
+### 8.3 批量发送
 
 ```objc
-// 批量发送减少线程切换
+// 一次性提交多条消息，减少向 CoreThread 派发的次数
 NSArray *messages = @[msg1, msg2, msg3, msg4];
-[[FusionCore getInstance] asyncBatchMessages:messages];
+[[FusionCore getInstance] asyncSendMessageArray:messages];
 ```
 
-### 8.4 内存管理
+### 8.4 延迟消息精度
 
-1. 使用SafeARC宏避免内存泄漏
-2. 在dealloc中清理资源
-3. 大对象使用弱引用
+CoreThread 以 0.5 秒为周期检查延迟队列，因此延迟消息的实际触发时间最多可能比 `delay` 晚约 0.5 秒。对时间精度要求较高的场景，请改用 `FusionTimerService` 或系统定时器。
+
+### 8.5 内存管理
+
+1. 统一使用 SafeARC 宏，保证代码在 ARC 与非 ARC 环境下行为一致
+2. 在 `dealloc` 中释放持有的资源
+3. 在 block 中引用 `self` 时使用 `__weak` / `__strong` 配对，避免循环引用
 
 ---
 
@@ -908,17 +983,17 @@ NSArray *messages = @[msg1, msg2, msg3, msg4];
 
 | 术语 | 说明 |
 |-----|------|
-| Actor | 消息处理器，封装了行为和数据 |
-| Service | Actor的容器，管理线程和生命周期 |
-| Message | 携带指令和数据的消息对象 |
-| Filter | 消息过滤器，决定是否处理 |
+| Actor | 消息处理器，实现具体业务逻辑 |
+| Service | Actor 的容器，决定执行线程并管理 Actor 的生命周期 |
+| Message | 携带目标、参数与结果的消息对象 |
+| Filter | 消息过滤器，决定消息是否进入 Actor 处理 |
 | Navigator | 页面导航管理器 |
-| Adapter | 页面配置适配器 |
+| Adapter | 根据页面配置创建页面实例的适配器 |
 
 ### B. 参考资料
 
 - [Actor Model](https://en.wikipedia.org/wiki/Actor_model)
-- [libcurl Documentation](https://curl.se/libcurl/c/)
+- [AFNetworking](https://github.com/AFNetworking/AFNetworking)
 - [Lua 5.1 Reference Manual](https://www.lua.org/manual/5.1/)
 
 ---
