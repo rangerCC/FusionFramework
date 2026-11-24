@@ -10,12 +10,13 @@
 		2017507D1A6507CB008D1007 /* TestCPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2017507C1A6507CB008D1007 /* TestCPageController.m */; };
 		201D31D61A66374C00C53B0F /* TestTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 201D31D51A66374C00C53B0F /* TestTabBar.m */; };
 		20969D9A1A64019F00E9C377 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969D991A64019F00E9C377 /* main.m */; };
-		20969D9D1A64019F00E9C377 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969D9C1A64019F00E9C377 /* AppDelegate.m */; };
 		20969DA51A64019F00E9C377 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20969DA41A64019F00E9C377 /* Images.xcassets */; };
 		20969DA81A64019F00E9C377 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20969DA61A64019F00E9C377 /* LaunchScreen.xib */; };
 		20969DC41A64038300E9C377 /* TestAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DC31A64038300E9C377 /* TestAdapter.m */; };
 		20969DC71A64048A00E9C377 /* TestAPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DC61A64048A00E9C377 /* TestAPageController.m */; };
 		20969DCA1A64138100E9C377 /* TestBPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20969DC91A64138100E9C377 /* TestBPageController.m */; };
+		A634865730B5F9310006E1DF /* PCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634865430B5F9310006E1DF /* PCAppDelegate.m */; };
+		A634865830B5F9310006E1DF /* PCSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634865630B5F9310006E1DF /* PCSceneDelegate.m */; };
 		EA21D9C2679A193CCDCEDC8F /* Pods_TestApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BBC6A28015EE352032A3147 /* Pods_TestApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -27,8 +28,6 @@
 		20969D941A64019F00E9C377 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20969D981A64019F00E9C377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20969D991A64019F00E9C377 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		20969D9B1A64019F00E9C377 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		20969D9C1A64019F00E9C377 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		20969DA41A64019F00E9C377 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		20969DA71A64019F00E9C377 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		20969DC21A64038300E9C377 /* TestAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAdapter.h; sourceTree = "<group>"; };
@@ -38,6 +37,10 @@
 		20969DC81A64138100E9C377 /* TestBPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBPageController.h; sourceTree = "<group>"; };
 		20969DC91A64138100E9C377 /* TestBPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestBPageController.m; sourceTree = "<group>"; };
 		9BBC6A28015EE352032A3147 /* Pods_TestApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A634865330B5F9310006E1DF /* PCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PCAppDelegate.h; sourceTree = "<group>"; };
+		A634865430B5F9310006E1DF /* PCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PCAppDelegate.m; sourceTree = "<group>"; };
+		A634865530B5F9310006E1DF /* PCSceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PCSceneDelegate.h; sourceTree = "<group>"; };
+		A634865630B5F9310006E1DF /* PCSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PCSceneDelegate.m; sourceTree = "<group>"; };
 		ACD7B84F8C1D9DA3DD51885D /* Pods-TestApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.debug.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.debug.xcconfig"; sourceTree = "<group>"; };
 		E6BFBA9FFE5B70F90866133E /* Pods-TestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.release.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,8 +78,11 @@
 		20969D961A64019F00E9C377 /* TestApp */ = {
 			isa = PBXGroup;
 			children = (
-				20969D9B1A64019F00E9C377 /* AppDelegate.h */,
-				20969D9C1A64019F00E9C377 /* AppDelegate.m */,
+				20969D991A64019F00E9C377 /* main.m */,
+				A634865330B5F9310006E1DF /* PCAppDelegate.h */,
+				A634865430B5F9310006E1DF /* PCAppDelegate.m */,
+				A634865530B5F9310006E1DF /* PCSceneDelegate.h */,
+				A634865630B5F9310006E1DF /* PCSceneDelegate.m */,
 				20969DA41A64019F00E9C377 /* Images.xcassets */,
 				20969DA61A64019F00E9C377 /* LaunchScreen.xib */,
 				20969D971A64019F00E9C377 /* Supporting Files */,
@@ -98,7 +104,6 @@
 			isa = PBXGroup;
 			children = (
 				20969D981A64019F00E9C377 /* Info.plist */,
-				20969D991A64019F00E9C377 /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -263,8 +268,9 @@
 			files = (
 				2017507D1A6507CB008D1007 /* TestCPageController.m in Sources */,
 				201D31D61A66374C00C53B0F /* TestTabBar.m in Sources */,
+				A634865730B5F9310006E1DF /* PCAppDelegate.m in Sources */,
+				A634865830B5F9310006E1DF /* PCSceneDelegate.m in Sources */,
 				20969DC41A64038300E9C377 /* TestAdapter.m in Sources */,
-				20969D9D1A64019F00E9C377 /* AppDelegate.m in Sources */,
 				20969DCA1A64138100E9C377 /* TestBPageController.m in Sources */,
 				20969DC71A64048A00E9C377 /* TestAPageController.m in Sources */,
 				20969D9A1A64019F00E9C377 /* main.m in Sources */,
@@ -378,7 +384,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.TestApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinapp.CleanPhoto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -394,7 +400,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alitrip.TestApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinapp.CleanPhoto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -150,7 +150,12 @@ id pullTableFromLuaState(lua_State* L) {
                     [[temp allKeys] count] == 0 ) {
                         [values addObject:[NSArray array]];
                 } else {
-                    [temp setValue:nil forKey:@"__JsonType"];
+                    // Only dictionaries carry the marker. On an NSArray, KVC
+                    // setValue:forKey: is forwarded to every element and
+                    // crashes on strings (e.g. a page's `commands` list).
+                    if ([temp isKindOfClass:[NSMutableDictionary class]]) {
+                        [temp removeObjectForKey:@"__JsonType"];
+                    }
                     [values addObject:temp];
                 }
                 break;

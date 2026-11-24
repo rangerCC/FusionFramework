@@ -1,0 +1,701 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		090349A0E4F37C159AC7CB46 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08A1B28C8DAC0CEEACFAEA00 /* Foundation.framework */; };
+		196A7C4A3A8550CDE672D288 /* PCMultiIndexHashTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F58CFE5C639E3F2D7E61F1B /* PCMultiIndexHashTests.m */; };
+		19D8EAD7CF8D86A939475680 /* Pods_PhotoCleanerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FEAAE9B35374A1C7D8ECF5 /* Pods_PhotoCleanerTests.framework */; };
+		2A56168920FDB1CAB8DBA7EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D527A6934FE49F6616250E86 /* Assets.xcassets */; };
+		2C41FD78DC6E21E8DC1F6758 /* PCFeaturePrintTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EC13CB107B877CFFBF29B2CB /* PCFeaturePrintTests.m */; };
+		2EF7D4DE9CABB76166548249 /* PCClusteringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C11F866F860C208294C526DD /* PCClusteringTests.m */; };
+		41B328C9620C820765F4A3D8 /* PCFusionConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 331812C0BEAF0A9E8223EA7D /* PCFusionConfig.m */; };
+		44765819B72C8942150C4AEF /* PCDHashTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 33971F6F06A41A2C5C35670D /* PCDHashTests.m */; };
+		51E26C57923C1B6731644BB0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08A1B28C8DAC0CEEACFAEA00 /* Foundation.framework */; };
+		629C171B6DBA0C725FBB256C /* PublishInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0583B6DC16871DE152CC5D27 /* PublishInfo.plist */; };
+		84F23538816E8A6588B731B4 /* PCPublishInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D9AC1E02AFDC3867992927C8 /* PCPublishInfo.m */; };
+		C2D7B77D938194AE6C92FF04 /* PCAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BF4918944BBEEC6A7C51AC /* PCAdapter.m */; };
+		CC19E77EE64682C68A82F914 /* PCHomePage.m in Sources */ = {isa = PBXBuildFile; fileRef = F91C0C8EE3CA26FB8544D53E /* PCHomePage.m */; };
+		CCCE5CA0CE7E57087F5DEC43 /* PCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FEBAA8B239F1909F790F476D /* PCAppDelegate.m */; };
+		D654A97D440357241F3AA043 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 152DE11AB34F223576313B9D /* main.m */; };
+		E03ED2F7B5224283B7E7BF4E /* PCFusionPipelineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05524FB60E300BF552BEF3D /* PCFusionPipelineTests.m */; };
+		EA4160A09C8597AFF35C214C /* config.zip in Resources */ = {isa = PBXBuildFile; fileRef = B233E2B3F8E3DFF29635B2F1 /* config.zip */; };
+		EF8C80EAD12D54EA8081777E /* PCSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A6555A53513E78B208D018 /* PCSceneDelegate.m */; };
+		F9E4018C8D09B7121AE09D1E /* Pods_PhotoCleaner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99C322FE4E597DE8B2872D00 /* Pods_PhotoCleaner.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F6DEBF18D8AB2619B3E90FEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D73B118E00C161C1AE058C3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2EC4D87A8B18C6D670A4300D;
+			remoteInfo = PhotoCleaner;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0583B6DC16871DE152CC5D27 /* PublishInfo.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = PublishInfo.plist; sourceTree = "<group>"; };
+		08A1B28C8DAC0CEEACFAEA00 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		152DE11AB34F223576313B9D /* main.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		15E077325406E7C2E4DAD6E5 /* PCPublishInfo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PCPublishInfo.h; sourceTree = "<group>"; };
+		1ABFD2963D17E8E2619D5C2A /* PCFusionConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PCFusionConfig.h; sourceTree = "<group>"; };
+		1F628B138B325B08008261A9 /* PCHomePage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PCHomePage.h; sourceTree = "<group>"; };
+		27BF4918944BBEEC6A7C51AC /* PCAdapter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCAdapter.m; sourceTree = "<group>"; };
+		331812C0BEAF0A9E8223EA7D /* PCFusionConfig.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCFusionConfig.m; sourceTree = "<group>"; };
+		33971F6F06A41A2C5C35670D /* PCDHashTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCDHashTests.m; sourceTree = "<group>"; };
+		3C03E5362491458A038E7C57 /* TRIPServiceMacro.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TRIPServiceMacro.h; path = Workspace/TRIPServiceMacro.h; sourceTree = "<group>"; };
+		4E486823AC60493F3E27101C /* PCAppDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PCAppDelegate.h; sourceTree = "<group>"; };
+		617E6DE72C4B321D9B81AE7D /* Pods-PhotoCleaner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotoCleaner.release.xcconfig"; path = "Target Support Files/Pods-PhotoCleaner/Pods-PhotoCleaner.release.xcconfig"; sourceTree = "<group>"; };
+		66A6555A53513E78B208D018 /* PCSceneDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCSceneDelegate.m; sourceTree = "<group>"; };
+		74717FCB77C0A42C78BDFFB1 /* PCSceneDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PCSceneDelegate.h; sourceTree = "<group>"; };
+		7F58CFE5C639E3F2D7E61F1B /* PCMultiIndexHashTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCMultiIndexHashTests.m; sourceTree = "<group>"; };
+		800E494017824DF2C0AEA6E6 /* TRIPPageMacro.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TRIPPageMacro.h; path = Workspace/TRIPPageMacro.h; sourceTree = "<group>"; };
+		951311EEFAEFCE9CEBA92DB8 /* PhotoCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		980AC04D20F8A1D23772BFAF /* Pods-PhotoCleaner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotoCleaner.debug.xcconfig"; path = "Target Support Files/Pods-PhotoCleaner/Pods-PhotoCleaner.debug.xcconfig"; sourceTree = "<group>"; };
+		99C322FE4E597DE8B2872D00 /* Pods_PhotoCleaner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PhotoCleaner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B01A9677EDE68C0DD07E13A1 /* PhotoCleanerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoCleanerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B233E2B3F8E3DFF29635B2F1 /* config.zip */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.zip; name = config.zip; path = Workspace/config.zip; sourceTree = "<group>"; };
+		C11F866F860C208294C526DD /* PCClusteringTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCClusteringTests.m; sourceTree = "<group>"; };
+		C1D6F2D6936D7D82309E6727 /* PCAdapter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = PCAdapter.h; sourceTree = "<group>"; };
+		D05524FB60E300BF552BEF3D /* PCFusionPipelineTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCFusionPipelineTests.m; sourceTree = "<group>"; };
+		D170327B3EFBD0EBA00849E0 /* Pods-PhotoCleanerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotoCleanerTests.release.xcconfig"; path = "Target Support Files/Pods-PhotoCleanerTests/Pods-PhotoCleanerTests.release.xcconfig"; sourceTree = "<group>"; };
+		D527A6934FE49F6616250E86 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D9AC1E02AFDC3867992927C8 /* PCPublishInfo.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCPublishInfo.m; sourceTree = "<group>"; };
+		E8EA40E9EF213B95E3FF5FBC /* Pods-PhotoCleanerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotoCleanerTests.debug.xcconfig"; path = "Target Support Files/Pods-PhotoCleanerTests/Pods-PhotoCleanerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E8FEAAE9B35374A1C7D8ECF5 /* Pods_PhotoCleanerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PhotoCleanerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC0E8E3B991D6702F53E4EB9 /* HomePage.lua */ = {isa = PBXFileReference; includeInIndex = 1; name = HomePage.lua; path = Page/HomePage.lua; sourceTree = "<group>"; };
+		EC13CB107B877CFFBF29B2CB /* PCFeaturePrintTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCFeaturePrintTests.m; sourceTree = "<group>"; };
+		F91C0C8EE3CA26FB8544D53E /* PCHomePage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCHomePage.m; sourceTree = "<group>"; };
+		FA24BD04907825AE59DFD782 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FEBAA8B239F1909F790F476D /* PCAppDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PCAppDelegate.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		574444B3D2606D65203CE01B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				090349A0E4F37C159AC7CB46 /* Foundation.framework in Frameworks */,
+				19D8EAD7CF8D86A939475680 /* Pods_PhotoCleanerTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAC02D6FCA6418BE85EDEBFA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				51E26C57923C1B6731644BB0 /* Foundation.framework in Frameworks */,
+				F9E4018C8D09B7121AE09D1E /* Pods_PhotoCleaner.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		06B4A86B38C3C870F08DFEA4 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				08A1B28C8DAC0CEEACFAEA00 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		1379F02D5A20C70A47F129E6 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				15E077325406E7C2E4DAD6E5 /* PCPublishInfo.h */,
+				D9AC1E02AFDC3867992927C8 /* PCPublishInfo.m */,
+			);
+			name = Common;
+			path = Common;
+			sourceTree = "<group>";
+		};
+		1A6852A76DA660E8FBE36335 /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				1F628B138B325B08008261A9 /* PCHomePage.h */,
+				F91C0C8EE3CA26FB8544D53E /* PCHomePage.m */,
+			);
+			name = Pages;
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		1D901994E371AEF3DB3D64F4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0583B6DC16871DE152CC5D27 /* PublishInfo.plist */,
+			);
+			name = Resources;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		33087C447A9FC637D1B5F29B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				951311EEFAEFCE9CEBA92DB8 /* PhotoCleaner.app */,
+				B01A9677EDE68C0DD07E13A1 /* PhotoCleanerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5794AE8F16F89EC3277F76F6 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				B233E2B3F8E3DFF29635B2F1 /* config.zip */,
+				3C03E5362491458A038E7C57 /* TRIPServiceMacro.h */,
+				800E494017824DF2C0AEA6E6 /* TRIPPageMacro.h */,
+				E8C22630AD2DCB6AB8E79B4E /* Lua */,
+			);
+			name = Shared;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		60C311485AE3A7A3A9A0B7B7 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4E486823AC60493F3E27101C /* PCAppDelegate.h */,
+				FEBAA8B239F1909F790F476D /* PCAppDelegate.m */,
+				74717FCB77C0A42C78BDFFB1 /* PCSceneDelegate.h */,
+				66A6555A53513E78B208D018 /* PCSceneDelegate.m */,
+				152DE11AB34F223576313B9D /* main.m */,
+			);
+			name = App;
+			path = App;
+			sourceTree = "<group>";
+		};
+		73FA0D859DA5672C66D60573 /* Fusion */ = {
+			isa = PBXGroup;
+			children = (
+				C1D6F2D6936D7D82309E6727 /* PCAdapter.h */,
+				27BF4918944BBEEC6A7C51AC /* PCAdapter.m */,
+				1ABFD2963D17E8E2619D5C2A /* PCFusionConfig.h */,
+				331812C0BEAF0A9E8223EA7D /* PCFusionConfig.m */,
+			);
+			name = Fusion;
+			path = Fusion;
+			sourceTree = "<group>";
+		};
+		9338F810739B4E3258AB5303 /* PhotoCleaner */ = {
+			isa = PBXGroup;
+			children = (
+				60C311485AE3A7A3A9A0B7B7 /* App */,
+				D527A6934FE49F6616250E86 /* Assets.xcassets */,
+				1379F02D5A20C70A47F129E6 /* Common */,
+				73FA0D859DA5672C66D60573 /* Fusion */,
+				1A6852A76DA660E8FBE36335 /* Pages */,
+				1D901994E371AEF3DB3D64F4 /* Resources */,
+				FA24BD04907825AE59DFD782 /* Info.plist */,
+			);
+			name = PhotoCleaner;
+			path = PhotoCleaner;
+			sourceTree = "<group>";
+		};
+		AFCD71A6B4F4B591B761AE30 = {
+			isa = PBXGroup;
+			children = (
+				33087C447A9FC637D1B5F29B /* Products */,
+				D19890B693AA3E84B88C2305 /* Frameworks */,
+				9338F810739B4E3258AB5303 /* PhotoCleaner */,
+				5794AE8F16F89EC3277F76F6 /* Shared */,
+				C775844818C2402EF824A9E8 /* PhotoCleanerTests */,
+				B084FE11E235346EEA678F9C /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		B084FE11E235346EEA678F9C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				617E6DE72C4B321D9B81AE7D /* Pods-PhotoCleaner.release.xcconfig */,
+				980AC04D20F8A1D23772BFAF /* Pods-PhotoCleaner.debug.xcconfig */,
+				D170327B3EFBD0EBA00849E0 /* Pods-PhotoCleanerTests.release.xcconfig */,
+				E8EA40E9EF213B95E3FF5FBC /* Pods-PhotoCleanerTests.debug.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
+		C775844818C2402EF824A9E8 /* PhotoCleanerTests */ = {
+			isa = PBXGroup;
+			children = (
+				D05524FB60E300BF552BEF3D /* PCFusionPipelineTests.m */,
+				33971F6F06A41A2C5C35670D /* PCDHashTests.m */,
+				7F58CFE5C639E3F2D7E61F1B /* PCMultiIndexHashTests.m */,
+				EC13CB107B877CFFBF29B2CB /* PCFeaturePrintTests.m */,
+				C11F866F860C208294C526DD /* PCClusteringTests.m */,
+			);
+			name = PhotoCleanerTests;
+			path = PhotoCleanerTests;
+			sourceTree = "<group>";
+		};
+		D19890B693AA3E84B88C2305 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				06B4A86B38C3C870F08DFEA4 /* iOS */,
+				99C322FE4E597DE8B2872D00 /* Pods_PhotoCleaner.framework */,
+				E8FEAAE9B35374A1C7D8ECF5 /* Pods_PhotoCleanerTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E8C22630AD2DCB6AB8E79B4E /* Lua */ = {
+			isa = PBXGroup;
+			children = (
+				EC0E8E3B991D6702F53E4EB9 /* HomePage.lua */,
+			);
+			name = Lua;
+			path = PhotoCleaner/Script;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2EC4D87A8B18C6D670A4300D /* PhotoCleaner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 147DE544B7B59BDF35903FB6 /* Build configuration list for PBXNativeTarget "PhotoCleaner" */;
+			buildPhases = (
+				7802D26F24FD7CDD7325BD53 /* [CP] Check Pods Manifest.lock */,
+				7A9CDCD6544411C0B3A180BA /* Sources */,
+				DAC02D6FCA6418BE85EDEBFA /* Frameworks */,
+				E7773B10AF1E30E91E6AC84D /* Resources */,
+				88215A3F1A02C4FA7D3F588C /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhotoCleaner;
+			productName = PhotoCleaner;
+			productReference = 951311EEFAEFCE9CEBA92DB8 /* PhotoCleaner.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3A6D942D5FDEF5BD918D6132 /* PhotoCleanerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5DBA4D2DA0475A4BF0BBDA7 /* Build configuration list for PBXNativeTarget "PhotoCleanerTests" */;
+			buildPhases = (
+				2FBFA421574C13F8FCBFDB9A /* [CP] Check Pods Manifest.lock */,
+				A2FEFF84DCAE023040E98E92 /* Sources */,
+				574444B3D2606D65203CE01B /* Frameworks */,
+				B43A69DF8F50201A9B5B57FE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				78B8AA95F0203B1A8F138036 /* PBXTargetDependency */,
+			);
+			name = PhotoCleanerTests;
+			productName = PhotoCleanerTests;
+			productReference = B01A9677EDE68C0DD07E13A1 /* PhotoCleanerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6D73B118E00C161C1AE058C3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = A7148CA23AB133F4842A2C6A /* Build configuration list for PBXProject "PhotoCleaner" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AFCD71A6B4F4B591B761AE30;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 33087C447A9FC637D1B5F29B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2EC4D87A8B18C6D670A4300D /* PhotoCleaner */,
+				3A6D942D5FDEF5BD918D6132 /* PhotoCleanerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B43A69DF8F50201A9B5B57FE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E7773B10AF1E30E91E6AC84D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A56168920FDB1CAB8DBA7EE /* Assets.xcassets in Resources */,
+				629C171B6DBA0C725FBB256C /* PublishInfo.plist in Resources */,
+				EA4160A09C8597AFF35C214C /* config.zip in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2FBFA421574C13F8FCBFDB9A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PhotoCleanerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7802D26F24FD7CDD7325BD53 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PhotoCleaner-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88215A3F1A02C4FA7D3F588C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PhotoCleaner/Pods-PhotoCleaner-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
+				"${BUILT_PRODUCTS_DIR}/Enviroment/Enviroment.framework",
+				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
+				"${BUILT_PRODUCTS_DIR}/FusionBase/FusionBase.framework",
+				"${BUILT_PRODUCTS_DIR}/FusionCore/FusionCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FusionUI/FusionUI.framework",
+				"${BUILT_PRODUCTS_DIR}/Utility/Utility.framework",
+				"${BUILT_PRODUCTS_DIR}/PhotoClean/PhotoClean.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Enviroment.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionBase.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FusionUI.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Utility.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PhotoClean.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PhotoCleaner/Pods-PhotoCleaner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7A9CDCD6544411C0B3A180BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCCE5CA0CE7E57087F5DEC43 /* PCAppDelegate.m in Sources */,
+				EF8C80EAD12D54EA8081777E /* PCSceneDelegate.m in Sources */,
+				D654A97D440357241F3AA043 /* main.m in Sources */,
+				84F23538816E8A6588B731B4 /* PCPublishInfo.m in Sources */,
+				C2D7B77D938194AE6C92FF04 /* PCAdapter.m in Sources */,
+				41B328C9620C820765F4A3D8 /* PCFusionConfig.m in Sources */,
+				CC19E77EE64682C68A82F914 /* PCHomePage.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2FEFF84DCAE023040E98E92 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E03ED2F7B5224283B7E7BF4E /* PCFusionPipelineTests.m in Sources */,
+				44765819B72C8942150C4AEF /* PCDHashTests.m in Sources */,
+				196A7C4A3A8550CDE672D288 /* PCMultiIndexHashTests.m in Sources */,
+				2C41FD78DC6E21E8DC1F6758 /* PCFeaturePrintTests.m in Sources */,
+				2EF7D4DE9CABB76166548249 /* PCClusteringTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		78B8AA95F0203B1A8F138036 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PhotoCleaner;
+			target = 2EC4D87A8B18C6D670A4300D /* PhotoCleaner */;
+			targetProxy = F6DEBF18D8AB2619B3E90FEB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4936628B5CFCD42B08EC5E9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		5812F83106911DEB298B131F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 617E6DE72C4B321D9B81AE7D /* Pods-PhotoCleaner.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6547856335;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PhotoCleaner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinapp.CleanPhoto;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../FusionBase/FusionBase/CommonHeader $(SRCROOT)/../Workspace $(SRCROOT)/PhotoCleaner/**";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8B65B6AA7B322E72C18FE3F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D170327B3EFBD0EBA00849E0 /* Pods-PhotoCleanerTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6547856335;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinapp.CleanPhoto.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoCleaner.app/PhotoCleaner";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../FusionBase/FusionBase/CommonHeader $(SRCROOT)/../Workspace";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B894BD9890709F5B28DF8B05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CCAD196A6F326064A81329C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 980AC04D20F8A1D23772BFAF /* Pods-PhotoCleaner.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6547856335;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PhotoCleaner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinapp.CleanPhoto;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../FusionBase/FusionBase/CommonHeader $(SRCROOT)/../Workspace $(SRCROOT)/PhotoCleaner/**";
+			};
+			name = Debug;
+		};
+		FC7FEFA2F90935A62CB635BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E8EA40E9EF213B95E3FF5FBC /* Pods-PhotoCleanerTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6547856335;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinapp.CleanPhoto.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoCleaner.app/PhotoCleaner";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../FusionBase/FusionBase/CommonHeader $(SRCROOT)/../Workspace";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		147DE544B7B59BDF35903FB6 /* Build configuration list for PBXNativeTarget "PhotoCleaner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5812F83106911DEB298B131F /* Release */,
+				CCAD196A6F326064A81329C5 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5DBA4D2DA0475A4BF0BBDA7 /* Build configuration list for PBXNativeTarget "PhotoCleanerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B65B6AA7B322E72C18FE3F6 /* Release */,
+				FC7FEFA2F90935A62CB635BA /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A7148CA23AB133F4842A2C6A /* Build configuration list for PBXProject "PhotoCleaner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4936628B5CFCD42B08EC5E9D /* Debug */,
+				B894BD9890709F5B28DF8B05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6D73B118E00C161C1AE058C3 /* Project object */;
+}

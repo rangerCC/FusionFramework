@@ -1,3 +1,6 @@
+-- loadstring was removed after Lua 5.1; the host may run a newer Lua than
+-- the 5.1 runtime embedded in the app.
+loadstring = loadstring or load
 
 require('Script/FusionService')
 require('Script/FusionActor')

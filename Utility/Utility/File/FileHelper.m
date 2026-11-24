@@ -87,7 +87,7 @@
 + (NSString *)getConfigFilePath {
     NSString *path = [NSString stringWithFormat:@"%@/config.zip", [FileHelper getCoreDirectory]];
     if (NO == [[FileKit getInstance] isFileExist:path]) {
-        [[AppUserDefault getInstance] setValue:@0 forKeyPath:@"core"];        
+        [[AppUserDefault getInstance] setValue:@0 withKey:@"core"];
         path = [NSString stringWithFormat:@"%@/config.zip", [FileHelper getCoreDirectory]];
         [[FileKit getInstance] copyItemFrom:[[NSBundle mainBundle] pathForResource:@"config" ofType:@"zip"]
                                          to:path];

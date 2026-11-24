@@ -38,6 +38,13 @@ PODS:
   - IQKeyboardManager (6.5.19)
   - Masonry (1.1.0)
   - MJRefresh (3.7.9)
+  - PhotoClean (1.0.0):
+    - CocoaLumberjack (~> 3.9)
+    - Enviroment
+    - FMDB (~> 2.7)
+    - FusionBase
+    - FusionCore
+    - Utility
   - SDWebImage (5.21.7):
     - SDWebImage/Core (= 5.21.7)
   - SDWebImage/Core (5.21.7)
@@ -57,6 +64,7 @@ DEPENDENCIES:
   - IQKeyboardManager
   - Masonry (~> 1.1)
   - MJRefresh (~> 3.7)
+  - PhotoClean (from `.`)
   - SDWebImage (~> 5.21)
   - Utility (from `.`)
 
@@ -81,6 +89,8 @@ EXTERNAL SOURCES:
     :path: "."
   FusionUI:
     :path: "."
+  PhotoClean:
+    :path: "."
   Utility:
     :path: "."
 
@@ -96,9 +106,10 @@ SPEC CHECKSUMS:
   IQKeyboardManager: c8665b3396bd0b79402b4c573eac345a31c7d485
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
+  PhotoClean: d2cdc0f4c4af5ca5ce9560dc833ac73319beb9df
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   Utility: 2943aa983991e2b1ccac82cc58c38bb27380ebe6
 
-PODFILE CHECKSUM: dbd08b218a8848e1be6a0d4f57b3fbe7c7cebee6
+PODFILE CHECKSUM: 17d62db38cdaaac2abfa152166a1fa9ba9cd7a2f
 
 COCOAPODS: 1.16.2

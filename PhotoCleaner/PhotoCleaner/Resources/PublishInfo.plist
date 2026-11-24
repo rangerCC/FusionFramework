@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  上架信息（任务 M0-06）。字段说明见 docs/上架信息.md。
+  所有值目前是占位，空字符串表示"未填写"，界面上不显示。
+-->
+<plist version="1.0">
+<dict>
+	<key>CompanyName</key>
+	<string></string>
+	<key>ICPNumber</key>
+	<string></string>
+	<key>SupportEmail</key>
+	<string></string>
+	<key>PrivacyPolicyURL</key>
+	<string></string>
+	<key>TermsOfUseURL</key>
+	<string></string>
+	<key>AppStoreID</key>
+	<string></string>
+	<key>PrivacyPolicyVersion</key>
+	<string>1</string>
+</dict>
+</plist>

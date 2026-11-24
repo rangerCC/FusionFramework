@@ -1,16 +1,15 @@
 //
 //  main.m
-//  TestApp
-//
-//  Created by Ryou Zhang on 1/12/15.
-//  Copyright (c) 2015 Ryou Zhang. All rights reserved.
+//  PhotoCleaner
 //
 
 #import <UIKit/UIKit.h>
-#import "AppDelegate.h"
+#import "PCAppDelegate.h"
 
-int main(int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
+    NSString *appDelegateClassName;
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+        appDelegateClassName = NSStringFromClass([PCAppDelegate class]);
     }
+    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
 }

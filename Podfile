@@ -23,6 +23,25 @@ target 'TestApp' do
   pod 'IQKeyboardManager'
 end
 
+# 相册清理 App（bundle id com.kevinapp.CleanPhoto）
+target 'PhotoCleaner' do
+  project 'PhotoCleaner/PhotoCleaner.xcodeproj'
+
+  pod 'FusionBase', :path => '.'
+  pod 'Enviroment', :path => '.'
+  pod 'Utility', :path => '.'
+  pod 'FusionCore', :path => '.'
+  pod 'FusionUI', :path => '.'
+  pod 'PhotoClean', :path => '.'
+
+  pod 'FMDB', '~> 2.7'
+  pod 'CocoaLumberjack', '~> 3.9'
+
+  target 'PhotoCleanerTests' do
+    inherit! :search_paths
+  end
+end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
