@@ -1,5 +1,6 @@
-# Xcode
-#
+# ============================================================
+# iOS / Xcode
+# ============================================================
 build/
 *.pbxuser
 !default.pbxuser
@@ -9,26 +10,40 @@ build/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData
+DerivedData/
 *.hmap
 *.ipa
 *.xcuserstate
+ios/Workspace/FusionWorkspace.xcworkspace/xcshareddata/
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
-#
-Pods/
+# CocoaPods（构建产物，不入库）
+ios/Pods/
+
+# Local-only dev config（per-developer，不入库；模板见 LocalConfig.example.plist）
+ios/TestApp/TestApp/LocalConfig.plist
+
+# ============================================================
+# Go 服务端
+# ============================================================
+server/bin/
+server/.env.test
+server/.env.prod
+server/server       # 编译产物
+
+# ============================================================
+# 管理后台（Node / Vite）
+# ============================================================
+admin-web/node_modules/
+admin-web/dist/
+admin-web/.env.local
+
+# ============================================================
+# 通用
+# ============================================================
 .DS_Store
-Workspace/.DS_Store
-Workspace/FusionWorkspace.xcworkspace/xcshareddata/
-
-# Local-only dev/test config (per-developer base URLs etc.).
-# The committed template is LocalConfig.example.plist.
-LocalConfig.plist
-TestApp/TestApp/LocalConfig.plist
+**/.DS_Store
+*.swp
+*.swo
