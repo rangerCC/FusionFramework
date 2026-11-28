@@ -1,6 +1,11 @@
 # Test-environment stack. Isolated from the default dev compose:
-# distinct project containers, distinct host ports, distinct DB name and
-# Redis key prefix (ss:test:). Use:  docker compose -f docker-compose.test.yml up -d
+# distinct containers, distinct host ports, distinct DB name and
+# Redis key prefix (ss:test:).
+#
+# Usage:
+#   make test-infra          start test postgres + redis
+#   make test                run Go tests against them
+#   docker compose -f docker-compose.test.yml down -v   tear down + wipe data
 services:
   postgres-test:
     image: postgres:16-alpine
@@ -29,7 +34,11 @@ services:
       retries: 10
 
   server-test:
-    build: .
+    build:
+      context: .
+      args:
+        GOLANG_IMAGE: registry.cn-hangzhou.aliyuncs.com/library/golang:1.25-alpine
+        ALPINE_IMAGE: registry.cn-hangzhou.aliyuncs.com/library/alpine:3.20
     depends_on:
       postgres-test:
         condition: service_healthy

@@ -1,3 +1,9 @@
+# Local development infrastructure only.
+# Start: make infra      (or: docker compose up -d)
+# Then run the server:   make run
+#
+# The server binary runs outside Docker so hot-reload is instant
+# and no image build is needed. See Makefile for the full workflow.
 services:
   postgres:
     image: postgres:16-alpine
@@ -24,26 +30,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-
-  server:
-    build: .
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      APP_ENV: dev
-      PORT: "8080"
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/socialstory?sslmode=disable
-      REDIS_ADDR: redis:6379
-      JWT_SECRET: dev-insecure-change-me
-      SMS_DEV_MODE: "true"
-      SMS_DEV_CODE: "1234"
-      MONTHLY_FREE_QUOTA: "3"
-      MIGRATIONS_DIR: /app/migrations
-    ports:
-      - "8080:8080"
 
 volumes:
   pgdata:
