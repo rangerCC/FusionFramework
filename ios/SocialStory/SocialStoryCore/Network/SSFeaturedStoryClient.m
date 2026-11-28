@@ -6,7 +6,6 @@
 #import "SSFeaturedStoryClient.h"
 #import "SSStory.h"
 #import "SSStoryDB.h"
-#import <AccountKit/AccountKit-Swift.h>
 
 static NSString *const kDefaultBaseURL = @"http://localhost:8080";
 
@@ -33,9 +32,17 @@ static NSString *const kDefaultBaseURL = @"http://localhost:8080";
     return self;
 }
 
+/// Reads AccountBaseURL directly from LocalConfig.plist, eliminating the
+/// AccountKit dependency. PoC replacement for SSRemoteAccountService.
+- (NSString *)baseURLFromLocalConfig {
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"LocalConfig" ofType:@"plist"];
+    NSDictionary *dict = path ? [NSDictionary dictionaryWithContentsOfFile:path] : nil;
+    NSString *url = dict[@"AccountBaseURL"];
+    return (url.length > 0) ? url : kDefaultBaseURL;
+}
+
 - (NSString *)baseURLString {
-    NSString *fromConfig = [SSRemoteAccountService localConfigStringForKey:@"AccountBaseURL"];
-    return fromConfig.length ? fromConfig : kDefaultBaseURL;
+    return [self baseURLFromLocalConfig];
 }
 
 - (void)refreshWithCompletion:(void (^)(BOOL, NSError *))completion {

@@ -11,22 +11,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/alitrip/socialstory-server/internal/account"
 	"github.com/alitrip/socialstory-server/internal/admin"
-	"github.com/alitrip/socialstory-server/internal/auth"
-	"github.com/alitrip/socialstory-server/internal/children"
 	"github.com/alitrip/socialstory-server/internal/config"
+	"github.com/alitrip/socialstory-server/internal/device"
 	"github.com/alitrip/socialstory-server/internal/platform/appstore"
 	"github.com/alitrip/socialstory-server/internal/platform/db"
 	"github.com/alitrip/socialstory-server/internal/platform/httpx"
 	"github.com/alitrip/socialstory-server/internal/platform/idgen"
 	"github.com/alitrip/socialstory-server/internal/platform/jwtx"
-	"github.com/alitrip/socialstory-server/internal/platform/oss"
-	"github.com/alitrip/socialstory-server/internal/platform/redisx"
-	"github.com/alitrip/socialstory-server/internal/platform/sms"
 	"github.com/alitrip/socialstory-server/internal/stories"
 	"github.com/alitrip/socialstory-server/internal/subscription"
-	"github.com/alitrip/socialstory-server/internal/usage"
 )
 
 func main() {
@@ -40,8 +34,7 @@ func main() {
 	}
 	defer pool.Close()
 
-	// Bind this database to APP_ENV. Refuses to start if the DB was previously
-	// stamped with a different environment (e.g. test pointed at prod).
+	// Refuse to start if DB was previously stamped with a different environment.
 	if err := db.GuardEnvironment(ctx, pool, cfg.Env); err != nil {
 		log.Fatalf("env guard: %v", err)
 	}
@@ -52,41 +45,26 @@ func main() {
 		}
 	}
 
-	rdb, err := redisx.New(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB, cfg.RedisKeyPrefix)
-	if err != nil {
-		log.Fatalf("redis: %v", err)
-	}
-
 	ids := idgen.NewSnowflake(1)
+
+	// jwtx is still needed by admin login/auth.
 	jwtMgr := jwtx.New(cfg.JWTSecret, cfg.AccessTokenTTL)
 
-	// --- platform adapters ---
-	var smsSender sms.Sender = sms.DevSender{}
-	if !cfg.SMSDevMode {
-		smsSender = &sms.AliyunSender{
-			AccessKey: cfg.AliyunSMSKey, AccessSecret: cfg.AliyunSMSSecret,
-			SignName: cfg.SMSSignName, TemplateCode: cfg.SMSTemplateCode,
-		}
-	}
-	ossSigner := oss.AliyunSigner{
-		Endpoint: cfg.OSSEndpoint, Bucket: cfg.OSSBucket,
-		AccessKey: cfg.OSSAccessKey, Secret: cfg.OSSSecret, PublicHost: cfg.OSSPublicHost,
-	}
+	// Apple verifier — required by subscription service.
 	appleVerifier := &appstore.DefaultVerifier{
 		BundleID: cfg.AppleBundleID, IssuerID: cfg.AppleIssuerID,
 		KeyID: cfg.AppleKeyID, PrivateKeyPath: cfg.ApplePrivateKeyPath,
 	}
 
 	// --- module wiring ---
-	authSvc := auth.NewService(cfg, pool, rdb, ids, jwtMgr, smsSender)
-	authH := auth.NewHandler(authSvc)
-	accountH := account.NewHandler(pool, ossSigner)
-	childrenH := children.NewHandler(pool, ids)
+	deviceH := device.NewHandler(pool, ids)
+
 	subSvc := subscription.NewService(pool, ids, appleVerifier, cfg.AppleEnvironment, cfg.StrictAppleEnv)
 	subH := subscription.NewHandler(subSvc)
-	usageH := usage.NewHandler(pool, subSvc, cfg.MonthlyFreeQuota) // subSvc implements SubChecker
-	adminOps := usage.NewAdminOps(pool, cfg.MonthlyFreeQuota)
-	adminH := admin.NewHandler(pool, ids, jwtMgr, adminOps)
+
+	// admin: pass nil for usage.AdminOps — quota endpoints are disabled in PoC.
+	adminH := admin.NewHandler(pool, ids, jwtMgr, nil)
+
 	storiesH := stories.NewHandler(pool, ids)
 
 	// --- router ---
@@ -101,31 +79,28 @@ func main() {
 	v1 := r.Group("/v1")
 
 	// public
-	authH.Register(v1)
+	deviceH.Register(v1)        // POST /v1/device/register
 	subH.RegisterPublic(v1)     // Apple webhook
 	adminH.RegisterPublic(v1)   // admin login
-	storiesH.RegisterPublic(v1) // featured stories list (public, ETag-cached)
+	storiesH.RegisterPublic(v1) // featured stories list (ETag-cached)
 
-	// authed (app user)
+	// authed (device-identity)
 	authed := v1.Group("")
-	authed.Use(auth.AuthRequired(jwtMgr))
-	authH.RegisterAuthed(authed)
-	accountH.Register(authed)
-	childrenH.Register(authed)
+	authed.Use(deviceH.DeviceRequired())
 	subH.RegisterAuthed(authed)
-	usageH.Register(authed)
+	subH.RegisterDeviceAuthed(authed)
 
-	// admin (admin token)
+	// admin (admin JWT)
 	adminG := v1.Group("")
 	adminG.Use(adminH.AdminAuth())
 	adminH.RegisterAuthed(adminG)
-	storiesH.RegisterAdmin(adminG) // featured stories insert/delete
+	storiesH.RegisterAdmin(adminG)
 
 	// --- serve with graceful shutdown ---
 	srv := &http.Server{Addr: ":" + cfg.Port, Handler: r}
 	go func() {
-		log.Printf("listening on :%s (env=%s, redis_prefix=%q, apple_env=%s, strict_apple=%v)",
-			cfg.Port, cfg.Env, cfg.RedisKeyPrefix, cfg.AppleEnvironment, cfg.StrictAppleEnv)
+		log.Printf("listening on :%s (env=%s, apple_env=%s, strict_apple=%v)",
+			cfg.Port, cfg.Env, cfg.AppleEnvironment, cfg.StrictAppleEnv)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("serve: %v", err)
 		}

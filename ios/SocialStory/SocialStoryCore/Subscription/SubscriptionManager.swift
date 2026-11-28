@@ -2,68 +2,47 @@
 //  SubscriptionManager.swift
 //  SocialStoryCore
 //
-//  StoreKit 2 subscription manager, exposed to Objective-C via @objc.
+//  StoreKit 2 subscription manager (买断型), exposed to Objective-C via @objc.
+//  PoC 改造：去除 AccountKit 依赖，改用 SSDeviceIdentity 作为账号标识。
+//  产品类型由订阅改为买断（Non-Consumable）。
 //
 
 import Foundation
 import StoreKit
-import AccountKit
 
 @objc public class SubscriptionManager: NSObject {
 
     @objc public static let shared = SubscriptionManager()
 
-    @objc public static let monthlyProductID = "com.alitrip.socialstory.monthly"
-    @objc public static let yearlyProductID  = "com.alitrip.socialstory.yearly"
+    /// 买断产品 ID（Non-Consumable）。
+    @objc public static let unlockProductID = "com.alitrip.socialstory.unlock"
 
-    @objc public static let monthlyFreeQuota = 3
-
-    private let subscribedKey = "ss_is_subscribed"
-    private let usedCountKey  = "ss_free_used_count"
-    private let usedMonthKey  = "ss_free_used_month"
+    // 买断状态的本地缓存 key（设备级，无账号后缀）。
+    private let unlockedKey = "ss_is_unlocked"
 
     private var products: [String: Product] = [:]
     private var updatesTask: Task<Void, Never>? = nil
 
     private override init() {
         super.init()
-        // Cache the last known status synchronously for isSubscribed.
         listenForTransactions()
-        // Re-check entitlements when the account changes (login / logout).
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(accountDidChange),
-            name: Notification.Name(AccountManager.didChangeNotificationName),
-            object: nil)
+        // PoC：去除账号变化监听（AccountManager.didChangeNotificationName）。
     }
 
-    @objc private func accountDidChange() {
-        refreshSubscriptionStatus(completion: nil)
+    // MARK: - Unlock status
+
+    /// 本地缓存的买断标志（同步读取，用于 UI 判断）。
+    @objc public var isUnlocked: Bool {
+        UserDefaults.standard.bool(forKey: unlockedKey)
     }
 
-    // MARK: - Free-quota storage keys (namespaced per account)
-
-    /// Free quota is tracked per logged-in account so switching accounts (or a
-    /// fresh install + login) doesn't inherit another account's used count.
-    /// Logged-out users fall back to a device-local bucket.
-    private var accountSuffix: String {
-        if let user = AccountManager.shared.currentUser { return "_" + user.userID }
-        return "_device"
-    }
-    private var scopedUsedCountKey: String { usedCountKey + accountSuffix }
-    private var scopedUsedMonthKey: String { usedMonthKey + accountSuffix }
-
-    // MARK: - Subscription status
-
-    /// Cached subscription flag (synchronous, for gating UI).
-    @objc public var isSubscribed: Bool {
-        UserDefaults.standard.bool(forKey: subscribedKey)
-    }
+    /// 兼容旧调用方：isSubscribed == isUnlocked。
+    @objc public var isSubscribed: Bool { isUnlocked }
 
     @objc public func refreshSubscriptionStatus(completion: ((Bool) -> Void)? = nil) {
         Task {
             let active = await self.currentlyEntitled()
-            UserDefaults.standard.set(active, forKey: self.subscribedKey)
+            UserDefaults.standard.set(active, forKey: self.unlockedKey)
             await MainActor.run { completion?(active) }
         }
     }
@@ -71,12 +50,9 @@ import AccountKit
     private func currentlyEntitled() async -> Bool {
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result {
+                // 买断型产品无 expirationDate，只需确认未撤销。
                 if transaction.revocationDate == nil {
-                    if let exp = transaction.expirationDate {
-                        if exp > Date() { return true }
-                    } else {
-                        return true
-                    }
+                    return true
                 }
             }
         }
@@ -97,11 +73,11 @@ import AccountKit
 
     // MARK: - Products
 
-    /// Loads products; completion returns localized display info on the main thread.
+    /// 加载买断产品；completion 在主线程回调。
     @objc public func loadProducts(completion: @escaping ([SSProductInfo]) -> Void) {
         Task {
             do {
-                let ids = [SubscriptionManager.monthlyProductID, SubscriptionManager.yearlyProductID]
+                let ids = [SubscriptionManager.unlockProductID]
                 let loaded = try await Product.products(for: ids)
                 var infos: [SSProductInfo] = []
                 for p in loaded {
@@ -119,7 +95,7 @@ import AccountKit
         }
     }
 
-    /// Purchase a product. completion(success, errorMessage) on the main thread.
+    /// 购买买断产品。completion(success, errorMessage) 在主线程回调。
     @objc public func purchase(productID: String,
                                completion: @escaping (Bool, String?) -> Void) {
         Task {
@@ -128,10 +104,9 @@ import AccountKit
                 return
             }
             do {
-                // Attach the account token so this purchase can be reconciled to
-                // the current account server-side (App Store Server Notifications).
+                // 用设备 ID 作为 appAccountToken，便于服务端对账。
                 var options: Set<Product.PurchaseOption> = []
-                if let uuid = UUID(uuidString: AccountManager.shared.appAccountToken) {
+                if let uuid = UUID(uuidString: SSDeviceIdentity.appAccountToken) {
                     options.insert(.appAccountToken(uuid))
                 }
                 let result = try await product.purchase(options: options)
@@ -139,7 +114,8 @@ import AccountKit
                 case .success(let verification):
                     if case .verified(let transaction) = verification {
                         await transaction.finish()
-                        UserDefaults.standard.set(true, forKey: self.subscribedKey)
+                        UserDefaults.standard.set(true, forKey: self.unlockedKey)
+                        self.verifyWithServer(transactionID: String(transaction.id))
                         await MainActor.run { completion(true, nil) }
                     } else {
                         await MainActor.run { completion(false, "交易验证失败") }
@@ -162,43 +138,64 @@ import AccountKit
             do {
                 try await AppStore.sync()
                 let active = await self.currentlyEntitled()
-                UserDefaults.standard.set(active, forKey: self.subscribedKey)
-                await MainActor.run { completion(active, active ? nil : "未找到可恢复的订阅") }
+                UserDefaults.standard.set(active, forKey: self.unlockedKey)
+                // 恢复购买时也同步服务端
+                if active {
+                    for await result in Transaction.currentEntitlements {
+                        if case .verified(let tx) = result {
+                            self.verifyWithServer(transactionID: String(tx.id))
+                            break
+                        }
+                    }
+                }
+                await MainActor.run { completion(active, active ? nil : "未找到可恢复的购买") }
             } catch {
                 await MainActor.run { completion(false, error.localizedDescription) }
             }
         }
     }
 
-    // MARK: - Free quota
+    // MARK: - Story generation gate
 
-    private func resetQuotaIfNeeded() {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM"
-        let month = fmt.string(from: Date())
-        let stored = UserDefaults.standard.string(forKey: scopedUsedMonthKey)
-        if stored != month {
-            UserDefaults.standard.set(month, forKey: scopedUsedMonthKey)
-            UserDefaults.standard.set(0, forKey: scopedUsedCountKey)
-        }
-    }
-
-    @objc public var remainingFreeCount: Int {
-        resetQuotaIfNeeded()
-        let used = UserDefaults.standard.integer(forKey: scopedUsedCountKey)
-        return max(0, SubscriptionManager.monthlyFreeQuota - used)
-    }
-
+    /// PoC：已买断返回 true，否则返回 false。
+    /// TODO: PoC 期间如需全部放开，改为直接 return true。
     @objc public var canGenerateStory: Bool {
-        if isSubscribed { return true }
-        return remainingFreeCount > 0
+        return isUnlocked
     }
 
-    @objc public func consumeFreeQuota() {
-        if isSubscribed { return }
-        resetQuotaIfNeeded()
-        let used = UserDefaults.standard.integer(forKey: scopedUsedCountKey)
-        UserDefaults.standard.set(used + 1, forKey: scopedUsedCountKey)
+    // MARK: - Server verification
+
+    /// 买断成功后异步通知服务端，写入 subscriptions 表。
+    /// 失败不影响本地解锁状态——下次启动时 restorePurchases 会再次触发。
+    nonisolated private func verifyWithServer(transactionID: String) {
+        let baseURL = localBaseURL()
+        guard let url = URL(string: baseURL + "/v1/purchase/verify") else { return }
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(SSDeviceIdentity.deviceID, forHTTPHeaderField: "X-Device-Id")
+        req.timeoutInterval = 15
+        req.httpBody = try? JSONSerialization.data(withJSONObject: ["transaction_id": transactionID])
+
+        URLSession.shared.dataTask(with: req) { _, resp, err in
+            let status = (resp as? HTTPURLResponse)?.statusCode ?? 0
+            if let err = err {
+                print("[SubscriptionManager] 服务端验证失败: \(err.localizedDescription)")
+            } else {
+                print("[SubscriptionManager] 服务端验证完成, status=\(status)")
+            }
+        }.resume()
+    }
+
+    nonisolated private func localBaseURL() -> String {
+        guard let path = Bundle.main.path(forResource: "LocalConfig", ofType: "plist"),
+              let dict = NSDictionary(contentsOfFile: path),
+              let url = dict["AccountBaseURL"] as? String,
+              !url.isEmpty else {
+            return "http://localhost:8080"
+        }
+        return url
     }
 }
 

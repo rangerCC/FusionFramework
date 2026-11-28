@@ -31,11 +31,10 @@ export default function SubscriptionsPage() {
 
   const columns: ColumnsType<SubRow> = [
     { title: '用户ID', dataIndex: 'user_id', width: 180, render: (v) => <Text copyable>{v}</Text> },
-    { title: '昵称', dataIndex: 'nickname' },
+    { title: '设备ID', dataIndex: 'device_id', ellipsis: true, render: (v) => <Text copyable>{v}</Text> },
     { title: '产品', dataIndex: 'product_id' },
     { title: '状态', dataIndex: 'status', width: 110, render: (v: string) => <Tag color={STATUS_COLOR[v] || 'default'}>{v}</Tag> },
-    { title: '到期', dataIndex: 'expires_at', width: 180, render: (v) => (v ? new Date(v).toLocaleString() : '-') },
-    { title: '自动续费', dataIndex: 'auto_renew', width: 90, render: (v: boolean) => (v ? '是' : '否') },
+    { title: '到期', dataIndex: 'expires_at', width: 160, render: (v) => (v ? new Date(v).toLocaleString() : '永久有效') },
     { title: '环境', dataIndex: 'environment', width: 110 },
     { title: '更新时间', dataIndex: 'updated_at', width: 180, render: (v) => new Date(v).toLocaleString() },
   ]

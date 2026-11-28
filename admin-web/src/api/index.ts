@@ -10,11 +10,9 @@ export interface Page<T> {
 
 export interface UserRow {
   user_id: string
-  nickname: string
-  phone_masked: string | null
+  device_id: string
   status: number
   is_subscribed: boolean
-  children_count: number
   created_at: string
 }
 
@@ -28,7 +26,7 @@ export interface UserDetail {
 
 export interface SubRow {
   user_id: string
-  nickname: string
+  device_id: string
   product_id: string
   status: string
   expires_at: string | null

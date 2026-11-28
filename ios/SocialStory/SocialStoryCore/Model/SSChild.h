@@ -31,6 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Build the create-request body (name/gender/birthday/diagnosis/level/interests).
 - (NSDictionary *)creationJSON;
 
+/// Full serialization including child_id and is_default, for local UserDefaults storage.
+- (NSDictionary *)localStorageJSON;
+
 // Shared enum <-> wire-string mapping (kept in one place to avoid drift with
 // SSStoryAPIClient).
 + (NSString *)stringForGender:(SSGender)g;

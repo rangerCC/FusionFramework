@@ -365,7 +365,7 @@
             return;
         }
         [[SSStoryStore shared] saveStory:story];
-        [SubscriptionManager.shared consumeFreeQuota];
+        // PoC: 买断模式，无需消耗配额
         [self openReaderForStory:story];
     }];
 }

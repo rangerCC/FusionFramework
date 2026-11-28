@@ -27,7 +27,6 @@ Pod::Spec.new do |s|
   s.dependency 'FusionCore'
   s.dependency 'FusionUI'
   s.dependency 'CoreService'
-  s.dependency 'AccountKit'
   s.dependency 'FMDB'
 
   s.pod_target_xcconfig = {

@@ -233,26 +233,24 @@ typedef NS_ENUM(NSInteger, SSChildEditMode) {
     [self.view endEditing:YES];
     self.saveButton.enabled = NO;
     [self.saveButton setTitle:@"保存中…" forState:UIControlStateNormal];
+
+    SSChild *child = [self childFromForm];
+    // Generate a stable local ID that never collides with server-assigned IDs.
+    child.childID = [@"local-" stringByAppendingString:[[NSUUID UUID] UUIDString]];
+    child.age = [self ageFromBirthday:child.birthday];
+
+    [[SSChildStore shared] saveChild:child];
+
+    self.saveButton.enabled = YES;
+    [self.saveButton setTitle:@"保存" forState:UIControlStateNormal];
+
     __weak typeof(self) weakSelf = self;
-    [[SSChildrenClient shared] createChild:[self childFromForm] completion:^(SSChild *created, NSError *error) {
-        __strong typeof(weakSelf) self = weakSelf;
-        if (!self) return;
-        self.saveButton.enabled = YES;
-        [self.saveButton setTitle:@"保存" forState:UIControlStateNormal];
-        if (error || !created) {
-            [self showAlert:@"保存失败" message:error.localizedDescription ?: @"请检查网络后重试"];
-            return;
-        }
-        // Refresh the shared store, then confirm success and return to the list.
-        // (The list page reloads itself on enterAnimeFinish.)
-        [[SSChildStore shared] reloadWithCompletion:nil];
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"保存成功"
-            message:[NSString stringWithFormat:@"已添加「%@」", created.name]
-            preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault
-                                                handler:^(UIAlertAction *a) { [self goBack]; }]];
-        [self presentViewController:alert animated:YES completion:nil];
-    }];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"保存成功"
+        message:[NSString stringWithFormat:@"已添加「%@」", child.name]
+        preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction *a) { [weakSelf goBack]; }]];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)submitUpdate {
@@ -260,28 +258,23 @@ typedef NS_ENUM(NSInteger, SSChildEditMode) {
     [self.view endEditing:YES];
     self.saveButton.enabled = NO;
     [self.saveButton setTitle:@"更新中…" forState:UIControlStateNormal];
-    __weak typeof(self) weakSelf = self;
-    [[SSChildrenClient shared] updateChildID:self.childID child:[self childFromForm]
-                                  completion:^(SSChild *updated, NSError *error) {
-        __strong typeof(weakSelf) self = weakSelf;
-        if (!self) return;
-        self.saveButton.enabled = YES;
-        if (error || !updated) {
-            [self applyMode]; // restore the button title
-            [self showAlert:@"更新失败" message:error.localizedDescription ?: @"请检查网络后重试"];
-            return;
-        }
-        // Re-fetch the canonical list, then reflect the refreshed child here and
-        // drop back to read-only view mode.
-        [[SSChildStore shared] reloadWithCompletion:^(NSError *e) {
-            self.editingChild = [self childFromStore:self.childID] ?: updated;
-            [self populateFromChild];
-            self.mode = SSChildEditModeView;
-            self.dirty = NO;
-            [self applyMode];
-        }];
-        [self showAlert:@"更新成功" message:@"孩子信息已更新"];
-    }];
+
+    SSChild *child = [self childFromForm];
+    child.childID = self.childID;
+    child.age = [self ageFromBirthday:child.birthday];
+    // Preserve the isDefault flag from the original record.
+    child.isDefault = self.editingChild.isDefault;
+
+    [[SSChildStore shared] saveChild:child];
+
+    self.saveButton.enabled = YES;
+    // Reflect the refreshed child here and drop back to read-only view mode.
+    self.editingChild = [self childFromStore:self.childID] ?: child;
+    [self populateFromChild];
+    self.mode = SSChildEditModeView;
+    self.dirty = NO;
+    [self applyMode];
+    [self showAlert:@"更新成功" message:@"孩子信息已更新"];
 }
 
 #pragma mark - Form helpers (mirror the generation page styling)
@@ -344,6 +337,17 @@ typedef NS_ENUM(NSInteger, SSChildEditMode) {
     NSDateComponents *c = [[NSCalendar currentCalendar] components:NSCalendarUnitYear
                                                          fromDate:date toDate:[NSDate date] options:0];
     return c.year;
+}
+
+- (NSInteger)ageFromBirthday:(NSString *)birthday {
+    if (birthday.length < 10) { return 0; }
+    NSDateFormatter *fmt = [NSDateFormatter new];
+    fmt.dateFormat = @"yyyy-MM-dd";
+    NSDate *bdate = [fmt dateFromString:birthday];
+    if (!bdate) { return 0; }
+    NSDateComponents *comps = [[NSCalendar currentCalendar]
+        components:NSCalendarUnitYear fromDate:bdate toDate:[NSDate date] options:0];
+    return MAX(0, comps.year);
 }
 
 - (void)showAlert:(NSString *)title message:(NSString *)message {

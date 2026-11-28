@@ -72,7 +72,7 @@
 - (void)reload {
     [self.spinner startAnimating];
     __weak typeof(self) weakSelf = self;
-    [[SSChildrenClient shared] fetchChildren:^(NSArray<SSChild *> *children, NSError *error) {
+    [[SSChildStore shared] reloadWithCompletion:^(NSError *error) {
         __strong typeof(weakSelf) self = weakSelf;
         if (!self) return;
         [self.spinner stopAnimating];
@@ -80,6 +80,7 @@
             self.tableView.backgroundView = [self errorLabel:error.localizedDescription];
             return;
         }
+        NSArray<SSChild *> *children = [SSChildStore shared].children;
         self.children = children;
         self.tableView.backgroundView = (children.count == 0) ? self.emptyLabel : nil;
         [self.tableView reloadData];
@@ -169,17 +170,12 @@
 }
 
 - (void)setDefaultChild:(SSChild *)c {
-    __weak typeof(self) weakSelf = self;
-    [[SSChildrenClient shared] setDefaultChildID:c.childID completion:^(BOOL success, NSError *error) {
-        __strong typeof(weakSelf) self = weakSelf;
-        if (!self) return;
-        if (success) {
-            [[SSChildStore shared] reloadWithCompletion:nil];
-            [self reload];
-        } else {
-            [self showAlert:@"设置失败" message:error.localizedDescription ?: @"请重试"];
-        }
-    }];
+    // Update isDefault flag locally: set target child to YES, all others to NO.
+    for (SSChild *child in [SSChildStore shared].children) {
+        child.isDefault = [child.childID isEqualToString:c.childID];
+        [[SSChildStore shared] saveChild:child];
+    }
+    [self reload];
 }
 
 #pragma mark - Swipe to delete
@@ -209,17 +205,8 @@
 }
 
 - (void)deleteChild:(SSChild *)c {
-    __weak typeof(self) weakSelf = self;
-    [[SSChildrenClient shared] deleteChildID:c.childID completion:^(BOOL success, NSError *error) {
-        __strong typeof(weakSelf) self = weakSelf;
-        if (!self) return;
-        if (success) {
-            [[SSChildStore shared] reloadWithCompletion:nil];
-            [self reload];
-        } else {
-            [self showAlert:@"删除失败" message:error.localizedDescription ?: @"请重试"];
-        }
-    }];
+    [[SSChildStore shared] deleteChildWithID:c.childID];
+    [self reload];
 }
 
 #pragma mark - Labels

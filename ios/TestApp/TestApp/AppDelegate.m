@@ -12,7 +12,6 @@
 #import <FusionUI/FusionPageNavigator+Auto.h>
 #import <SocialStoryCore/SocialStoryCore.h>
 #import <SocialStoryCore/SocialStoryCore-Swift.h>
-#import <AccountKit/AccountKit-Swift.h>
 
 @interface AppDelegate () {
 @private
@@ -22,12 +21,6 @@
 
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Account backend (test env): base URL comes from LocalConfig.plist
-    // (gitignored, per-developer). Falls back to localhost for the simulator
-    // when that file is absent. Production wiring is deferred.
-    AccountManager.shared.service =
-        [SSRemoteAccountService fromLocalConfigWithDefaultBaseURL:@"http://localhost:8080"];
-
     // Warm up the store and subscription status.
     [SSStoryStore shared];
     [[SubscriptionManager shared] refreshSubscriptionStatusWithCompletion:nil];
@@ -44,17 +37,50 @@
     [_navigator setAdapter:[TestAdapter getInstance]];
     [self.window setRootViewController:_navigator];
     [self.window makeKeyAndVisible];
-    
-    {
-        FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:SSPageLibrary
-                                                                        pageNick:nil
-                                                                         command:@"init"
-                                                                            args:nil
-                                                                        callback:nil];
-        [_navigator gotoPage:message];
-    }
+
+    FusionPageMessage *message = [[FusionPageMessage alloc] initWithPageName:SSPageLibrary
+                                                                    pageNick:nil
+                                                                     command:@"init"
+                                                                        args:nil
+                                                                    callback:nil];
+    [_navigator gotoPage:message];
+
+    // Register device with server on first launch (async, non-blocking).
+    [self registerDeviceIfNeeded];
 
     return YES;
+}
+
+- (void)registerDeviceIfNeeded {
+    NSString *key = @"ss_device_registered";
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:key]) { return; }
+
+    // Read AccountBaseURL from LocalConfig.plist; fall back to localhost.
+    NSString *baseURL = @"http://localhost:8080";
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"LocalConfig" ofType:@"plist"];
+    NSDictionary *config = path ? [NSDictionary dictionaryWithContentsOfFile:path] : nil;
+    if (config[@"AccountBaseURL"]) { baseURL = config[@"AccountBaseURL"]; }
+
+    NSString *deviceID = [SSDeviceIdentity deviceID];
+    NSDictionary *body = @{@"device_id": deviceID};
+    NSData *bodyData = [NSJSONSerialization dataWithJSONObject:body options:0 error:NULL];
+
+    NSURL *url = [NSURL URLWithString:[baseURL stringByAppendingString:@"/v1/device/register"]];
+    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
+    req.HTTPMethod = @"POST";
+    [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    req.HTTPBody = bodyData;
+    req.timeoutInterval = 15;
+
+    [[NSURLSession.sharedSession dataTaskWithRequest:req
+        completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
+        if (!err && [(NSHTTPURLResponse *)resp statusCode] == 200) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:key];
+            NSLog(@"[AppDelegate] 设备注册成功: %@", deviceID);
+        } else {
+            NSLog(@"[AppDelegate] 设备注册失败，下次启动重试: %@", err.localizedDescription ?: @"unknown");
+        }
+    }] resume];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -12,7 +12,6 @@ import (
 	"github.com/alitrip/socialstory-server/internal/platform/idgen"
 	"github.com/alitrip/socialstory-server/internal/platform/jwtx"
 	"github.com/alitrip/socialstory-server/internal/usage"
-	"github.com/alitrip/socialstory-server/internal/util"
 )
 
 // Handler serves the admin backend.
@@ -131,14 +130,12 @@ func (h *Handler) listUsers(c *gin.Context) {
 	}
 	items := []gin.H{}
 	for _, u := range rows {
-		var phone interface{}
-		if u.Phone != nil {
-			phone = util.MaskPhone(*u.Phone)
-		}
 		items = append(items, gin.H{
-			"user_id": u.PublicID, "nickname": u.Nickname, "phone_masked": phone,
-			"status": u.Status, "is_subscribed": u.IsSubscribed,
-			"children_count": u.ChildrenCount, "created_at": u.CreatedAt,
+			"user_id":       u.PublicID,
+			"device_id":     u.DeviceID,
+			"status":        u.Status,
+			"is_subscribed": u.IsSubscribed,
+			"created_at":    u.CreatedAt,
 		})
 	}
 	httpx.OK(c, gin.H{"items": items, "total": total, "page": page, "page_size": size})
@@ -217,6 +214,11 @@ type quotaReq struct {
 
 func (h *Handler) adjustQuota(c *gin.Context) {
 	if !h.requireRole(c, "super", "support") {
+		return
+	}
+	// usage quota is disabled in PoC device-identity mode.
+	if h.usage == nil {
+		httpx.Fail(c, httpx.ErrNotEnabled)
 		return
 	}
 	var req quotaReq

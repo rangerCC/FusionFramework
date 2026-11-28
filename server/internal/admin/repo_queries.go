@@ -20,60 +20,29 @@ type userDetail struct {
 func (r *repo) userDetailByPublic(ctx context.Context, publicID string) (*userDetail, error) {
 	var (
 		id        int64
-		nickname  string
-		avatar    *string
+		deviceID  string
 		status    int16
 		token     string
 		createdAt time.Time
 	)
 	err := r.pool.QueryRow(ctx,
-		`SELECT id, nickname, avatar_url, status, app_account_token, created_at
+		`SELECT id, device_id, status, app_account_token, created_at
 		 FROM users WHERE public_id=$1`, publicID,
-	).Scan(&id, &nickname, &avatar, &status, &token, &createdAt)
+	).Scan(&id, &deviceID, &status, &token, &createdAt)
 	if err != nil {
 		return nil, nil // treated as not-found by caller
 	}
 
 	d := &userDetail{
 		Profile: map[string]interface{}{
-			"user_id": publicID, "nickname": nickname, "avatar_url": avatar,
-			"status": status, "app_account_token": token, "created_at": createdAt,
+			"user_id":           publicID,
+			"device_id":         deviceID,
+			"status":            status,
+			"app_account_token": token,
+			"created_at":        createdAt,
 		},
 		Bindings: []map[string]interface{}{},
 		Children: []map[string]interface{}{},
-	}
-
-	// Bindings
-	if rows, e := r.pool.Query(ctx,
-		`SELECT provider, identifier FROM auth_identities WHERE user_id=$1`, id); e == nil {
-		defer rows.Close()
-		for rows.Next() {
-			var provider, identifier string
-			if rows.Scan(&provider, &identifier) == nil {
-				d.Bindings = append(d.Bindings, map[string]interface{}{
-					"provider": provider, "identifier": maskIdentifier(provider, identifier),
-				})
-			}
-		}
-	}
-
-	// Children (not soft-deleted)
-	if rows, e := r.pool.Query(ctx,
-		`SELECT public_id, name, gender, birthday, diagnosis_type, language_level, is_default
-		 FROM children WHERE user_id=$1 AND deleted_at IS NULL ORDER BY created_at ASC`, id); e == nil {
-		defer rows.Close()
-		for rows.Next() {
-			var cid, name, gender, diag, level string
-			var bday time.Time
-			var isDefault bool
-			if rows.Scan(&cid, &name, &gender, &bday, &diag, &level, &isDefault) == nil {
-				d.Children = append(d.Children, map[string]interface{}{
-					"child_id": cid, "name": name, "gender": gender,
-					"birthday": bday.Format("2006-01-02"), "diagnosis_type": diag,
-					"language_level": level, "is_default": isDefault,
-				})
-			}
-		}
 	}
 
 	// Subscription (latest)
@@ -92,17 +61,6 @@ func (r *repo) userDetailByPublic(ctx context.Context, publicID string) (*userDe
 		}
 	}
 
-	// Usage (current month)
-	period := time.Now().Format("2006-01")
-	var used, quota int
-	if r.pool.QueryRow(ctx,
-		`SELECT used, quota FROM usage_quota WHERE user_id=$1 AND period=$2`, id, period,
-	).Scan(&used, &quota) == nil {
-		d.Usage = map[string]interface{}{"period": period, "used": used, "quota": quota}
-	} else {
-		d.Usage = map[string]interface{}{"period": period, "used": 0, "quota": nil}
-	}
-
 	return d, nil
 }
 
@@ -117,7 +75,7 @@ func maskIdentifier(provider, identifier string) string {
 
 type subRow struct {
 	UserPublicID string     `json:"user_id"`
-	Nickname     string     `json:"nickname"`
+	DeviceID     string     `json:"device_id"`
 	ProductID    string     `json:"product_id"`
 	Status       string     `json:"status"`
 	ExpiresAt    *time.Time `json:"expires_at"`
@@ -130,15 +88,14 @@ func (r *repo) listSubscriptions(ctx context.Context, status, env, keyword strin
 	const base = `
 		FROM subscriptions s
 		JOIN users u ON u.id = s.user_id
-		LEFT JOIN auth_identities ai ON ai.user_id=u.id AND ai.provider='phone'
 		WHERE ($1='' OR s.status=$1)
 		  AND ($2='' OR s.environment=$2)
-		  AND ($3='' OR u.nickname ILIKE '%'||$3||'%' OR ai.identifier ILIKE '%'||$3||'%')`
+		  AND ($3='' OR u.device_id ILIKE '%'||$3||'%' OR u.public_id ILIKE '%'||$3||'%')`
 	var total int
 	if err := r.pool.QueryRow(ctx, `SELECT count(*) `+base, status, env, keyword).Scan(&total); err != nil {
 		return nil, 0, err
 	}
-	q := `SELECT u.public_id, u.nickname, s.product_id, s.status, s.expires_at, s.auto_renew, s.environment, s.updated_at ` +
+	q := `SELECT u.public_id, u.device_id, s.product_id, s.status, s.expires_at, s.auto_renew, s.environment, s.updated_at ` +
 		base + ` ORDER BY s.updated_at DESC LIMIT $4 OFFSET $5`
 	rows, err := r.pool.Query(ctx, q, status, env, keyword, limit, offset)
 	if err != nil {
@@ -148,7 +105,7 @@ func (r *repo) listSubscriptions(ctx context.Context, status, env, keyword strin
 	var out []subRow
 	for rows.Next() {
 		var s subRow
-		if err := rows.Scan(&s.UserPublicID, &s.Nickname, &s.ProductID, &s.Status,
+		if err := rows.Scan(&s.UserPublicID, &s.DeviceID, &s.ProductID, &s.Status,
 			&s.ExpiresAt, &s.AutoRenew, &s.Environment, &s.UpdatedAt); err != nil {
 			return nil, 0, err
 		}
@@ -195,11 +152,12 @@ func (r *repo) listAuditLogs(ctx context.Context, actor, action, target string, 
 	return out, total, rows.Err()
 }
 
-// storiesGeneratedToday sums today's usage increments as a proxy for generations.
+// storiesGeneratedToday uses today's new device registrations as a proxy
+// (usage_quota table was removed in PoC migration 0006).
 func (r *repo) storiesGeneratedToday(ctx context.Context) int {
 	var n int
 	_ = r.pool.QueryRow(ctx,
-		`SELECT COALESCE(sum(used),0) FROM usage_quota WHERE updated_at::date = now()::date`,
+		`SELECT count(*) FROM users WHERE created_at::date = now()::date`,
 	).Scan(&n)
 	return n
 }

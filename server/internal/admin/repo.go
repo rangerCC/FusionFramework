@@ -47,29 +47,25 @@ func (r *repo) findAdminByID(ctx context.Context, id int64) (*adminUser, error) 
 
 // userRow is a row in the admin user list.
 type userRow struct {
-	PublicID      string
-	Nickname      string
-	Phone         *string
-	Status        int16
-	IsSubscribed  bool
-	ChildrenCount int
-	CreatedAt     time.Time
+	PublicID     string
+	DeviceID     string
+	Status       int16
+	IsSubscribed bool
+	CreatedAt    time.Time
 }
 
 func (r *repo) listUsers(ctx context.Context, keyword string, limit, offset int) ([]userRow, int, error) {
-	// keyword matches phone identifier or nickname.
+	// keyword matches device_id prefix or public_id.
 	const base = `
 		FROM users u
-		LEFT JOIN auth_identities ai ON ai.user_id=u.id AND ai.provider='phone'
-		WHERE ($1='' OR u.nickname ILIKE '%'||$1||'%' OR ai.identifier ILIKE '%'||$1||'%')`
+		WHERE ($1='' OR u.device_id ILIKE '%'||$1||'%' OR u.public_id ILIKE '%'||$1||'%')`
 	var total int
 	if err := r.pool.QueryRow(ctx, `SELECT count(*) `+base, keyword).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 	const q = `
-		SELECT u.public_id, u.nickname, ai.identifier, u.status, u.created_at,
-		   EXISTS(SELECT 1 FROM subscriptions s WHERE s.user_id=u.id AND s.status='active' AND (s.expires_at IS NULL OR s.expires_at>now())),
-		   (SELECT count(*) FROM children c WHERE c.user_id=u.id AND c.deleted_at IS NULL)
+		SELECT u.public_id, u.device_id, u.status, u.created_at,
+		   EXISTS(SELECT 1 FROM subscriptions s WHERE s.user_id=u.id AND s.status='active' AND (s.expires_at IS NULL OR s.expires_at>now()))
 		` + base + ` ORDER BY u.created_at DESC LIMIT $2 OFFSET $3`
 	rows, err := r.pool.Query(ctx, q, keyword, limit, offset)
 	if err != nil {
@@ -79,8 +75,7 @@ func (r *repo) listUsers(ctx context.Context, keyword string, limit, offset int)
 	var out []userRow
 	for rows.Next() {
 		var u userRow
-		if err := rows.Scan(&u.PublicID, &u.Nickname, &u.Phone, &u.Status, &u.CreatedAt,
-			&u.IsSubscribed, &u.ChildrenCount); err != nil {
+		if err := rows.Scan(&u.PublicID, &u.DeviceID, &u.Status, &u.CreatedAt, &u.IsSubscribed); err != nil {
 			return nil, 0, err
 		}
 		out = append(out, u)
@@ -98,20 +93,8 @@ func (r *repo) userIDByPublic(ctx context.Context, publicID string) (int64, erro
 }
 
 func (r *repo) setUserStatus(ctx context.Context, userID int64, status int16) error {
-	tx, err := r.pool.Begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback(ctx)
-	if _, err := tx.Exec(ctx, `UPDATE users SET status=$2 WHERE id=$1`, userID, status); err != nil {
-		return err
-	}
-	if status == 0 {
-		if _, err := tx.Exec(ctx, `UPDATE refresh_tokens SET revoked=true WHERE user_id=$1`, userID); err != nil {
-			return err
-		}
-	}
-	return tx.Commit(ctx)
+	_, err := r.pool.Exec(ctx, `UPDATE users SET status=$2 WHERE id=$1`, userID, status)
+	return err
 }
 
 func (r *repo) audit(ctx context.Context, actor, action, target string, detail []byte) {

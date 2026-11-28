@@ -9,7 +9,7 @@
 #import "SSReaderPageController.h"
 #import <AVFoundation/AVFoundation.h>
 
-@interface SSReaderPageController () <UIScrollViewDelegate>
+@interface SSReaderPageController () <UIScrollViewDelegate, AVSpeechSynthesizerDelegate>
 @property (nonatomic, strong) SSStory *story;
 @property (nonatomic, strong) UIScrollView *pager;
 @property (nonatomic, strong) UIPageControl *pageControl;
@@ -23,6 +23,7 @@
 
 // audio
 @property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic, strong) AVSpeechSynthesizer *synthesizer; // TTS fallback when audioURL is absent
 @property (nonatomic, assign) NSInteger currentIndex;
 @property (nonatomic, assign) BOOL isPlaying;
 
@@ -231,15 +232,37 @@
             return;
         }
     }
-    // No audio: fall back to auto-advance by duration so the story still flows.
-    self.isPlaying = YES;
-    [self updatePlayButton];
-    NSInteger secs = page.durationSeconds > 0 ? page.durationSeconds : 5;
-    [self performSelector:@selector(advanceAfterSilentPage) withObject:nil afterDelay:secs];
+    // No audio URL: use TTS to read the page content aloud.
+    NSString *text = page.content;
+    if (text.length > 0) {
+        if (!self.synthesizer) {
+            self.synthesizer = [AVSpeechSynthesizer new];
+        }
+        self.synthesizer.delegate = self;
+        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:text];
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-CN"];
+        utterance.rate = (float)([self effectiveRate] * AVSpeechUtteranceDefaultSpeechRate);
+        [self.synthesizer speakUtterance:utterance];
+        self.isPlaying = YES;
+        [self updatePlayButton];
+    } else {
+        // No content either, just auto-advance.
+        NSInteger secs = page.durationSeconds > 0 ? page.durationSeconds : 5;
+        [self performSelector:@selector(advanceAfterSilentPage) withObject:nil afterDelay:secs];
+        self.isPlaying = YES;
+        [self updatePlayButton];
+    }
 }
 
 - (void)advanceAfterSilentPage {
     if (self.isPlaying) { [self autoAdvance]; }
+}
+
+#pragma mark - AVSpeechSynthesizerDelegate
+
+- (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer
+ didFinishSpeechUtterance:(AVSpeechUtterance *)utterance {
+    [self autoAdvance];
 }
 
 - (void)onAudioFinished:(NSNotification *)note {
@@ -267,6 +290,9 @@
         [self.player pause];
         self.player = nil;
     }
+    if (self.synthesizer.isSpeaking) {
+        [self.synthesizer stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+    }
 }
 
 - (void)updatePlayButton {
@@ -278,12 +304,17 @@
 - (void)onPlayPause {
     if (self.isPlaying) {
         [self.player pause];
+        if (self.synthesizer.isSpeaking) {
+            [self.synthesizer pauseSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+        }
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(advanceAfterSilentPage) object:nil];
         self.isPlaying = NO;
     } else {
         if (self.player) {
             [self.player play];
             self.player.rate = (float)[self effectiveRate];
+        } else if (self.synthesizer.isPaused) {
+            [self.synthesizer continueSpeaking];
         } else {
             [self playCurrentPage];
         }

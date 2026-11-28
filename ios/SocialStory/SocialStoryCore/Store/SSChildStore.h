@@ -27,8 +27,14 @@ extern NSString *const SSChildrenDidChangeNotification;
 
 @property (nonatomic, readonly) BOOL hasAnyChild;
 
-/// Refetch from the server and update the cache (posts the notification).
+/// Refetch from local storage and update the cache (PoC: no server sync).
 - (void)reloadWithCompletion:(nullable void (^)(NSError * _Nullable error))completion;
+
+/// Save or update a child locally (UserDefaults). Posts the notification.
+- (void)saveChild:(SSChild *)child;
+
+/// Delete a child by ID locally. Posts the notification.
+- (void)deleteChildWithID:(NSString *)childID;
 
 /// Override the in-session selected child (e.g. user picked another in the
 /// generation page). Does not hit the network.

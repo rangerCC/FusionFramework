@@ -21,6 +21,11 @@ func (h *Handler) RegisterAuthed(r *gin.RouterGroup) {
 	r.POST("/subscription/verify", h.verify)
 }
 
+// RegisterDeviceAuthed 挂载 device-identity 认证下的购买接口（PoC 买断）。
+func (h *Handler) RegisterDeviceAuthed(r *gin.RouterGroup) {
+	r.POST("/purchase/verify", h.purchaseVerify)
+}
+
 // RegisterPublic mounts the Apple webhook (no app auth; JWS-verified).
 func (h *Handler) RegisterPublic(r *gin.RouterGroup) {
 	r.POST("/webhook/appstore/notifications", h.webhook)
@@ -55,6 +60,22 @@ type verifyReq struct {
 }
 
 func (h *Handler) verify(c *gin.Context) {
+	var req verifyReq
+	if err := c.ShouldBindJSON(&req); err != nil || req.TransactionID == "" {
+		httpx.Fail(c, httpx.ErrBadJSON)
+		return
+	}
+	uid := httpx.UserID(c)
+	token, _ := h.svc.UserToken(c.Request.Context(), uid)
+	sub, err := h.svc.Verify(c.Request.Context(), uid, token, req.TransactionID)
+	if err != nil {
+		httpx.Fail(c, err)
+		return
+	}
+	httpx.OK(c, subJSON(sub))
+}
+
+func (h *Handler) purchaseVerify(c *gin.Context) {
 	var req verifyReq
 	if err := c.ShouldBindJSON(&req); err != nil || req.TransactionID == "" {
 		httpx.Fail(c, httpx.ErrBadJSON)

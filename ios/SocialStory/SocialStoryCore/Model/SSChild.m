@@ -41,6 +41,15 @@ static NSString *SSChildStr(id v) {
     };
 }
 
+- (NSDictionary *)localStorageJSON {
+    NSMutableDictionary *d = [[self creationJSON] mutableCopy];
+    if (self.childID.length) { d[@"child_id"] = self.childID; }
+    if (self.age > 0)        { d[@"age"] = @(self.age); }
+    if (self.avatarURL)      { d[@"avatar_url"] = self.avatarURL; }
+    d[@"is_default"] = @(self.isDefault);
+    return d;
+}
+
 #pragma mark - Enum mapping
 
 + (NSString *)stringForGender:(SSGender)g {

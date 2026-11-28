@@ -5,7 +5,7 @@
 
 #import "SSChildrenClient.h"
 #import "SSChild.h"
-#import <AccountKit/AccountKit-Swift.h>
+#import <SocialStoryCore/SocialStoryCore-Swift.h>
 
 static NSString *const kDefaultBaseURL = @"http://localhost:8080";
 
@@ -33,8 +33,10 @@ static NSString *const kDefaultBaseURL = @"http://localhost:8080";
 }
 
 - (NSString *)baseURLString {
-    NSString *fromConfig = [SSRemoteAccountService localConfigStringForKey:@"AccountBaseURL"];
-    return fromConfig.length ? fromConfig : kDefaultBaseURL;
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"LocalConfig" ofType:@"plist"];
+    NSDictionary *dict = path ? [NSDictionary dictionaryWithContentsOfFile:path] : nil;
+    NSString *url = dict[@"AccountBaseURL"];
+    return (url.length > 0) ? url : kDefaultBaseURL;
 }
 
 #pragma mark - Public
@@ -110,10 +112,7 @@ static NSString *const kDefaultBaseURL = @"http://localhost:8080";
     req.HTTPMethod = method;
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [req setValue:@"ios" forHTTPHeaderField:@"X-Platform"];
-    NSString *token = [AccountManager shared].accessToken;
-    if (token.length) {
-        [req setValue:[NSString stringWithFormat:@"Bearer %@", token] forHTTPHeaderField:@"Authorization"];
-    }
+    [req setValue:[SSDeviceIdentity deviceID] forHTTPHeaderField:@"X-Device-Id"];
     if (body) {
         req.HTTPBody = [NSJSONSerialization dataWithJSONObject:body options:0 error:NULL];
     }
@@ -140,16 +139,10 @@ static NSString *const kDefaultBaseURL = @"http://localhost:8080";
             [self finish:completion data:([data isKindOfClass:[NSDictionary class]] ? data : @{}) error:nil];
             return;
         }
-        // 2001 = unauthorized: try one token refresh then retry.
+        // 2001 = unauthorized (device not registered yet, should not normally occur).
         if (code == 2001 && retryOn401) {
-            [[AccountManager shared] refreshTokensWithCompletion:^(BOOL ok) {
-                if (ok) {
-                    [self requestMethod:method path:path body:body retryOn401:NO completion:completion];
-                } else {
-                    [self finish:completion data:nil
-                           error:[self errorWithMessage:(obj[@"message"] ?: @"登录已失效") code:code]];
-                }
-            }];
+            [self finish:completion data:nil
+                   error:[self errorWithMessage:(obj[@"message"] ?: @"设备未注册") code:code]];
             return;
         }
         [self finish:completion data:nil

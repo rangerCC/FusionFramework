@@ -176,10 +176,8 @@ typedef NS_ENUM(NSInteger, SSProfileSection) {
         __strong typeof(weakSelf) self = weakSelf;
         if (!self) return;
         self.badgeLabel.hidden = !active;
-        self.memberStatusText = active ? @"会员状态：已订阅 ✓" : @"会员状态：免费用户";
-        self.memberQuotaText = active ? @"可无限生成故事"
-            : [NSString stringWithFormat:@"本月剩余免费次数：%ld",
-               (long)SubscriptionManager.shared.remainingFreeCount];
+        self.memberStatusText = active ? @"会员状态：已买断 ✓" : @"会员状态：未购买";
+        self.memberQuotaText  = active ? @"可无限生成故事" : @"购买后可无限生成故事";
         [self.tableView reloadData];
     }];
 }
